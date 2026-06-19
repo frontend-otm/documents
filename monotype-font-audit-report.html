@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monotype Font Audit Report — OWNDAYS Renewal Project</title>
+  <style>
+    :root {
+      --color-bg: #f8f9fb;
+      --color-surface: #ffffff;
+      --color-border: #e2e6ed;
+      --color-text: #1a1d23;
+      --color-text-secondary: #5a6170;
+      --color-primary: #2563eb;
+      --color-danger: #dc2626;
+      --color-warning: #d97706;
+      --color-success: #059669;
+      --color-danger-bg: #fef2f2;
+      --color-warning-bg: #fffbeb;
+      --color-success-bg: #ecfdf5;
+      --color-info-bg: #eff6ff;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,.07), 0 4px 10px rgba(0,0,0,.04);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      padding: 40px 20px 80px;
+    }
+    .container { max-width: 1060px; margin: 0 auto; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding: 48px 32px;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: #fff;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+    .header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .header .subtitle { font-size: 15px; opacity: 0.75; margin-bottom: 24px; }
+    .header .meta {
+      display: inline-flex; gap: 24px; font-size: 13px; opacity: 0.6;
+      flex-wrap: wrap; justify-content: center;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 40px;
+    }
+    .summary-card {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius); padding: 24px; text-align: center; box-shadow: var(--shadow);
+    }
+    .summary-card .number { font-size: 36px; font-weight: 800; line-height: 1; }
+    .summary-card .label { font-size: 13px; color: var(--color-text-secondary); margin-top: 6px; }
+    .summary-card.danger .number { color: var(--color-danger); }
+    .summary-card.warning .number { color: var(--color-warning); }
+    .summary-card.info .number { color: var(--color-primary); }
+
+    .section {
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius); padding: 32px; margin-bottom: 24px; box-shadow: var(--shadow);
+    }
+    .section h2 {
+      font-size: 18px; font-weight: 700; margin-bottom: 6px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section h2 .icon { font-size: 22px; }
+    .section .section-desc { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 20px; }
+
+    .risk-badge {
+      display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 3px 10px; border-radius: 20px;
+    }
+    .risk-high { background: var(--color-danger-bg); color: var(--color-danger); }
+    .risk-medium { background: var(--color-warning-bg); color: var(--color-warning); }
+    .risk-low { background: var(--color-success-bg); color: var(--color-success); }
+    .risk-info { background: var(--color-info-bg); color: var(--color-primary); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead th {
+      text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--color-text-secondary); padding: 10px 14px;
+      border-bottom: 2px solid var(--color-border); white-space: nowrap;
+    }
+    tbody td { padding: 12px 14px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #f9fafb; }
+    .font-name { font-weight: 600; white-space: nowrap; }
+    code, .path {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 12px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;
+    }
+    .path { color: var(--color-text-secondary); word-break: break-all; display: inline-block; margin: 1px 0; }
+    .owner { font-size: 13px; color: var(--color-text-secondary); }
+    .file-count {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 12px;
+      color: var(--color-text-secondary); background: #f1f5f9; padding: 2px 8px; border-radius: 12px;
+    }
+
+    .callout {
+      padding: 20px 24px; border-radius: var(--radius); font-size: 14px; line-height: 1.7;
+    }
+    .callout.danger { background: var(--color-danger-bg); border-left: 4px solid var(--color-danger); }
+    .callout.warning { background: var(--color-warning-bg); border-left: 4px solid var(--color-warning); }
+    .callout.info { background: var(--color-info-bg); border-left: 4px solid var(--color-primary); }
+    .callout strong { display: block; margin-bottom: 4px; }
+
+    .recommendations { list-style: none; }
+    .recommendations li {
+      padding: 14px 0; border-bottom: 1px solid var(--color-border);
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .recommendations li:last-child { border-bottom: none; }
+    .rec-number {
+      flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+      background: var(--color-primary); color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Font detail cards */
+    .font-detail {
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .font-detail-header {
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid var(--color-border); cursor: pointer;
+      user-select: none;
+    }
+    .font-detail-header:hover { background: #f1f5f9; }
+    .font-detail-header h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .font-detail-header .meta-right { display: flex; align-items: center; gap: 10px; }
+    .font-detail-body { padding: 0; max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s ease; }
+    .font-detail.open .font-detail-body { max-height: 4000px; padding: 16px 20px; }
+    .font-detail .toggle-icon { transition: transform .2s; font-size: 14px; color: var(--color-text-secondary); }
+    .font-detail.open .toggle-icon { transform: rotate(90deg); }
+
+    .file-list { list-style: none; }
+    .file-list li {
+      font-size: 13px; padding: 5px 0; border-bottom: 1px solid #f1f5f9;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      color: var(--color-text-secondary); word-break: break-all;
+    }
+    .file-list li:last-child { border-bottom: none; }
+    .file-group { margin-bottom: 14px; }
+    .file-group-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+      color: var(--color-text-secondary); margin-bottom: 6px; padding-bottom: 4px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .footer {
+      text-align: center; margin-top: 48px; font-size: 13px; color: var(--color-text-secondary);
+    }
+
+    @media (max-width: 640px) {
+      .header { padding: 32px 20px; }
+      .header h1 { font-size: 22px; }
+      .section { padding: 20px; }
+      table { font-size: 13px; }
+      thead th, tbody td { padding: 8px 10px; }
+    }
+    @media print {
+      body { background: #fff; padding: 20px; }
+      .header { background: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .section, .font-detail { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+      .font-detail-body { max-height: none !important; padding: 16px 20px !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ==================== HEADER ==================== -->
+  <div class="header">
+    <h1>Monotype Font Audit Report</h1>
+    <p class="subtitle">OWNDAYS Renewal Project &mdash; Comprehensive font license compliance review</p>
+    <div class="meta">
+      <span>Generated: June 5, 2026</span>
+      <span>Project: owndays-renewal</span>
+      <span>Scope: Full codebase</span>
+    </div>
+  </div>
+
+  <!-- ==================== SUMMARY ==================== -->
+  <div class="summary-grid">
+    <div class="summary-card danger">
+      <div class="number">12</div>
+      <div class="label">Monotype Font Families Found</div>
+    </div>
+    <div class="summary-card warning">
+      <div class="number">10</div>
+      <div class="label">Self-Hosted Font Sets</div>
+    </div>
+    <div class="summary-card info">
+      <div class="number">150+</div>
+      <div class="label">Files Referencing Monotype Fonts</div>
+    </div>
+    <div class="summary-card">
+      <div class="number">~80 MB</div>
+      <div class="label">Total Monotype Font File Size</div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 1: OVERVIEW TABLE ==================== -->
+  <div class="section">
+    <h2><span class="icon">&#128202;</span> Complete Monotype Font Inventory</h2>
+    <p class="section-desc">All Monotype-owned font families identified in the project, sorted by risk level.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Font Family</th>
+          <th>Monotype Entity</th>
+          <th>Usage Type</th>
+          <th>Files</th>
+          <th>Risk</th>
+          <th>Font URL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="font-name">Arial / Arial Unicode MS / Arial Rounded MT</td>
+          <td class="owner">Monotype Corporation</td>
+          <td>Self-hosted + dompdf</td>
+          <td>21+</td>
+          <td><span class="risk-badge risk-high">High</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/arial" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="font-name">Avenir</td>
+          <td class="owner">Linotype (Monotype)</td>
+          <td>Self-hosted</td>
+          <td>4</td>
+          <td><span class="risk-badge risk-high">High</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/avenir" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="font-name">Courier New</td>
+          <td class="owner">Monotype Corporation</td>
+          <td>Self-hosted</td>
+          <td>8</td>
+          <td><span class="risk-badge risk-high">High</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/courier-new" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="font-name">DIN Next / DIN Alternate</td>
+          <td class="owner">Linotype (Monotype)</td>
+          <td>Self-hosted</td>
+          <td>3+</td>
+          <td><span class="risk-badge risk-high">High</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/din-2014" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="font-name">Futura Std / Futura PT</td>
+          <td class="owner">Monotype / ParaType</td>
+          <td>Self-hosted + CDN + Typekit</td>
+          <td>27</td>
+          <td><span class="risk-badge risk-high">High</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/futura-pt" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="font-name">ITC Avant Garde Gothic</td>
+          <td class="owner">ITC (Monotype)</td>
+          <td>Self-hosted</td>
+          <td>2+</td>
+          <td><span class="risk-badge risk-high">High</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/itc-avant-garde-gothic" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="font-name">Optima</td>
+          <td class="owner">Linotype (Monotype)</td>
+          <td>Self-hosted</td>
+          <td>5</td>
+          <td><span class="risk-badge risk-high">High</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/optima" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="font-name">Neuzeit Grotesk</td>
+          <td class="owner">Stempel / Linotype (Monotype)</td>
+          <td>Adobe Typekit</td>
+          <td>55+</td>
+          <td><span class="risk-badge risk-medium">Medium</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/neuzeit-grotesk" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="font-name">Microsoft JhengHei</td>
+          <td class="owner">Monotype Imaging (for Microsoft)</td>
+          <td>Self-hosted + dompdf</td>
+          <td>5+</td>
+          <td><span class="risk-badge risk-medium">Medium</span></td>
+          <td><a href="https://learn.microsoft.com/th-th/typography/font-list/microsoft-jhenghei" target="_blank">LINK</a></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="font-name">Gill Sans Nova</td>
+          <td class="owner">Monotype Corporation</td>
+          <td>CSS system-font reference</td>
+          <td>9+</td>
+          <td><span class="risk-badge risk-low">Low</span></td>
+          <td><a href="https://fonts.adobe.com/fonts/gill-sans-nova" target="_blank">LINK</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ==================== SECTION 2: DETAILED FILE REFERENCES ==================== -->
+  <div class="section">
+    <h2><span class="icon">&#128269;</span> Detailed File References Per Font</h2>
+    <p class="section-desc">Click each font to expand and see every file in the codebase that references it.</p>
+
+    <!-- ===== 1. ARIAL ===== -->
+    <div class="font-detail open" id="font-arial">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Arial / Arial Unicode MS / Arial Rounded MT</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-high">High</span>
+          <span class="file-count">21+ files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (public/fonts/)</div>
+          <ul class="file-list">
+            <li>public/fonts/arial.ttf</li>
+            <li>public/fonts/arialce.ttf</li>
+            <li>public/fonts/arialceb.ttf</li>
+            <li>public/fonts/arialunicodems.ttf</li>
+            <li>public/fonts/Arial-Rounded-MT/ArialRoundedMTBold.woff</li>
+            <li>public/fonts/Arial-Rounded-MT/ArialRoundedMTBold.woff2</li>
+            <li>public/fonts/dompdf-font/arialunicodems_*.ufm (8 files)</li>
+            <li>public/fonts/dompdf-font/arialunicodems_*.ufm.php (4 files)</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing Arial</div>
+          <ul class="file-list">
+            <li>config/dompdf.php</li>
+            <li>resources/views/management-new/thailand-e-commerce/orders/export/pdf.blade.php</li>
+            <li>resources/views/management-new/thailand-e-commerce/orders/export/pdf-head.blade.php</li>
+            <li>resources/views/management-new/thailand-e-commerce/orders/export/pdf-list.blade.php</li>
+            <li>resources/views/management-new/thailand-e-commerce/orders/export/pdf-detail.blade.php</li>
+            <li>resources/views/management-new/hongkong-e-commerce/orders/export/pdf-details.blade.php</li>
+            <li>resources/views/management-new/indonesia-e-commerce/orders/export/pdf-details.blade.php</li>
+            <li>resources/assets/web/sass/pages/specials-kafun2021.scss</li>
+            <li>resources/assets/web/sass/pages/specials-kafun2024.scss</li>
+            <li>resources/assets/web/sass/pages/specials-crystaledition.scss</li>
+            <li>resources/assets/web/sass/pages/specials-poupelle.scss</li>
+            <li>resources/assets/web/sass/pages/specials-owndayspc.scss</li>
+            <li>resources/assets/web/sass/pages/specials-oceans.scss</li>
+            <li>resources/assets/web/sass/pages/specials-progressivelenses.scss</li>
+            <li>resources/assets/web/sass/pages/specials-ginger.scss</li>
+            <li>resources/assets/web/sass/pages/gift-ticket-howto.scss</li>
+            <li>resources/assets/web/sass/pages/kidzania.scss</li>
+            <li>resources/assets/web/sass/pages/manga-contents.scss</li>
+            <li>resources/views/emails/jp/ja/sweepstakes_campaign_a.blade.php</li>
+            <li>resources/views/emails/jp/ja/sweepstakes_campaign_b.blade.php</li>
+            <li>resources/views/emails/jp/ja/sweepstakes_campaign_c.blade.php</li>
+            <li>resources/views/emails/jp/ja/sweepstakes_campaign_d.blade.php</li>
+            <li>resources/views/emails/jp/ja/sweepstakes_campaign_s.blade.php</li>
+            <li>resources/views/emails/jp/ja/line-reward/completed.blade.php</li>
+            <li>resources/views/emails/id/en/account-activation.blade.php</li>
+            <li>resources/views/emails/id/in/account-activation.blade.php</li>
+            <li>resources/views/emails/id/en/order-created.blade.php</li>
+            <li>resources/views/emails/id/in/order-created.blade.php</li>
+            <li>resources/views/gift-ticket/email/sample.blade.php</li>
+            <li>resources/assets/management-new/js/components/member/NewList.vue</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 2. AVENIR ===== -->
+    <div class="font-detail" id="font-avenir">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Avenir</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-high">High</span>
+          <span class="file-count">4 files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (public/fonts/)</div>
+          <ul class="file-list">
+            <li>public/fonts/Avenir/Avenir-Black.woff</li>
+            <li>public/fonts/Avenir/Avenir-Black.woff2</li>
+            <li>public/fonts/Avenir/Avenir-LightOblique.woff</li>
+            <li>public/fonts/Avenir/Avenir-LightOblique.woff2</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing Avenir</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/pages/specials-500stores.scss</li>
+            <li>resources/assets/web/sass/pages/specials-oceans.scss</li>
+            <li>resources/views/specials/products/pages/500stores.blade.php</li>
+            <li>resources/views/specials/products/pages/oceans.blade.php</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 3. COURIER NEW ===== -->
+    <div class="font-detail" id="font-courier-new">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Courier New</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-high">High</span>
+          <span class="file-count">8 files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (public/fonts/)</div>
+          <ul class="file-list">
+            <li>public/fonts/CourierNew/CourierNewPSMT.woff</li>
+            <li>public/fonts/CourierNew/CourierNewPSMT.woff2</li>
+            <li>public/fonts/CourierNew/CourierNewPS-BoldMT.woff</li>
+            <li>public/fonts/CourierNew/CourierNewPS-BoldMT.woff2</li>
+            <li>public/fonts/CourierNew/CourierNewPS-ItalicMT.woff</li>
+            <li>public/fonts/CourierNew/CourierNewPS-ItalicMT.woff2</li>
+            <li>public/fonts/CourierNew/CourierNewPS-BoldItalicMT.woff</li>
+            <li>public/fonts/CourierNew/CourierNewPS-BoldItalicMT.woff2</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing Courier New</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/pages/specials-ginger.scss</li>
+            <li>resources/assets/management-business/css/sb-admin-2.css</li>
+            <li>resources/assets/management-business/css/sb-admin-2.min.css</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 4. DIN NEXT / DIN ALTERNATE ===== -->
+    <div class="font-detail" id="font-din">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> DIN Next / DIN Alternate</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-high">High</span>
+          <span class="file-count">3+ files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (public/fonts/)</div>
+          <ul class="file-list">
+            <li>public/fonts/DINNext/DINNextRoundedLTW01-Regular.woff</li>
+            <li>public/fonts/DINNext/DINNextRoundedLTW01-Regular.woff2</li>
+            <li>public/fonts/DINAlternate-Bold.woff</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing DIN Next / DIN Alternate</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/pages/specials-saunaland.scss</li>
+            <li>resources/assets/web/sass/pages/specials-tul-fan-meeting.scss</li>
+            <li>resources/assets/web/sass/pages/lp-progressive.scss</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 5. FUTURA STD / FUTURA PT ===== -->
+    <div class="font-detail" id="font-futura">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Futura Std / Futura PT</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-high">High</span>
+          <span class="file-count">27 files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (self-hosted)</div>
+          <ul class="file-list">
+            <li>public/fonts/FuturaStd/FuturaStd-Bold.woff</li>
+            <li>public/fonts/FuturaStd/FuturaStd-Bold.woff2</li>
+            <li>public/fonts/FuturaStd/FuturaStd-Light.woff</li>
+            <li>public/fonts/FuturaStd/FuturaStd-Light.woff2</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">CDN-Hosted (storage.owndays.com)</div>
+          <ul class="file-list">
+            <li>https://storage.owndays.com/fonts/FuturaStd/FuturaStd-Bold.woff2</li>
+            <li>https://storage.owndays.com/fonts/FuturaStd/FuturaStd-Bold.woff</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing Futura</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/pages/specials-christmas-campaign2025.scss</li>
+            <li>resources/assets/web/sass/pages/specials-mi-mollet.scss</li>
+            <li>resources/assets/web/sass/pages/specials-sweet2026.scss</li>
+            <li>resources/assets/web/sass/pages/specials-autumn-styling.scss</li>
+            <li>resources/assets/web/sass/pages/specials-membership-sale.scss</li>
+            <li>resources/assets/web/sass/pages/specials-mina2022.scss</li>
+            <li>resources/assets/web/sass/pages/specials-mina2.scss</li>
+            <li>resources/assets/web/sass/pages/specials-blackfriday2025.scss</li>
+            <li>resources/assets/web/sass/pages/specials-steady.scss</li>
+            <li>resources/assets/web/sass/pages/specials-clear-sunglasses-2022.scss</li>
+            <li>resources/assets/web/sass/pages/specials-sunglasses-fair.scss</li>
+            <li>resources/assets/web/sass/pages/specials-nuance-color-lens.scss</li>
+            <li>resources/assets/web/sass/pages/specials-rezard.scss</li>
+            <li>resources/assets/web/sass/pages/specials-fathers-day.scss</li>
+            <li>resources/assets/web/sass/pages/specials-owndays-plus.scss</li>
+            <li>resources/assets/web/sass/pages/special-7th-anniversary.scss</li>
+            <li>resources/assets/web/sass/pages/nuance-color-lens.scss</li>
+            <li>resources/assets/web/sass/pages/lp-glp-springfesta.scss</li>
+            <li>resources/assets/web/css/sg/en.css</li>
+            <li>resources/assets/web/css/ph/en.css</li>
+            <li>resources/assets/web/css/au/en.css</li>
+            <li>resources/assets/web/css/ae/en.css</li>
+            <li>resources/assets/web/css/my/en.css</li>
+            <li>resources/assets/web/css/th/th.css</li>
+            <li>resources/assets/web/css/th/en.css</li>
+            <li>resources/assets/web/css/id/in.css</li>
+            <li>resources/views/specials/campaign/pages/christmas-campaign-2025.blade.php</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 6. ITC AVANT GARDE GOTHIC ===== -->
+    <div class="font-detail" id="font-itc-avant-garde">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> ITC Avant Garde Gothic</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-high">High</span>
+          <span class="file-count">2+ files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (public/fonts/)</div>
+          <ul class="file-list">
+            <li>public/fonts/ITC-Avant-Garde-Gothic/ITC-Avant-Garde-Gothic-CE-Book.woff</li>
+            <li>public/fonts/ITC-Avant-Garde-Gothic/ITC-Avant-Garde-Gothic-CE-Book.woff2</li>
+            <li>public/fonts/ITC-Avant-Garde-Gothic/ITC-Avant-Garde-Gothic-CE-Demi.woff</li>
+            <li>public/fonts/ITC-Avant-Garde-Gothic/ITC-Avant-Garde-Gothic-CE-Demi.woff2</li>
+            <li>public/fonts/ITC-Avant-Garde-Gothic/ITC-Avant-Garde-Gothic-Medium.woff</li>
+            <li>public/fonts/ITC-Avant-Garde-Gothic/ITC-Avant-Garde-Gothic-Medium.woff2</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing ITC Avant Garde</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/pages/specials-10th-anniversary-collection.scss</li>
+            <li>resources/assets/web/sass/pages/specials-stranger-things.scss</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 7. OPTIMA ===== -->
+    <div class="font-detail" id="font-optima">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Optima</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-high">High</span>
+          <span class="file-count">5 files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (public/fonts/)</div>
+          <ul class="file-list">
+            <li>public/fonts/Optima/OPTIMA.woff</li>
+            <li>public/fonts/Optima/OPTIMA_B.woff</li>
+            <li>public/fonts/Optima/Optima Medium.woff</li>
+            <li>public/fonts/Optima/Optima_Italic.woff</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing Optima</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/pages/specials-nuance-color-lens.scss</li>
+            <li>resources/assets/web/sass/pages/specials-spring.scss</li>
+            <li>resources/views/specials/products/pages/ortho-k-lens.blade.php</li>
+            <li>resources/views/specials/products/pages/owndays-contactlens-ph.blade.php</li>
+            <li>resources/views/services/id/onlinestore.blade.php</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 8. NEUZEIT GROTESK ===== -->
+    <div class="font-detail" id="font-neuzeit">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Neuzeit Grotesk</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-medium">Medium</span>
+          <span class="file-count">55+ files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Variable / Definition Files</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/foundation/variable/_font-optimize2.scss</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">SCSS Files</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/layout/_cookie.scss</li>
+            <li>resources/assets/web/sass/pages/cm-003.scss</li>
+            <li>resources/assets/web/sass/pages/cm-004.scss</li>
+            <li>resources/assets/web/sass/pages/kidzania.scss</li>
+            <li>resources/assets/web/sass/pages/line-main-style.scss</li>
+            <li>resources/assets/web/sass/pages/line-my-page.scss</li>
+            <li>resources/assets/web/sass/pages/line-my-page-logout.scss</li>
+            <li>resources/assets/web/sass/pages/line-products-category.scss</li>
+            <li>resources/assets/web/sass/pages/line-self-reception.scss</li>
+            <li>resources/assets/web/sass/pages/profile-family.scss</li>
+            <li>resources/assets/web/sass/pages/self-registration.scss</li>
+            <li>resources/assets/web/sass/pages/special-transitions.scss</li>
+            <li>resources/assets/web/sass/pages/specials-500stores.scss</li>
+            <li>resources/assets/web/sass/pages/specials-cases-for-change-2024.scss</li>
+            <li>resources/assets/web/sass/pages/specials-freaks-store.scss</li>
+            <li>resources/assets/web/sass/pages/specials-graphbelle-2024.scss</li>
+            <li>resources/assets/web/sass/pages/specials-gundam-f91.scss</li>
+            <li>resources/assets/web/sass/pages/specials-gundam3-audio.scss</li>
+            <li>resources/assets/web/sass/pages/specials-mina2023.scss</li>
+            <li>resources/assets/web/sass/pages/specials-mina2024.scss</li>
+            <li>resources/assets/web/sass/pages/specials-mini.scss</li>
+            <li>resources/assets/web/sass/pages/specials-owndayspc2022.scss</li>
+            <li>resources/assets/web/sass/pages/specials-progressive.scss</li>
+            <li>resources/assets/web/sass/pages/specials-spring-collection-2024.scss</li>
+            <li>resources/assets/web/sass/pages/specials-story.scss</li>
+            <li>resources/assets/web/sass/pages/specials-sweet2023.scss</li>
+            <li>resources/assets/web/sass/pages/specials-tokyo-revengers.scss</li>
+            <li>resources/assets/web/sass/pages/surveys-services.scss</li>
+            <li>resources/assets/web/sass/pages/welcome.scss</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Vue Components</div>
+          <ul class="file-list">
+            <li>resources/assets/web/js/views/profile/components/ModalIssuePoint.vue</li>
+            <li>resources/assets/web/js/views/profile/components/ModalCheckCustomerNo.vue</li>
+            <li>resources/assets/web/js/components/line-mini/self-reception/modals/Prescription-copy.vue</li>
+            <li>resources/assets/web/js/components/line-mini/self-reception/modals/Prescription-history.vue</li>
+            <li>resources/assets/web/js/components/line-mini/self-reception/modals/Prescription-qr-detail.vue</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Compiled CSS (per-country)</div>
+          <ul class="file-list">
+            <li>resources/assets/web/css/jp/ja.css</li>
+            <li>resources/assets/web/css/jp/en.css</li>
+            <li>resources/assets/web/css/jp/vi.css</li>
+            <li>resources/assets/web/css/jp/zh_cn.css</li>
+            <li>resources/assets/web/css/jp/zh_tw.css</li>
+            <li>resources/assets/web/css/th/en.css</li>
+            <li>resources/assets/web/css/th/th.css</li>
+            <li>resources/assets/web/css/th/ja.css</li>
+            <li>resources/assets/web/css/th/zh_cn.css</li>
+            <li>resources/assets/web/css/sg/en.css</li>
+            <li>resources/assets/web/css/sg/zh_cn.css</li>
+            <li>resources/assets/web/css/hk/zh_hk.css</li>
+            <li>resources/assets/web/css/au/en.css</li>
+            <li>resources/assets/web/css/ae/en.css</li>
+            <li>resources/assets/web/css/my/en.css</li>
+            <li>resources/assets/web/css/ph/en.css</li>
+            <li>resources/assets/web/css/vn/en.css</li>
+            <li>resources/assets/web/css/kh/km.css</li>
+            <li>resources/assets/web/css/tw/zh_tw.css</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Blade Templates</div>
+          <ul class="file-list">
+            <li>resources/views/management-new/indonesia-e-commerce/orders/export/pdf-details.blade.php</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 9. MICROSOFT JHENGHEI ===== -->
+    <div class="font-detail" id="font-msjh">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Microsoft JhengHei</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-medium">Medium</span>
+          <span class="file-count">5+ files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">Font Files (public/fonts/)</div>
+          <ul class="file-list">
+            <li>public/fonts/msjh.ttf (21 MB)</li>
+            <li>public/fonts/msj-hk.ttf (21 MB)</li>
+            <li>public/fonts/dompdf-font/microsoft_jhenghei_normal_*.ufm</li>
+            <li>public/fonts/dompdf-font/microsoft_jhenghei_bold_*.ufm</li>
+            <li>public/fonts/dompdf-font/msjhk_normal_*.ufm</li>
+            <li>public/fonts/dompdf-font/msjhk_bold_*.ufm</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source Code Referencing Microsoft JhengHei</div>
+          <ul class="file-list">
+            <li>public/fonts/dompdf-font/dompdf_font_family_cache.php</li>
+            <li>resources/views/management-new/hongkong-e-commerce/orders/export/pdf.blade.php</li>
+            <li>resources/views/management-new/hongkong-e-commerce/orders/export/pdf-head.blade.php</li>
+            <li>resources/views/management-new/hongkong-e-commerce/orders/export/pdf-list.blade.php</li>
+            <li>resources/views/management-new/hongkong-e-commerce/orders/export/pdf-details.blade.php</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 10. GILL SANS NOVA ===== -->
+    <div class="font-detail" id="font-gill-sans">
+      <div class="font-detail-header" onclick="this.parentElement.classList.toggle('open')">
+        <h3><span class="toggle-icon">&#9654;</span> Gill Sans Nova</h3>
+        <div class="meta-right">
+          <span class="risk-badge risk-low">Low</span>
+          <span class="file-count">9+ files</span>
+        </div>
+      </div>
+      <div class="font-detail-body">
+        <div class="file-group">
+          <div class="file-group-label">No self-hosted files &mdash; referenced as system font in CSS</div>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Source SCSS (Kuromi campaign)</div>
+          <ul class="file-list">
+            <li>resources/assets/web/sass/pages/specials-kuromi.scss</li>
+            <li>resources/assets/web/sass/pages/specials-kuromi-full-ver.scss</li>
+            <li>resources/views/specials/products/pages/kuromi.blade.php</li>
+          </ul>
+        </div>
+        <div class="file-group">
+          <div class="file-group-label">Compiled CSS (per-country)</div>
+          <ul class="file-list">
+            <li>resources/assets/web/css/sg/en.css</li>
+            <li>resources/assets/web/css/au/en.css</li>
+            <li>resources/assets/web/css/ae/en.css</li>
+            <li>resources/assets/web/css/my/en.css</li>
+            <li>resources/assets/web/css/hk/zh_hk.css</li>
+            <li>resources/assets/web/css/tw/zh_tw.css</li>
+            <li>resources/assets/web/css/th/en.css</li>
+            <li>resources/assets/web/css/th/th.css</li>
+            <li>resources/assets/web/css/kh/km.css</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- end detail section -->
+
+  <!-- ==================== RISK ASSESSMENT ==================== -->
+  <div class="section">
+    <h2><span class="icon">&#9888;</span> Risk Assessment Summary</h2>
+    <p class="section-desc">Overall compliance exposure by font category.</p>
+
+    <div class="callout danger" style="margin-bottom: 16px;">
+      <strong>HIGH RISK &mdash; Self-Hosted Fonts (10 font sets, 40+ font files)</strong>
+      Font files stored in <code>public/fonts/</code> and served directly from the web server or CDN.
+      This constitutes web font embedding / self-hosting, which requires a commercial license from Monotype.
+      Without a valid license, this may result in <strong>copyright infringement claims and significant financial liability</strong>.
+    </div>
+
+    <div class="callout warning" style="margin-bottom: 16px;">
+      <strong>MEDIUM RISK &mdash; PDF &amp; Typekit Fonts</strong>
+      <em>dompdf fonts:</em> Used for server-side PDF generation. Requires font embedding rights, typically covered
+      by the original font license or a separate server license.<br>
+      <em>Neuzeit Grotesk (Typekit):</em> Covered by Adobe Fonts subscription, but the subscription must be active
+      and usage must comply with Adobe&rsquo;s terms of service.
+    </div>
+
+    <div class="callout info">
+      <strong>LOW RISK &mdash; System Font References</strong>
+      Fonts like Gill Sans Nova referenced in CSS <code>font-family</code> stacks rely on the end user&rsquo;s
+      operating system. No font files are distributed, so no additional licensing is typically required.
+    </div>
+  </div>
+
+  <!-- ==================== RECOMMENDATIONS ==================== -->
+  <div class="section">
+    <h2><span class="icon">&#9989;</span> Recommendations</h2>
+    <p class="section-desc">Suggested actions to achieve full licensing compliance.</p>
+    <ol class="recommendations">
+      <li>
+        <span class="rec-number">1</span>
+        <div>
+          <strong>Verify existing Monotype licenses.</strong>
+          Check whether OWNDAYS holds any active Monotype, Linotype, or ITC font licenses
+          (e.g., Monotype Fonts subscription, fonts.com license, or direct purchase agreements)
+          that cover web embedding and self-hosting for all identified fonts.
+        </div>
+      </li>
+      <li>
+        <span class="rec-number">2</span>
+        <div>
+          <strong>Audit Adobe Fonts subscription.</strong>
+          Confirm the Adobe Fonts (Typekit) subscription is active and covers all Typekit kit IDs used
+          in the project. Verify that Neuzeit Grotesk and other Typekit fonts are within the
+          subscription&rsquo;s page view limits.
+        </div>
+      </li>
+      <li>
+        <span class="rec-number">3</span>
+        <div>
+          <strong>Acquire proper licenses or replace fonts.</strong>
+          For any self-hosted fonts without a valid license, either:
+          <br>&bull; Purchase appropriate Monotype web font licenses, or
+          <br>&bull; Replace with open-source alternatives (e.g., Inter, Noto Sans, Source Sans for body text;
+          Libre Franklin, Work Sans for headlines).
+        </div>
+      </li>
+      <li>
+        <span class="rec-number">4</span>
+        <div>
+          <strong>Remove unused font files.</strong>
+          Identify font files in <code>public/fonts/</code> that are no longer referenced anywhere in the
+          codebase and remove them to reduce the compliance surface area.
+        </div>
+      </li>
+      <li>
+        <span class="rec-number">5</span>
+        <div>
+          <strong>Review dompdf configuration.</strong>
+          Ensure the PDF generation pipeline uses fonts with proper embedding rights.
+          Consider switching to open-source alternatives like Noto Sans CJK for Asian language support.
+        </div>
+      </li>
+      <li>
+        <span class="rec-number">6</span>
+        <div>
+          <strong>Establish a font governance policy.</strong>
+          Create a documented process for introducing new fonts to the project, requiring license
+          verification before any font is added to the codebase.
+        </div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    <p><strong>Monotype Font Audit Report</strong> &mdash; OWNDAYS Renewal Project</p>
+    <p>This report was generated by automated codebase analysis on June 5, 2026.</p>
+    <p>For licensing inquiries, contact Monotype at <a href="https://www.monotype.com">monotype.com</a>.</p>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.font-detail-header').forEach(function(header) {
+  header.setAttribute('role', 'button');
+  header.setAttribute('tabindex', '0');
+  header.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  });
+});
+</script>
+</body>
+</html>
