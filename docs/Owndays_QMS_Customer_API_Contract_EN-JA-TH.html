@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owndays QMS Customer API Contract</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+Thai:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b1220;
+    --ink-2:#1f2937;
+    --muted:#5b6675;
+    --line:#e3e7ed;
+    --line-2:#eef1f5;
+    --bg:#f6f7f9;
+    --card:#ffffff;
+    --accent:#0f62fe;
+    --accent-soft:#eaf1ff;
+    --code-bg:#0d1524;
+    --code-ink:#e6edf7;
+    --ok:#0f7b4f;
+    --warn:#8a5300;
+    --warn-bg:#fff8e6;
+    --note-bg:#f2f6ff;
+    --radius:10px;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:"Inter","Noto Sans JP","Noto Sans Thai",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:15px;line-height:1.68;
+    -webkit-font-smoothing:antialiased;
+  }
+  html[lang="ja"] body{font-family:"Noto Sans JP","Inter",sans-serif;line-height:1.85}
+  html[lang="th"] body{font-family:"Noto Sans Thai","Inter",sans-serif;line-height:1.95}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);
+    backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:1120px;margin:0 auto;padding:10px 24px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.14em;font-size:12px;text-transform:uppercase}
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .spacer{flex:1}
+  .langswitch{display:inline-flex;background:var(--line-2);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+  .langswitch button{
+    appearance:none;border:0;background:transparent;cursor:pointer;
+    font:inherit;font-size:13px;font-weight:600;color:var(--muted);
+    padding:5px 14px;border-radius:999px;transition:.15s;white-space:nowrap;
+  }
+  .langswitch button:hover{color:var(--ink)}
+  .langswitch button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(11,18,32,.14)}
+  .printbtn{
+    appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink-2);
+    font:inherit;font-size:13px;font-weight:500;padding:6px 13px;border-radius:8px;cursor:pointer;
+  }
+  .printbtn:hover{border-color:#c9d1dc}
+
+  /* ---------- layout ---------- */
+  .page{max-width:1120px;margin:0 auto;padding:0 24px 96px}
+  .hero{padding:44px 0 26px}
+  h1{font-size:30px;line-height:1.28;margin:0 0 14px;letter-spacing:-.015em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .chip{
+    font-size:12px;font-weight:500;color:var(--ink-2);background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:4px 11px;
+  }
+  .chip b{font-weight:700}
+  .chip.env{background:var(--accent-soft);border-color:#cfe0ff;color:#0b47b3}
+
+  .layout{display:grid;grid-template-columns:236px minmax(0,1fr);gap:38px;align-items:start}
+  .layout>*{min-width:0}
+  main{min-width:0;overflow:hidden}
+  @media (max-width:940px){.layout{grid-template-columns:minmax(0,1fr);gap:0}}
+
+  /* ---------- toc ---------- */
+  nav.toc{position:sticky;top:64px;font-size:13.5px}
+  nav.toc .toc-title{
+    font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 10px;padding-left:12px;
+  }
+  nav.toc ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
+  nav.toc a{
+    display:flex;gap:9px;padding:6px 12px;color:var(--muted);text-decoration:none;
+    border-left:2px solid transparent;margin-left:-1px;transition:.12s;
+  }
+  nav.toc a span.n{color:#9aa5b3;font-variant-numeric:tabular-nums;min-width:12px}
+  nav.toc a:hover{color:var(--ink)}
+  nav.toc a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600;background:linear-gradient(90deg,var(--accent-soft),transparent)}
+  @media (max-width:940px){
+    nav.toc{position:static;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:28px}
+    nav.toc ol{columns:2;column-gap:16px;border-left:0}
+    nav.toc a{border-left:0;padding:5px 0}
+  }
+
+  /* ---------- sections ---------- */
+  section{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 28px 30px;margin-bottom:22px;scroll-margin-top:72px;
+  }
+  @media (max-width:640px){section{padding:20px 16px 24px}}
+  h2{
+    font-size:20px;margin:0 0 18px;padding-bottom:12px;border-bottom:1px solid var(--line-2);
+    letter-spacing:-.01em;display:flex;align-items:baseline;gap:11px;
+  }
+  h2 .num{
+    font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);
+    border-radius:6px;padding:3px 8px;line-height:1.4;flex:none;
+  }
+  h3{font-size:15px;margin:26px 0 12px;color:var(--ink-2);display:flex;align-items:baseline;gap:9px}
+  h3 .num{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-weight:500;flex:none}
+  h3:first-of-type{margin-top:4px}
+  p{margin:0 0 12px;color:var(--ink-2)}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin:0 0 8px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:420px}
+  @media (max-width:640px){
+    table{min-width:340px;font-size:12.5px}
+    thead th{padding:8px 10px}
+    tbody td{padding:9px 10px}
+  }
+  thead th{
+    text-align:left;background:#fafbfc;color:var(--muted);font-weight:600;
+    font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+    padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line-2);vertical-align:top;color:var(--ink-2)}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:#fcfdfe}
+  td.k{font-family:var(--mono);font-size:12.5px;color:var(--ink);white-space:nowrap}
+  html[lang="ja"] table,html[lang="th"] table{line-height:1.7}
+
+  code{
+    font-family:var(--mono);font-size:.885em;background:#f1f3f7;color:#1a2436;
+    border:1px solid #e4e8ee;border-radius:4px;padding:1px 5px;white-space:nowrap;
+  }
+  code.wrap{
+    display:inline-block;max-width:100%;white-space:normal;
+    overflow-wrap:anywhere;word-break:normal;line-height:1.55;
+  }
+  td code.wrap{margin:1px 0}
+  .req{font-weight:600;color:var(--ok);white-space:nowrap}
+  .opt{color:var(--muted);white-space:nowrap}
+  .rec{color:var(--warn);white-space:nowrap}
+  .pii{
+    display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;
+    color:#8a1c1c;background:#fdeced;border:1px solid #f7d4d6;border-radius:4px;
+    padding:0 5px;margin-left:6px;vertical-align:1px;white-space:nowrap;
+  }
+  .st{font-family:var(--mono);font-size:12.5px;font-weight:600;white-space:nowrap}
+  .st.s4{color:#b4400c}.st.s2{color:var(--ok)}
+
+  /* ---------- code blocks ---------- */
+  .cb{position:relative;margin:0 0 14px;border-radius:8px;overflow:hidden;background:var(--code-bg)}
+  .cb-head{
+    display:flex;align-items:center;gap:10px;padding:8px 12px;
+    background:#111b2d;border-bottom:1px solid #1e2b42;
+  }
+  .cb-tag{
+    font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;
+    text-transform:uppercase;color:#8fa2bd;
+  }
+  .cb-head .spacer{flex:1}
+  .copy{
+    appearance:none;border:1px solid #26354f;background:#16223a;color:#c3d0e3;
+    font:inherit;font-size:11.5px;font-weight:500;padding:3px 10px;border-radius:6px;cursor:pointer;
+  }
+  .copy:hover{background:#1d2c48;color:#fff}
+  .copy.done{border-color:#1d5f42;background:#123526;color:#6ee7a8}
+  .cb pre{
+    margin:0;padding:14px 16px;overflow-x:auto;
+    font-family:var(--mono);font-size:12.5px;line-height:1.72;color:var(--code-ink);
+    white-space:pre;tab-size:2;
+  }
+  .cb pre::-webkit-scrollbar{height:9px}
+  .cb pre::-webkit-scrollbar-thumb{background:#2b3b57;border-radius:9px}
+
+  .flow{
+    margin:0 0 16px;padding:16px 18px;background:#0d1524;border-radius:8px;
+    font-family:var(--mono);font-size:12.5px;line-height:1.9;color:#cdd9ea;
+    overflow-x:auto;white-space:pre;
+  }
+  .flow b{color:#7fb2ff;font-weight:500}
+
+  /* ---------- notes ---------- */
+  .note{
+    border-left:3px solid var(--accent);background:var(--note-bg);
+    padding:13px 16px;border-radius:0 8px 8px 0;margin:0 0 16px;font-size:13.5px;color:var(--ink-2);
+  }
+  .note.warn{border-left-color:#d99100;background:var(--warn-bg)}
+  .note .lbl{font-weight:700;color:var(--ink);margin-right:6px}
+
+  footer{
+    max-width:1120px;margin:0 auto;padding:26px 24px 0;border-top:1px solid var(--line);
+    color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  }
+  [hidden]{display:none !important}
+
+  @media print{
+    .topbar,nav.toc,.copy{display:none}
+    body{background:#fff;font-size:10.5pt}
+    .layout{display:block}
+    section{border-color:#ccc;margin-bottom:14px;padding:14px}
+    h2{break-after:avoid}h3{break-after:avoid}
+    .cb,.flow,tr,.note{break-inside:avoid}
+    thead{display:table-header-group}
+    .cb{background:#f4f6f9}
+    .cb pre{color:#111;white-space:pre-wrap;word-break:break-all}
+    .cb-head{background:#e8ecf1;border-color:#d5dbe3}
+    .cb-tag{color:#4a5666}
+    .flow{background:#f4f6f9;color:#111;white-space:pre-wrap}
+    .flow b{color:#0b47b3}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot"></span>OWNDAYS<span style="color:var(--muted);font-weight:600">&nbsp;&times;&nbsp;JUNO</span></div>
+    <div class="spacer"></div>
+    <div class="langswitch" role="group" id="langswitch">
+      <button type="button" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
+      <button type="button" data-lang="th" aria-pressed="false">ไทย</button>
+    </div>
+    <button type="button" class="printbtn" id="printbtn">Print / PDF</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="hero">
+    <h1 id="doc-title">Owndays QMS Customer API Contract</h1>
+    <div class="chips" id="doc-chips"></div>
+  </div>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Table of contents">
+      <p class="toc-title" id="toc-title">Table of Contents</p>
+      <ol id="toc-list"></ol>
+    </nav>
+    <main id="doc-body"></main>
+  </div>
+</div>
+
+<footer>
+  <span id="foot-left">Generated for <code>juno-customer</code> Owndays QMS integration.</span>
+  <span id="foot-right"></span>
+</footer>
+
+<script type="application/json" id="code-samples">
+{
+  "envelope": "{\n    \"result\": { ... },\n    \"status\": 200,\n    \"traceId\": \"768885d22465845f\"\n}",
+
+  "authReq": "curl --location --request POST \\\n  'https://api-gateway.juno.preprod.lenskart.com/draco/v1.0/users/auth/token' \\\n  --header 'X-Auth-Token: Basic <base64(clientId:clientSecret)>'",
+
+  "authRes": "{\n    \"result\": {\n        \"access_token\": \"eyJraWQiOiJqd3QtOGI2NzI0ODktNjM4Yy00MWE5LWFjMTItNTc1MTY2YWRjMDQ1IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ...\",\n        \"expires_in\": 300000\n    },\n    \"status\": 200,\n    \"traceId\": \"b1d1061505d0119e\"\n}",
+
+  "getReq": "curl --location \\\n  'https://api-gateway.juno.preprod.lenskart.com/v2/customers/owndays/tickets/30104' \\\n  --header 'Content-Type: application/json' \\\n  --header 'X-Auth-Token: Bearer eyJraWQiOiJqd3QtOGI2NzI0ODktNjM4Yy00MWE5LWFjMTItNTc1MTY2YWRjMDQ1...' \\\n  --header 'X-Client-Org: owndays' \\\n  --header 'X-Country-Code: SG' \\\n  --data '{\n    \"authCode\": \"Djh3CdZ0\"\n}'",
+
+  "getRes": "{\n    \"result\": {\n        \"indexId\": 30104,\n        \"receptionDate\": \"2026-07-29\",\n        \"storeCode\": 18,\n        \"authCode\": \"Djh3CdZ0\",\n        \"ticketType\": \"B\",\n        \"id\": 2,\n        \"reservationId\": null,\n        \"customerNo\": null,\n        \"telNo\": null,\n        \"customerReservationName\": null,\n        \"registerStaff\": null,\n        \"name\": null,\n        \"hasOwndaysPro\": null,\n        \"owndaysProExpiredDate\": null,\n        \"firstName\": null,\n        \"lastName\": null,\n        \"kana\": null,\n        \"firstKana\": null,\n        \"lastKana\": null,\n        \"birthDay\": null,\n        \"gender\": null,\n        \"hasInternalMemo\": null,\n        \"u18ValidDate\": null,\n        \"receptionId\": 38155,\n        \"intended\": \"buyGlasses\",\n        \"hasKnownOwndays\": null,\n        \"visitMotivation\": null,\n        \"hasSeenWebsit\": null,\n        \"hasSeenCm\": null,\n        \"visitReason\": null,\n        \"waitTime\": 0\n    },\n    \"status\": 200,\n    \"traceId\": \"89a8e372859ecddc\"\n}",
+
+  "updReq": "curl --location --request PUT \\\n  'https://api-gateway.juno.preprod.lenskart.com/v2/customers/owndays/tickets/38155/web' \\\n  --header 'Content-Type: application/json' \\\n  --header 'X-Auth-Token: Bearer eyJraWQiOiJqd3QtOGI2NzI0ODktNjM4Yy00MWE5LWFjMTItNTc1MTY2YWRjMDQ1...' \\\n  --header 'X-Client-Org: owndays' \\\n  --header 'X-Country-Code: SG' \\\n  --data '{\n    \"customerNo\": 17695979,\n    \"firstBuyGlasses\": true,\n    \"contactLensType\": \"noUse\",\n    \"nowHasGlasses\": true,\n    \"firstUseOwndays\": true,\n    \"useKb\": true,\n    \"useNowGlasses\": true,\n    \"glassesPurpose\": [\"forFar\"]\n}'",
+
+  "updRes": "{\n    \"result\": {\n        \"receptionId\": 38155,\n        \"receptionDate\": \"2026-07-29\",\n        \"storeCode\": 18,\n        \"indexId\": 30104,\n        \"intended\": \"buyGlasses\",\n        \"firstBuyGlasses\": true,\n        \"contactLensType\": \"noUse\",\n        \"nowHasGlasses\": true,\n        \"firstUseOwndays\": true,\n        \"useKb\": true,\n        \"useNowGlasses\": true,\n        \"glassesPurpose\": [\"forFar\"],\n        \"hasKnownOwndays\": null,\n        \"visitMotivation\": null,\n        \"hasSeenWebsit\": null,\n        \"hasSeenCm\": null,\n        \"visitReason\": null,\n        \"customerNo\": 17695979,\n        \"ticketType\": \"B\",\n        \"id\": 2\n    },\n    \"status\": 200,\n    \"traceId\": \"cc41345ab5a53d4c\"\n}",
+
+  "e2e1": "ACCESS_TOKEN=$(curl -s -X POST \\\n  'https://api-gateway.juno.preprod.lenskart.com/draco/v1.0/users/auth/token' \\\n  -H 'X-Auth-Token: Basic <base64(clientId:clientSecret)>' \\\n  | jq -r '.result.access_token')\n\necho \"Access Token: ${ACCESS_TOKEN:0:40}...\"",
+
+  "e2e2": "curl -s -X POST \\\n  'https://api-gateway.juno.preprod.lenskart.com/v2/customers/owndays/tickets/30104' \\\n  -H 'Content-Type: application/json' \\\n  -H \"X-Auth-Token: Bearer $ACCESS_TOKEN\" \\\n  -H 'X-Client-Org: owndays' \\\n  -H 'X-Country-Code: SG' \\\n  -d '{\"authCode\": \"Djh3CdZ0\"}' | jq .",
+
+  "e2e3": "curl -s -X PUT \\\n  'https://api-gateway.juno.preprod.lenskart.com/v2/customers/owndays/tickets/38155/web' \\\n  -H 'Content-Type: application/json' \\\n  -H \"X-Auth-Token: Bearer $ACCESS_TOKEN\" \\\n  -H 'X-Client-Org: owndays' \\\n  -H 'X-Country-Code: SG' \\\n  -d '{\n    \"customerNo\": 17695979,\n    \"firstBuyGlasses\": true,\n    \"contactLensType\": \"noUse\",\n    \"nowHasGlasses\": true,\n    \"firstUseOwndays\": true,\n    \"useKb\": true,\n    \"useNowGlasses\": true,\n    \"glassesPurpose\": [\"forFar\"]\n}' | jq ."
+}
+</script>
+
+<script>
+"use strict";
+
+const CODE = JSON.parse(document.getElementById("code-samples").textContent);
+
+/* ============ UI strings ============ */
+const UI = {
+  docTitle:{en:"Owndays QMS Customer API Contract",ja:"Owndays QMS カスタマー API 仕様書",th:"เอกสารข้อกำหนด API ลูกค้า Owndays QMS"},
+  toc:{en:"Table of Contents",ja:"目次",th:"สารบัญ"},
+  print:{en:"Print / PDF",ja:"印刷 / PDF",th:"พิมพ์ / PDF"},
+  copy:{en:"Copy",ja:"コピー",th:"คัดลอก"},
+  copied:{en:"Copied",ja:"コピーしました",th:"คัดลอกแล้ว"},
+  chipService:{en:"Service",ja:"サービス",th:"เซอร์วิส"},
+  chipVersion:{en:"Version",ja:"バージョン",th:"เวอร์ชัน"},
+  chipUpdated:{en:"Last Updated",ja:"最終更新",th:"อัปเดตล่าสุด"},
+  chipUpdatedVal:{en:"July 2026",ja:"2026年7月",th:"กรกฎาคม 2026"},
+  chipEnv:{en:"Environment: Preprod",ja:"環境: Preprod（検証）",th:"สภาพแวดล้อม: Preprod (ทดสอบ)"},
+  footLeft:{
+    en:'Generated for <code>juno-customer</code> Owndays QMS integration.',
+    ja:'<code>juno-customer</code> の Owndays QMS 連携用に作成されたドキュメントです。',
+    th:'จัดทำขึ้นสำหรับการเชื่อมต่อ Owndays QMS ของ <code>juno-customer</code>'
+  },
+  footRight:{
+    en:"Internal technical reference — verify before external use.",
+    ja:"社内技術リファレンス — 外部利用前に内容をご確認ください。",
+    th:"เอกสารอ้างอิงทางเทคนิคภายใน — โปรดตรวจสอบก่อนนำไปใช้ภายนอก"
+  }
+};
+
+/* ============ shared table header labels ============ */
+const H = {
+  prop:{en:"Property",ja:"項目",th:"รายการ"},
+  val:{en:"Value",ja:"値",th:"ค่า"},
+  field:{en:"Field",ja:"フィールド",th:"ฟิลด์"},
+  type:{en:"Type",ja:"型",th:"ชนิดข้อมูล"},
+  desc:{en:"Description",ja:"説明",th:"คำอธิบาย"},
+  reqd:{en:"Required",ja:"必須",th:"จำเป็น"},
+  header:{en:"Header",ja:"ヘッダー",th:"เฮดเดอร์"},
+  param:{en:"Parameter",ja:"パラメータ",th:"พารามิเตอร์"},
+  step:{en:"Step",ja:"ステップ",th:"ขั้นตอน"},
+  api:{en:"API",ja:"API",th:"API"},
+  preprod:{en:"Preprod",ja:"Preprod（検証環境）",th:"Preprod (ทดสอบ)"},
+  prod:{en:"Production",ja:"Production（本番環境）",th:"Production (ใช้งานจริง)"},
+  scenario:{en:"Scenario",ja:"シナリオ",th:"กรณี"},
+  status:{en:"HTTP Status",ja:"HTTP ステータス",th:"สถานะ HTTP"},
+  behavior:{en:"Behavior",ja:"動作",th:"พฤติกรรม"},
+  inPrev:{en:"Input from previous step",ja:"前ステップからの入力",th:"ข้อมูลนำเข้าจากขั้นก่อน"},
+  outNext:{en:"Output used next",ja:"次ステップで使用する出力",th:"ผลลัพธ์ที่ใช้ในขั้นถัดไป"}
+};
+const YES={en:'<span class="req">Yes</span>',ja:'<span class="req">必須</span>',th:'<span class="req">ต้องระบุ</span>'};
+const OPT={en:'<span class="opt">Optional</span>',ja:'<span class="opt">任意</span>',th:'<span class="opt">ไม่บังคับ</span>'};
+const REC={en:'<span class="rec">Recommended</span>',ja:'<span class="rec">推奨</span>',th:'<span class="rec">แนะนำ</span>'};
+const PII={en:'<span class="pii">PII</span>',ja:'<span class="pii">個人情報</span>',th:'<span class="pii">PII</span>'};
+
+/* ============ document model ============ */
+const DOC = [
+/* ---------------- 1. Overview ---------------- */
+{
+  id:"overview", num:"1",
+  title:{en:"Overview",ja:"概要",th:"ภาพรวม"},
+  blocks:[
+    {t:"table", head:[H.prop,H.val], colk:0, rows:[
+      [{en:"Gateway base URL (Preprod)",ja:"ゲートウェイ ベース URL（検証環境）",th:"URL หลักของ Gateway (Preprod)"},
+       '<code class="wrap">https://api-gateway.juno.preprod.lenskart.com</code>'],
+      [{en:"Gateway base URL (Production)",ja:"ゲートウェイ ベース URL（本番環境）",th:"URL หลักของ Gateway (Production)"},
+       '<code class="wrap">https://api-gateway.juno.lenskart.com</code>'],
+      [{en:"Authentication",ja:"認証",th:"การยืนยันตัวตน"},
+       {en:'<code class="wrap">X-Auth-Token: Bearer &lt;access_token&gt;</code> obtained from <code class="wrap">POST /draco/v1.0/users/auth/token</code>',
+        ja:'<code class="wrap">POST /draco/v1.0/users/auth/token</code> で取得した <code class="wrap">X-Auth-Token: Bearer &lt;access_token&gt;</code>',
+        th:'<code class="wrap">X-Auth-Token: Bearer &lt;access_token&gt;</code> ที่ได้จาก <code class="wrap">POST /draco/v1.0/users/auth/token</code>'}],
+      ["Content-Type",
+       {en:'<code>application/json</code> (for POST / update-tickets)',
+        ja:'<code>application/json</code>（POST / update-tickets の場合）',
+        th:'<code>application/json</code> (สำหรับ POST / update-tickets)'}]
+    ]},
+    {t:"note", lbl:{en:"Purpose",ja:"目的",th:"วัตถุประสงค์"}, text:{
+      en:'Juno acts as a proxy to the Owndays QMS APIs. Owndays credentials are resolved server-side from the client-org config (<code>OD_API_CREDS</code>). Callers do <b>not</b> pass Owndays basic auth.',
+      ja:'Juno は Owndays QMS API へのプロキシとして動作します。Owndays の認証情報はクライアント組織設定（<code>OD_API_CREDS</code>）からサーバー側で解決されます。呼び出し側が Owndays の Basic 認証情報を渡す必要は<b>ありません</b>。',
+      th:'Juno ทำหน้าที่เป็นพร็อกซีไปยัง API ของ Owndays QMS ข้อมูลรับรองของ Owndays จะถูกจัดการที่ฝั่งเซิร์ฟเวอร์จากการตั้งค่า client-org (<code>OD_API_CREDS</code>) ผู้เรียกใช้<b>ไม่ต้อง</b>ส่ง basic auth ของ Owndays'
+    }}
+  ]
+},
+
+/* ---------------- 2. Integration Flow ---------------- */
+{
+  id:"flow", num:"2",
+  title:{en:"Integration Flow",ja:"連携フロー",th:"ขั้นตอนการเชื่อมต่อ"},
+  blocks:[
+    {t:"flow", lines:{
+      en:['<b>Step 1:</b> POST /draco/v1.0/users/auth/token',
+          '        └─► Save result.access_token as X-Auth-Token: Bearer &lt;token&gt;',
+          '',
+          '<b>Step 2:</b> POST /v2/customers/owndays/tickets/{ticketId}',
+          '        └─► Read ticket details; note receptionId and customerNo',
+          '',
+          '<b>Step 3:</b> PUT /v2/customers/owndays/tickets/{receptionId}/web',
+          '        └─► Submit web interview payload; returns updated ticket web details'],
+      ja:['<b>ステップ 1:</b> POST /draco/v1.0/users/auth/token',
+          '        └─► result.access_token を X-Auth-Token: Bearer &lt;token&gt; として保存',
+          '',
+          '<b>ステップ 2:</b> POST /v2/customers/owndays/tickets/{ticketId}',
+          '        └─► チケット詳細を取得し、receptionId と customerNo を確認',
+          '',
+          '<b>ステップ 3:</b> PUT /v2/customers/owndays/tickets/{receptionId}/web',
+          '        └─► Web 問診のペイロードを送信し、更新後のチケット Web 情報を受け取る'],
+      th:['<b>ขั้นตอนที่ 1:</b> POST /draco/v1.0/users/auth/token',
+          '        └─► บันทึก result.access_token เป็น X-Auth-Token: Bearer &lt;token&gt;',
+          '',
+          '<b>ขั้นตอนที่ 2:</b> POST /v2/customers/owndays/tickets/{ticketId}',
+          '        └─► อ่านรายละเอียดบัตรคิว และจดค่า receptionId กับ customerNo',
+          '',
+          '<b>ขั้นตอนที่ 3:</b> PUT /v2/customers/owndays/tickets/{receptionId}/web',
+          '        └─► ส่งข้อมูลแบบสอบถามออนไลน์ ระบบจะคืนข้อมูลบัตรคิวที่อัปเดตแล้ว']
+    }},
+    {t:"table", head:[H.step,H.api,H.inPrev,H.outNext], rows:[
+      ["1",{en:"Get Auth Token (Draco)",ja:"認証トークン取得（Draco）",th:"ขอ Auth Token (Draco)"},
+        {en:'Basic credentials in <code>X-Auth-Token</code>',ja:'<code>X-Auth-Token</code> に Basic 認証情報',th:'ข้อมูลรับรองแบบ Basic ใน <code>X-Auth-Token</code>'},
+        '<code>result.access_token</code> → <code class="wrap">X-Auth-Token: Bearer</code>'],
+      ["2",{en:"Get Ticket",ja:"チケット取得",th:"ดึงข้อมูลบัตรคิว"},
+        {en:'QR / ticket <code>ticketId</code>, body <code>authCode</code>',ja:'QR／チケットの <code>ticketId</code>、ボディの <code>authCode</code>',th:'<code>ticketId</code> จาก QR / บัตรคิว และ <code>authCode</code> ใน body'},
+        '<code>result.receptionId</code>, <code>result.customerNo</code>'],
+      ["3",{en:"Update Ticket",ja:"チケット更新",th:"อัปเดตบัตรคิว"},
+        {en:'<code>receptionId</code> from step 2',ja:'ステップ 2 の <code>receptionId</code>',th:'<code>receptionId</code> จากขั้นตอนที่ 2'},
+        {en:'Updated ticket web interview fields in <code>result</code>',ja:'<code>result</code> 内の更新済み Web 問診フィールド',th:'ฟิลด์แบบสอบถามออนไลน์ที่อัปเดตแล้วใน <code>result</code>'}]
+    ]}
+  ]
+},
+
+/* ---------------- 3. Environment URLs ---------------- */
+{
+  id:"env", num:"3",
+  title:{en:"Environment URLs",ja:"環境別 URL",th:"URL แยกตามสภาพแวดล้อม"},
+  blocks:[
+    {t:"table", head:[H.api,H.preprod,H.prod], rows:[
+      [{en:"Get Auth Token (Draco)",ja:"認証トークン取得（Draco）",th:"ขอ Auth Token (Draco)"},
+       '<code class="wrap">POST https://api-gateway.juno.preprod.lenskart.com/draco/v1.0/users/auth/token</code>',
+       '<code class="wrap">POST https://api-gateway.juno.lenskart.com/draco/v1.0/users/auth/token</code>'],
+      [{en:"Get Ticket",ja:"チケット取得",th:"ดึงข้อมูลบัตรคิว"},
+       '<code class="wrap">POST https://api-gateway.juno.preprod.lenskart.com/v2/customers/owndays/tickets/{ticketId}</code>',
+       '<code class="wrap">POST https://api-gateway.juno.lenskart.com/v2/customers/owndays/tickets/{ticketId}</code>'],
+      [{en:"Update Ticket",ja:"チケット更新",th:"อัปเดตบัตรคิว"},
+       '<code class="wrap">PUT https://api-gateway.juno.preprod.lenskart.com/v2/customers/owndays/tickets/{receptionId}/web</code>',
+       '<code class="wrap">PUT https://api-gateway.juno.lenskart.com/v2/customers/owndays/tickets/{receptionId}/web</code>']
+    ]}
+  ]
+},
+
+/* ---------------- 4. Headers & Envelope ---------------- */
+{
+  id:"headers", num:"4",
+  title:{en:"Common Headers & Response Envelope",ja:"共通ヘッダーとレスポンス構造",th:"เฮดเดอร์ร่วมและโครงสร้างการตอบกลับ"},
+  blocks:[
+    {t:"h3", num:"4.1", title:{en:"Headers (Get Ticket & Update Ticket)",ja:"ヘッダー（チケット取得・チケット更新）",th:"เฮดเดอร์ (Get Ticket และ Update Ticket)"}},
+    {t:"table", head:[H.header,H.reqd,H.desc], colk:0, rows:[
+      ["X-Auth-Token",YES,{
+        en:'Bearer JWT from the Draco auth token response: <code class="wrap">Bearer &lt;result.access_token&gt;</code>.',
+        ja:'Draco 認証トークンレスポンスの Bearer JWT: <code class="wrap">Bearer &lt;result.access_token&gt;</code>',
+        th:'Bearer JWT จากการตอบกลับของ Draco: <code class="wrap">Bearer &lt;result.access_token&gt;</code>'}],
+      ["X-Client-Org",REC,{
+        en:'Client organization. Defaults to <code>owndays</code> when omitted.',
+        ja:'クライアント組織。省略時は <code>owndays</code> が既定値。',
+        th:'องค์กรผู้เรียกใช้ หากไม่ระบุจะใช้ <code>owndays</code> เป็นค่าเริ่มต้น'}],
+      ["X-Country-Code",YES,{
+        en:'Country code for the store / market (e.g. <code>SG</code>).',
+        ja:'店舗／市場の国コード（例: <code>SG</code>）',
+        th:'รหัสประเทศของสาขา / ตลาด (เช่น <code>SG</code>)'}],
+      ["Content-Type",YES,{
+        en:'<code>application/json</code> for get-ticket (body) and update-ticket.',
+        ja:'get-ticket（ボディあり）および update-ticket では <code>application/json</code>',
+        th:'ใช้ <code>application/json</code> สำหรับ get-ticket (มี body) และ update-ticket'}]
+    ]},
+
+    {t:"h3", num:"4.2", title:{en:"Headers (Get Auth Token — Draco)",ja:"ヘッダー（認証トークン取得 — Draco）",th:"เฮดเดอร์ (ขอ Auth Token — Draco)"}},
+    {t:"table", head:[H.header,H.reqd,H.desc], colk:0, rows:[
+      ["X-Auth-Token",YES,{
+        en:'Basic credentials: <code class="wrap">Basic &lt;base64(clientId:clientSecret)&gt;</code>.',
+        ja:'Basic 認証情報: <code class="wrap">Basic &lt;base64(clientId:clientSecret)&gt;</code>',
+        th:'ข้อมูลรับรองแบบ Basic: <code class="wrap">Basic &lt;base64(clientId:clientSecret)&gt;</code>'}]
+    ]},
+
+    {t:"h3", num:"4.3", title:{en:"Standard Response Envelope",ja:"標準レスポンス構造",th:"โครงสร้างการตอบกลับมาตรฐาน"}},
+    {t:"p", text:{en:"All APIs return a Juno wrapper:",ja:"すべての API は Juno のラッパー形式で返却されます。",th:"ทุก API จะคืนค่าในรูปแบบ wrapper ของ Juno:"}},
+    {t:"code", tag:"json", key:"envelope"},
+    {t:"table", head:[H.field,H.type,H.desc], colk:0, rows:[
+      ["result","object",{en:"API-specific payload.",ja:"API 固有のペイロード",th:"เพย์โหลดเฉพาะของแต่ละ API"}],
+      ["status","integer",{en:"HTTP-style status (<code>200</code> on success).",ja:"HTTP 形式のステータス（成功時は <code>200</code>）",th:"สถานะรูปแบบ HTTP (<code>200</code> เมื่อสำเร็จ)"}],
+      ["traceId","string",{en:"Request trace ID for debugging.",ja:"デバッグ用のリクエストトレース ID",th:"รหัสติดตามคำขอสำหรับการดีบั๊ก"}]
+    ]}
+  ]
+},
+
+/* ---------------- 5. Auth Token ---------------- */
+{
+  id:"auth", num:"5",
+  title:{en:"Get Auth Token (Draco)",ja:"認証トークン取得（Draco）",th:"ขอ Auth Token (Draco)"},
+  blocks:[
+    {t:"table", head:[H.prop,H.val], colk:0, rows:[
+      [{en:"Method",ja:"メソッド",th:"เมธอด"},"<code>POST</code>"],
+      [{en:"Endpoint",ja:"エンドポイント",th:"เอนด์พอยต์"},'<code class="wrap">{gateway_base_url}/draco/v1.0/users/auth/token</code>'],
+      [{en:"Request body",ja:"リクエストボディ",th:"เนื้อหาคำขอ (body)"},{en:"None",ja:"なし",th:"ไม่มี"}]
+    ]},
+    {t:"note", cls:"warn", lbl:{en:"Security",ja:"セキュリティ",th:"ความปลอดภัย"}, text:{
+      en:'The Basic credential value below is a <b>placeholder</b>. Retrieve real <code>clientId</code> / <code>clientSecret</code> from your secret store — never commit them into shared documents.',
+      ja:'以下の Basic 認証情報は<b>プレースホルダー</b>です。実際の <code>clientId</code> / <code>clientSecret</code> はシークレットストアから取得し、共有ドキュメントには記載しないでください。',
+      th:'ค่าข้อมูลรับรองแบบ Basic ด้านล่างเป็น<b>ตัวอย่าง (placeholder)</b> โปรดดึงค่า <code>clientId</code> / <code>clientSecret</code> จริงจากที่เก็บความลับของระบบ และอย่าใส่ไว้ในเอกสารที่แชร์ร่วมกัน'
+    }},
+    {t:"h3", num:"5.1", title:{en:"Sample Request",ja:"リクエスト例",th:"ตัวอย่างคำขอ"}},
+    {t:"code", tag:"bash", key:"authReq"},
+    {t:"h3", num:"5.2", title:{en:"Sample Response",ja:"レスポンス例",th:"ตัวอย่างการตอบกลับ"}},
+    {t:"code", tag:"json", key:"authRes"},
+    {t:"h3", num:"5.3", title:{en:"Response Fields",ja:"レスポンスフィールド",th:"ฟิลด์ในการตอบกลับ"}},
+    {t:"table", head:[H.field,H.type,H.desc], colk:0, rows:[
+      ["result.access_token","string (JWT)",{
+        en:'Access token. Pass as <code class="wrap">X-Auth-Token: Bearer &lt;access_token&gt;</code> in get-ticket and update-ticket calls.',
+        ja:'アクセストークン。get-ticket および update-ticket の呼び出しで <code class="wrap">X-Auth-Token: Bearer &lt;access_token&gt;</code> として渡します。',
+        th:'โทเค็นสำหรับเข้าใช้งาน ส่งเป็น <code class="wrap">X-Auth-Token: Bearer &lt;access_token&gt;</code> ในการเรียก get-ticket และ update-ticket'}],
+      ["result.expires_in","integer",{
+        en:"Token expiry duration in milliseconds.",
+        ja:"トークンの有効期間（ミリ秒）",
+        th:"ระยะเวลาหมดอายุของโทเค็น (มิลลิวินาที)"}]
+    ]}
+  ]
+},
+
+/* ---------------- 6. Get Ticket ---------------- */
+{
+  id:"get-ticket", num:"6",
+  title:{en:"Get Ticket",ja:"チケット取得",th:"ดึงข้อมูลบัตรคิว (Get Ticket)"},
+  blocks:[
+    {t:"table", head:[H.prop,H.val], colk:0, rows:[
+      [{en:"Method",ja:"メソッド",th:"เมธอด"},"<code>POST</code>"],
+      [{en:"Endpoint",ja:"エンドポイント",th:"เอนด์พอยต์"},'<code class="wrap">{gateway_base_url}/v2/customers/owndays/tickets/{ticketId}</code>'],
+      [{en:"Controller",ja:"コントローラー",th:"คอนโทรลเลอร์"},'<code class="wrap">OwndaysQmsCustomerController#getTicket</code>']
+    ]},
+    {t:"h3", num:"6.1", title:{en:"Path Parameters",ja:"パスパラメータ",th:"พารามิเตอร์ใน Path"}},
+    {t:"table", head:[H.param,H.type,H.reqd,H.desc], colk:0, rows:[
+      ["ticketId","long",YES,{
+        en:"Ticket index ID from the Owndays QMS QR / ticket link.",
+        ja:"Owndays QMS の QR／チケットリンクから取得するチケットインデックス ID",
+        th:"รหัส index ของบัตรคิวจาก QR / ลิงก์บัตรคิวของ Owndays QMS"}]
+    ]},
+    {t:"h3", num:"6.2", title:{en:"Request Body",ja:"リクエストボディ",th:"เนื้อหาคำขอ (Body)"}},
+    {t:"table", head:[H.field,H.type,H.reqd,H.desc], colk:0, rows:[
+      ["authCode","string",YES,{
+        en:"Auth code paired with the ticket ID.",
+        ja:"チケット ID と対になる認証コード",
+        th:"รหัสยืนยันที่จับคู่กับรหัสบัตรคิว"}]
+    ]},
+    {t:"h3", num:"6.3", title:{en:"Sample Request",ja:"リクエスト例",th:"ตัวอย่างคำขอ"}},
+    {t:"code", tag:"bash", key:"getReq"},
+    {t:"h3", num:"6.4", title:{en:"Sample Response",ja:"レスポンス例",th:"ตัวอย่างการตอบกลับ"}},
+    {t:"code", tag:"json", key:"getRes"},
+    {t:"h3", num:"6.5", title:{en:"Response Fields (result)",ja:"レスポンスフィールド（result）",th:"ฟิลด์ในการตอบกลับ (result)"}},
+    {t:"table", head:[H.field,H.type,H.desc], colk:0, rows:[
+      ["indexId","long",{en:"Ticket index ID.",ja:"チケットインデックス ID",th:"รหัส index ของบัตรคิว"}],
+      ["receptionDate","string (date)",{en:"Reception date (<code>YYYY-MM-DD</code>).",ja:"受付日（<code>YYYY-MM-DD</code>）",th:"วันที่รับบัตรคิว (<code>YYYY-MM-DD</code>)"}],
+      ["storeCode","integer",{en:"Store identifier.",ja:"店舗識別コード",th:"รหัสระบุสาขา"}],
+      ["authCode","string",{en:"Ticket auth code.",ja:"チケット認証コード",th:"รหัสยืนยันบัตรคิว"}],
+      ["ticketType","string",{en:"Ticket type (e.g. <code>A</code>).",ja:"チケット種別（例: <code>A</code>）",th:"ประเภทบัตรคิว (เช่น <code>A</code>)"}],
+      ["id","integer",{en:"Internal ticket row ID.",ja:"内部チケット行 ID",th:"รหัสแถวข้อมูลบัตรคิวภายในระบบ"}],
+      ["reservationId","long | null",{en:"Reservation ID if applicable.",ja:"該当する場合の予約 ID",th:"รหัสการจอง (ถ้ามี)"}],
+      ["customerNo","long",{en:"Owndays customer number. <b>Required</b> for the update-ticket body.",ja:"Owndays 顧客番号。チケット更新のリクエストボディで<b>必須</b>。",th:"เลขที่ลูกค้า Owndays <b>จำเป็น</b>สำหรับ body ของการอัปเดตบัตรคิว"}],
+      ["telNo","string",{en:"Customer phone number."+PII.en,ja:"顧客電話番号"+PII.ja,th:"เบอร์โทรศัพท์ลูกค้า"+PII.th}],
+      ["registerStaff","string",{en:"Staff who registered the ticket (e.g. <code>self</code>).",ja:"チケットを登録したスタッフ（例: <code>self</code>）",th:"พนักงานที่ลงทะเบียนบัตรคิว (เช่น <code>self</code>)"}],
+      ["name, firstName, lastName","string",{en:"Customer name fields."+PII.en,ja:"顧客氏名フィールド"+PII.ja,th:"ฟิลด์ชื่อลูกค้า"+PII.th}],
+      ["kana, firstKana, lastKana","string",{en:"Kana name fields.",ja:"カナ氏名フィールド",th:"ฟิลด์ชื่อแบบคานะ"}],
+      ["customerReservationName","string",{en:"Name on the reservation."+PII.en,ja:"予約時の氏名"+PII.ja,th:"ชื่อที่ใช้ในการจอง"+PII.th}],
+      ["birthDay","string (date)",{en:"Date of birth."+PII.en,ja:"生年月日"+PII.ja,th:"วันเกิด"+PII.th}],
+      ["gender","string",{en:"Gender (e.g. <code>male</code>, <code>female</code>).",ja:"性別（例: <code>male</code>、<code>female</code>）",th:"เพศ (เช่น <code>male</code>, <code>female</code>)"}],
+      ["receptionId","long",{en:"<b>Required</b> as the update-ticket path parameter.",ja:"チケット更新のパスパラメータとして<b>必須</b>",th:"<b>จำเป็น</b>สำหรับพารามิเตอร์ path ของการอัปเดตบัตรคิว"}],
+      ["intended","string",{en:"Visit intent (e.g. <code>buyGlasses</code>).",ja:"来店目的（例: <code>buyGlasses</code>）",th:"วัตถุประสงค์การเข้าร้าน (เช่น <code>buyGlasses</code>)"}],
+      ["waitTime","integer",{en:"Estimated wait time in minutes.",ja:"推定待ち時間（分）",th:"เวลารอโดยประมาณ (นาที)"}],
+      ["hasInternalMemo","boolean",{en:"Whether an internal memo exists.",ja:"社内メモの有無",th:"มีบันทึกภายในหรือไม่"}],
+      ["hasOwndaysPro","boolean | null",{en:"Owndays Pro membership flag.",ja:"Owndays Pro 会員フラグ",th:"สถานะสมาชิก Owndays Pro"}],
+      ["owndaysProExpiredDate","string | null",{en:"Pro membership expiry date.",ja:"Pro 会員の有効期限",th:"วันหมดอายุสมาชิก Pro"}],
+      ["hasKnownOwndays","boolean | null",{en:"Whether the customer knew Owndays before the visit.",ja:"来店前に Owndays を知っていたか",th:"ลูกค้ารู้จัก Owndays ก่อนเข้าร้านหรือไม่"}],
+      ["visitMotivation","string | null",{en:"Visit motivation.",ja:"来店動機",th:"แรงจูงใจในการเข้าร้าน"}],
+      ["hasSeenWebsit","boolean | null",{en:"Seen-website flag (spelling as per API).",ja:"ウェブサイト閲覧フラグ（スペルは API 準拠）",th:"เคยเห็นเว็บไซต์หรือไม่ (สะกดตาม API)"}],
+      ["hasSeenCm","boolean | null",{en:"Seen-CM (TV commercial) flag.",ja:"CM 視聴フラグ",th:"เคยเห็นโฆษณา (CM) หรือไม่"}],
+      ["visitReason","string | null",{en:"Visit reason.",ja:"来店理由",th:"เหตุผลในการเข้าร้าน"}],
+      ["u18ValidDate","string | null",{en:"Under-18 validity date.",ja:"18 歳未満の有効期限日",th:"วันที่มีผลสำหรับผู้มีอายุต่ำกว่า 18 ปี"}]
+    ]},
+    {t:"note", lbl:{en:"Note",ja:"備考",th:"หมายเหตุ"}, text:{
+      en:'In the sample response many fields are <code>null</code> because the ticket was issued but not yet linked to a customer record. Always null-check before use.',
+      ja:'サンプルレスポンスでは多くのフィールドが <code>null</code> ですが、これはチケットが発券済みで顧客レコードに未紐付けの状態のためです。使用前に必ず null チェックを行ってください。',
+      th:'ในตัวอย่างการตอบกลับ หลายฟิลด์มีค่าเป็น <code>null</code> เนื่องจากบัตรคิวถูกออกแล้วแต่ยังไม่ผูกกับข้อมูลลูกค้า โปรดตรวจสอบค่า null ก่อนนำไปใช้ทุกครั้ง'
+    }}
+  ]
+},
+
+/* ---------------- 7. Update Ticket ---------------- */
+{
+  id:"update-ticket", num:"7",
+  title:{en:"Update Ticket (Web Interview)",ja:"チケット更新（Web 問診）",th:"อัปเดตบัตรคิว (แบบสอบถามออนไลน์)"},
+  blocks:[
+    {t:"table", head:[H.prop,H.val], colk:0, rows:[
+      [{en:"Method",ja:"メソッド",th:"เมธอด"},"<code>PUT</code>"],
+      [{en:"Endpoint",ja:"エンドポイント",th:"เอนด์พอยต์"},'<code class="wrap">{gateway_base_url}/v2/customers/owndays/tickets/{receptionId}/web</code>'],
+      [{en:"Controller",ja:"コントローラー",th:"คอนโทรลเลอร์"},'<code class="wrap">OwndaysQmsCustomerController#updateTicket</code>'],
+      [{en:"Downstream",ja:"下流連携",th:"ระบบปลายทาง"},{
+        en:'Juno proxies to Owndays QMS via HTTP PUT using the client-org config <code>updateTicketsApiUrl</code>.',
+        ja:'Juno はクライアント組織設定の <code>updateTicketsApiUrl</code> を用いて HTTP PUT で Owndays QMS にプロキシします。',
+        th:'Juno ส่งต่อไปยัง Owndays QMS ผ่าน HTTP PUT โดยใช้การตั้งค่า client-org <code>updateTicketsApiUrl</code>'}]
+    ]},
+    {t:"h3", num:"7.1", title:{en:"Path Parameters",ja:"パスパラメータ",th:"พารามิเตอร์ใน Path"}},
+    {t:"table", head:[H.param,H.type,H.reqd,H.desc], colk:0, rows:[
+      ["receptionId","long",YES,{
+        en:'From the get-ticket response <code>result.receptionId</code>.',
+        ja:'get-ticket レスポンスの <code>result.receptionId</code> から取得',
+        th:'ได้จาก <code>result.receptionId</code> ของการตอบกลับ get-ticket'}]
+    ]},
+    {t:"h3", num:"7.2", title:{en:"Request Body",ja:"リクエストボディ",th:"เนื้อหาคำขอ (Body)"}},
+    {t:"table", head:[H.field,H.type,H.reqd,H.desc], colk:0, rows:[
+      ["customerNo","long",YES,{
+        en:'Owndays customer number from the get-ticket <code>result.customerNo</code>.',
+        ja:'get-ticket の <code>result.customerNo</code> から取得した Owndays 顧客番号',
+        th:'เลขที่ลูกค้า Owndays จาก <code>result.customerNo</code> ของ get-ticket'}],
+      ["firstBuyGlasses","boolean",OPT,{en:"First time buying glasses.",ja:"メガネの初回購入か",th:"ซื้อแว่นตาครั้งแรกหรือไม่"}],
+      ["contactLensType","string",OPT,{en:'Contact lens usage. Example: <code>noUse</code>.',ja:'コンタクトレンズの使用状況。例: <code>noUse</code>',th:'การใช้คอนแทคเลนส์ เช่น <code>noUse</code>'}],
+      ["nowHasGlasses","boolean",OPT,{en:"Customer currently has glasses.",ja:"現在メガネを所有しているか",th:"ลูกค้ามีแว่นตาอยู่แล้วหรือไม่"}],
+      ["firstUseOwndays","boolean",OPT,{en:"First visit to Owndays.",ja:"Owndays の初回利用か",th:"ใช้บริการ Owndays ครั้งแรกหรือไม่"}],
+      ["useKb","boolean",OPT,{en:"Uses KB (input-method flag per the Owndays schema).",ja:"KB の使用（Owndays スキーマ上の入力方式フラグ）",th:"ใช้ KB (แฟล็กตามสคีมาของ Owndays)"}],
+      ["useNowGlasses","boolean",OPT,{en:"Uses current glasses.",ja:"現在のメガネを使用しているか",th:"ใช้แว่นตาปัจจุบันหรือไม่"}],
+      ["glassesPurpose","array of string",OPT,{
+        en:'Purpose of glasses. Example values: <code>forFar</code>, <code>forNear</code> (Owndays-defined).',
+        ja:'メガネの用途。例: <code>forFar</code>、<code>forNear</code>（Owndays 定義）',
+        th:'วัตถุประสงค์การใช้แว่น เช่น <code>forFar</code>, <code>forNear</code> (กำหนดโดย Owndays)'}]
+    ]},
+    {t:"h3", num:"7.3", title:{en:"Sample Request",ja:"リクエスト例",th:"ตัวอย่างคำขอ"}},
+    {t:"code", tag:"bash", key:"updReq"},
+    {t:"h3", num:"7.4", title:{en:"Sample Response",ja:"レスポンス例",th:"ตัวอย่างการตอบกลับ"}},
+    {t:"code", tag:"json", key:"updRes"},
+    {t:"h3", num:"7.5", title:{en:"Response Fields (result)",ja:"レスポンスフィールド（result）",th:"ฟิลด์ในการตอบกลับ (result)"}},
+    {t:"table", head:[H.field,H.type,H.desc], colk:0, rows:[
+      ["receptionId","long",{en:"Reception ID.",ja:"受付 ID",th:"รหัสการรับบัตรคิว"}],
+      ["receptionDate","string (date)",{en:"Reception date (<code>YYYY-MM-DD</code>).",ja:"受付日（<code>YYYY-MM-DD</code>）",th:"วันที่รับบัตรคิว (<code>YYYY-MM-DD</code>)"}],
+      ["storeCode","integer",{en:"Store identifier.",ja:"店舗識別コード",th:"รหัสระบุสาขา"}],
+      ["indexId","long",{en:"Ticket index ID.",ja:"チケットインデックス ID",th:"รหัส index ของบัตรคิว"}],
+      ["intended","string",{en:"Visit intent (e.g. <code>buyGlasses</code>).",ja:"来店目的（例: <code>buyGlasses</code>）",th:"วัตถุประสงค์การเข้าร้าน (เช่น <code>buyGlasses</code>)"}],
+      ["firstBuyGlasses","boolean",{en:"First time buying glasses.",ja:"メガネの初回購入か",th:"ซื้อแว่นตาครั้งแรกหรือไม่"}],
+      ["contactLensType","string",{en:"Contact lens usage (e.g. <code>noUse</code>).",ja:"コンタクトレンズの使用状況（例: <code>noUse</code>）",th:"การใช้คอนแทคเลนส์ (เช่น <code>noUse</code>)"}],
+      ["nowHasGlasses","boolean",{en:"Customer currently has glasses.",ja:"現在メガネを所有しているか",th:"ลูกค้ามีแว่นตาอยู่แล้วหรือไม่"}],
+      ["firstUseOwndays","boolean",{en:"First visit to Owndays.",ja:"Owndays の初回利用か",th:"ใช้บริการ Owndays ครั้งแรกหรือไม่"}],
+      ["useKb","boolean",{en:"KB usage flag.",ja:"KB 使用フラグ",th:"แฟล็กการใช้ KB"}],
+      ["useNowGlasses","boolean",{en:"Uses current glasses.",ja:"現在のメガネを使用しているか",th:"ใช้แว่นตาปัจจุบันหรือไม่"}],
+      ["glassesPurpose","array of string",{en:"Purpose of glasses (e.g. <code>forFar</code>).",ja:"メガネの用途（例: <code>forFar</code>）",th:"วัตถุประสงค์การใช้แว่น (เช่น <code>forFar</code>)"}],
+      ["hasKnownOwndays","boolean | null",{en:"Whether the customer knew Owndays before the visit.",ja:"来店前に Owndays を知っていたか",th:"ลูกค้ารู้จัก Owndays ก่อนเข้าร้านหรือไม่"}],
+      ["visitMotivation","string | null",{en:"Visit motivation.",ja:"来店動機",th:"แรงจูงใจในการเข้าร้าน"}],
+      ["hasSeenWebsit","boolean | null",{en:"Seen-website flag.",ja:"ウェブサイト閲覧フラグ",th:"เคยเห็นเว็บไซต์หรือไม่"}],
+      ["hasSeenCm","boolean | null",{en:"Seen-CM flag.",ja:"CM 視聴フラグ",th:"เคยเห็นโฆษณา (CM) หรือไม่"}],
+      ["visitReason","string | null",{en:"Visit reason.",ja:"来店理由",th:"เหตุผลในการเข้าร้าน"}],
+      ["customerNo","long",{en:"Owndays customer number.",ja:"Owndays 顧客番号",th:"เลขที่ลูกค้า Owndays"}],
+      ["ticketType","string",{en:"Ticket type (e.g. <code>B</code>).",ja:"チケット種別（例: <code>B</code>）",th:"ประเภทบัตรคิว (เช่น <code>B</code>)"}],
+      ["id","integer",{en:"Internal ticket row ID.",ja:"内部チケット行 ID",th:"รหัสแถวข้อมูลบัตรคิวภายในระบบ"}]
+    ]}
+  ]
+},
+
+/* ---------------- 8. Errors ---------------- */
+{
+  id:"errors", num:"8",
+  title:{en:"Errors",ja:"エラー",th:"ข้อผิดพลาด"},
+  blocks:[
+    {t:"table", head:[H.scenario,H.status,H.behavior], rows:[
+      [{en:'Missing <code>ticketId</code> or <code>authCode</code> on get ticket',
+        ja:'チケット取得時に <code>ticketId</code> または <code>authCode</code> が欠落',
+        th:'ไม่ได้ระบุ <code>ticketId</code> หรือ <code>authCode</code> ในการดึงข้อมูลบัตรคิว'},
+       '<span class="st s4">400</span>',
+       {en:'<code class="wrap">JunoBadRequestException</code>: <i>ticketId and authCode are required</i>',
+        ja:'<code class="wrap">JunoBadRequestException</code>：<i>ticketId と authCode は必須です</i>',
+        th:'<code class="wrap">JunoBadRequestException</code>：<i>ต้องระบุ ticketId และ authCode</i>'}],
+      [{en:'Missing <code>receptionId</code> or request body on update ticket',
+        ja:'チケット更新時に <code>receptionId</code> またはリクエストボディが欠落',
+        th:'ไม่ได้ระบุ <code>receptionId</code> หรือเนื้อหาคำขอในการอัปเดตบัตรคิว'},
+       '<span class="st s4">400</span>',
+       {en:'<code class="wrap">JunoBadRequestException</code>: <i>receptionId and request body are required</i>',
+        ja:'<code class="wrap">JunoBadRequestException</code>：<i>receptionId とリクエストボディは必須です</i>',
+        th:'<code class="wrap">JunoBadRequestException</code>：<i>ต้องระบุ receptionId และเนื้อหาคำขอ</i>'}],
+      [{en:'Invalid / missing / expired access token',
+        ja:'アクセストークンが不正・欠落・期限切れ',
+        th:'โทเค็นไม่ถูกต้อง / ไม่มี / หมดอายุ'},
+       '<span class="st s4">401 / 403</span>',
+       {en:'Rejected by Draco or the gateway. Re-fetch the token via <code class="wrap">POST /draco/v1.0/users/auth/token</code>.',
+        ja:'Draco またはゲートウェイで拒否されます。<code class="wrap">POST /draco/v1.0/users/auth/token</code> でトークンを再取得してください。',
+        th:'ถูกปฏิเสธจาก Draco หรือ Gateway ขอโทเค็นใหม่ผ่าน <code class="wrap">POST /draco/v1.0/users/auth/token</code>'}],
+      [{en:'Owndays downstream failure',
+        ja:'Owndays 下流システムの障害',
+        th:'ระบบปลายทางของ Owndays ล้มเหลว'},
+       '<span class="st s2">200</span>',
+       {en:'<code>result</code> may be <code>null</code>; check application logs via <code>traceId</code>.',
+        ja:'<code>result</code> が <code>null</code> になる場合があります。<code>traceId</code> でアプリケーションログを確認してください。',
+        th:'<code>result</code> อาจเป็น <code>null</code> ตรวจสอบ log ของแอปพลิเคชันด้วย <code>traceId</code>'}]
+    ]}
+  ]
+},
+
+/* ---------------- 9. End-to-End ---------------- */
+{
+  id:"e2e", num:"9",
+  title:{en:"End-to-End Sample",ja:"エンドツーエンドのサンプル",th:"ตัวอย่างการใช้งานแบบครบวงจร"},
+  blocks:[
+    {t:"p", text:{
+      en:"Replace placeholder values before running.",
+      ja:"実行前にプレースホルダーの値を置き換えてください。",
+      th:"โปรดแทนค่าตัวอย่าง (placeholder) ก่อนรันคำสั่ง"}},
+    {t:"h3", num:"9.1", title:{en:"Step 1 — Get auth token (Draco)",ja:"ステップ 1 — 認証トークン取得（Draco）",th:"ขั้นตอนที่ 1 — ขอ auth token (Draco)"}},
+    {t:"code", tag:"bash", key:"e2e1"},
+    {t:"h3", num:"9.2", title:{en:"Step 2 — Get ticket",ja:"ステップ 2 — チケット取得",th:"ขั้นตอนที่ 2 — ดึงข้อมูลบัตรคิว"}},
+    {t:"code", tag:"bash", key:"e2e2"},
+    {t:"h3", num:"9.3", title:{en:"Step 3 — Update ticket",ja:"ステップ 3 — チケット更新",th:"ขั้นตอนที่ 3 — อัปเดตบัตรคิว"}},
+    {t:"code", tag:"bash", key:"e2e3"}
+  ]
+}
+];
+
+/* ============ renderer ============ */
+let LANG = "en";
+const tx = (v) => (v && typeof v === "object" && !Array.isArray(v)) ? (v[LANG] ?? v.en) : v;
+
+function renderTable(b){
+  const head = b.head.map(h=>`<th>${tx(h)}</th>`).join("");
+  const rows = b.rows.map(r=>{
+    const tds = r.map((c,i)=>{
+      const cls = (b.colk===i) ? ' class="k"' : "";
+      return `<td${cls}>${tx(c)}</td>`;
+    }).join("");
+    return `<tr>${tds}</tr>`;
+  }).join("");
+  return `<div class="tw"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function renderCode(b){
+  const src = CODE[b.key] || "";
+  const esc = src.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  return `<div class="cb"><div class="cb-head"><span class="cb-tag">${b.tag}</span><span class="spacer"></span>`+
+         `<button type="button" class="copy" data-key="${b.key}">${UI.copy[LANG]}</button></div>`+
+         `<pre>${esc}</pre></div>`;
+}
+
+function renderBlock(b){
+  switch(b.t){
+    case "table": return renderTable(b);
+    case "code":  return renderCode(b);
+    case "flow":  return `<div class="flow">${tx(b.lines).join("\n")}</div>`;
+    case "note":  return `<div class="note${b.cls?" "+b.cls:""}"><span class="lbl">${tx(b.lbl)}:</span>${tx(b.text)}</div>`;
+    case "h3":    return `<h3><span class="num">${b.num}</span><span>${tx(b.title)}</span></h3>`;
+    case "p":     return `<p>${tx(b.text)}</p>`;
+    default:      return "";
+  }
+}
+
+function render(){
+  document.documentElement.lang = LANG;
+  document.title = UI.docTitle[LANG];
+  document.getElementById("doc-title").textContent = UI.docTitle[LANG];
+  document.getElementById("toc-title").textContent = UI.toc[LANG];
+  document.getElementById("printbtn").textContent = UI.print[LANG];
+  document.getElementById("foot-left").innerHTML = UI.footLeft[LANG];
+  document.getElementById("foot-right").textContent = UI.footRight[LANG];
+
+  document.getElementById("doc-chips").innerHTML = [
+    `<span class="chip">${UI.chipService[LANG]}: <b>juno-customer</b></span>`,
+    `<span class="chip">${UI.chipVersion[LANG]}: <b>1.0</b></span>`,
+    `<span class="chip">${UI.chipUpdated[LANG]}: <b>${UI.chipUpdatedVal[LANG]}</b></span>`,
+    `<span class="chip env">${UI.chipEnv[LANG]}</span>`
+  ].join("");
+
+  document.getElementById("toc-list").innerHTML = DOC.map(s=>
+    `<li><a href="#${s.id}" data-target="${s.id}"><span class="n">${s.num}</span><span>${tx(s.title)}</span></a></li>`
+  ).join("");
+
+  document.getElementById("doc-body").innerHTML = DOC.map(s=>
+    `<section id="${s.id}"><h2><span class="num">${s.num}</span><span>${tx(s.title)}</span></h2>`+
+    s.blocks.map(renderBlock).join("")+`</section>`
+  ).join("");
+
+  document.querySelectorAll("#langswitch button").forEach(btn=>
+    btn.setAttribute("aria-pressed", String(btn.dataset.lang === LANG))
+  );
+  observeSections();
+}
+
+/* ---- copy buttons ---- */
+document.addEventListener("click", async (e)=>{
+  const btn = e.target.closest(".copy");
+  if(!btn) return;
+  const text = CODE[btn.dataset.key] || "";
+  try{
+    if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(text); }
+    else{
+      const ta=document.createElement("textarea");
+      ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+    }
+    btn.textContent = UI.copied[LANG]; btn.classList.add("done");
+    setTimeout(()=>{ btn.textContent = UI.copy[LANG]; btn.classList.remove("done"); }, 1600);
+  }catch(_){ /* clipboard blocked */ }
+});
+
+/* ---- language switch ---- */
+document.getElementById("langswitch").addEventListener("click",(e)=>{
+  const btn = e.target.closest("button[data-lang]");
+  if(!btn) return;
+  const prev = document.querySelector("section:target") ? null : null;
+  LANG = btn.dataset.lang;
+  const y = window.scrollY;
+  render();
+  window.scrollTo({top:y});
+});
+
+document.getElementById("printbtn").addEventListener("click",()=>window.print());
+
+/* ---- active TOC highlight ---- */
+let io = null;
+function observeSections(){
+  if(io) io.disconnect();
+  const links = new Map();
+  document.querySelectorAll("#toc-list a").forEach(a=>links.set(a.dataset.target,a));
+  io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        links.forEach(a=>a.classList.remove("active"));
+        const a = links.get(en.target.id);
+        if(a) a.classList.add("active");
+      }
+    });
+  },{rootMargin:"-70px 0px -70% 0px",threshold:0});
+  document.querySelectorAll("main section").forEach(s=>io.observe(s));
+}
+
+/* ---- init: honour ?lang= and browser locale ---- */
+(function init(){
+  const p = new URLSearchParams(location.search).get("lang");
+  if(p && ["en","ja","th"].includes(p)) LANG = p;
+  else{
+    const n = (navigator.language||"").toLowerCase();
+    if(n.startsWith("ja")) LANG="ja";
+    else if(n.startsWith("th")) LANG="th";
+  }
+  render();
+})();
+</script>
+</body>
+</html>
