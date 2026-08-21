@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontend Task Workflow Guideline</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#dfe3e8;--accent:#2563eb;--accent-soft:#eff6ff;--waiting:#fff7ed;--done:#ecfdf5}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Thai",sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+.container{max-width:1100px;margin:0 auto;padding:32px 20px 56px}.hero,.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:18px}
+.topbar{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.hero h1{margin:0 0 8px;font-size:28px}.subtitle{margin:0;color:var(--muted)}
+.lang-switch{display:flex;gap:8px;background:#eef1f4;padding:4px;border-radius:10px;height:max-content}.lang-switch button{border:0;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;background:transparent;color:#4b5563}
+.lang-switch button.active{background:#fff;color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+h2{font-size:20px;margin:0 0 14px}ul{padding-left:22px}li{margin:6px 0}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid var(--border);padding:12px;text-align:left;vertical-align:top}th{background:#f3f4f6}
+.tag{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.status-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}.status{border:1px solid var(--border);border-radius:10px;padding:8px 12px;background:#fff;font-weight:700}.waiting{background:var(--waiting)}.done{background:var(--done)}
+.flow{overflow-x:auto;padding-bottom:8px}.flow-row{min-width:900px;display:flex;align-items:center;gap:10px}.flow-box{flex:1;min-width:165px;border:1px solid var(--border);border-radius:12px;padding:14px;background:#fff;text-align:center;font-weight:700}.arrow{font-size:22px;color:var(--muted)}.small{font-size:13px;color:var(--muted)}
+.note{padding:14px 16px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:8px;margin-top:14px}.lang{display:none}.lang.active{display:block}
+@media(max-width:700px){.container{padding:18px 12px 36px}.hero,.card{padding:18px}.hero h1{font-size:23px}table{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <section class="hero">
+    <div class="topbar">
+      <div>
+        <h1>Frontend Task Workflow Guideline</h1>
+        <p class="subtitle lang lang-en active">Task naming, ownership, status transitions, feedback handling, and release flow.</p>
+        <p class="subtitle lang lang-th">แนวทางการตั้งชื่อ Task, ผู้รับผิดชอบ, การเปลี่ยน Status, การจัดการ Feedback และ Release</p>
+      </div>
+      <div class="lang-switch">
+        <button id="thBtn" type="button">ไทย</button>
+        <button id="enBtn" class="active" type="button">English</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="lang lang-en active">
+      <h2>1. Purpose</h2>
+      <p>This guideline defines a consistent workflow for Frontend implementation, feedback, production feedback, and release tasks. The goal is to keep ownership and task history clear while avoiding unnecessary task creation during the normal implementation and review cycle.</p>
+    </div>
+    <div class="lang lang-th">
+      <h2>1. วัตถุประสงค์</h2>
+      <p>เอกสารนี้ใช้กำหนด Workflow กลางสำหรับงาน Frontend, Feedback, Production Feedback และ Release เพื่อให้ทุกคนเข้าใจตรงกันว่าใครเป็นผู้รับผิดชอบ สามารถเปลี่ยน Status ได้ถึงขั้นไหน และควรสร้าง Task ใหม่เมื่อใด โดยไม่สร้าง Task เพิ่มโดยไม่จำเป็นในช่วง Implementation และ Review ปกติ</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="lang lang-en active">
+      <h2>2. Task Naming Convention</h2>
+      <table><tr><th>Task Name</th><th>Purpose</th></tr>
+      <tr><td><b>FE - Task Name</b></td><td>Main Frontend implementation task.</td></tr>
+      <tr><td><b>Feedback - Task Name</b></td><td>Feedback before Production release, after the main implementation cycle.</td></tr>
+      <tr><td><b>Release - Task Name</b></td><td>Initial Production release.</td></tr>
+      <tr><td><b>Production Feedback - Task Name</b></td><td>Feedback or fixes received after Production release.</td></tr>
+      <tr><td><b>Release - Task Name (Production Feedback Fix)</b></td><td>Release of the post-production feedback fix.</td></tr></table>
+    </div>
+    <div class="lang lang-th">
+      <h2>2. รูปแบบการตั้งชื่อ Task</h2>
+      <table><tr><th>ชื่อ Task</th><th>ใช้สำหรับ</th></tr>
+      <tr><td><b>FE - Task Name</b></td><td>งาน Implementation หลักของ Frontend</td></tr>
+      <tr><td><b>Feedback - Task Name</b></td><td>Feedback ก่อนขึ้น Production หลังจากงาน Implementation หลักเสร็จแล้ว</td></tr>
+      <tr><td><b>Release - Task Name</b></td><td>Release งานขึ้น Production ครั้งแรก</td></tr>
+      <tr><td><b>Production Feedback - Task Name</b></td><td>Feedback หรือ Fix ที่ได้รับหลังจาก Release ขึ้น Production แล้ว</td></tr>
+      <tr><td><b>Release - Task Name (Production Feedback Fix)</b></td><td>Release งานแก้จาก Production Feedback</td></tr></table>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="lang lang-en active">
+      <h2>3. FE Task Workflow</h2><p><span class="tag">Owner: Assigned Frontend Developer</span></p>
+      <div class="status-flow"><span class="status">To Do</span><span>→</span><span class="status">In Progress</span><span>→</span><span class="status done">Done</span></div>
+      <ul><li>The assigned Dev may move the FE task from To Do → In Progress → Done by themselves.</li>
+      <li>When the Dev reports that implementation is complete, the Head may review it before the Due date.</li>
+      <li>If the Head requests adjustments that are within the original scope and the Dev's Due date has not passed, continue using the same FE task. A separate Feedback task is not required.</li>
+      <li>Due date is not the only criterion. New or out-of-scope requirements should be handled separately.</li></ul>
+    </div>
+    <div class="lang lang-th">
+      <h2>3. Workflow ของ FE Task</h2><p><span class="tag">Owner: Frontend Developer ที่ได้รับมอบหมาย</span></p>
+      <div class="status-flow"><span class="status">To Do</span><span>→</span><span class="status">In Progress</span><span>→</span><span class="status done">Done</span></div>
+      <ul><li>Dev ที่รับผิดชอบ Task สามารถเปลี่ยน Status จาก To Do → In Progress → Done ได้ด้วยตนเอง</li>
+      <li>เมื่อ Dev แจ้งว่า Implementation เสร็จแล้ว Head สามารถ Review งานก่อนถึง Due date ได้</li>
+      <li>หาก Head ต้องการให้แก้บางส่วน และยังเป็นงานที่อยู่ใน Original Scope รวมถึงยังอยู่ภายใน Due date ของ Dev ให้ใช้ FE Task เดิมต่อได้ โดยยังไม่จำเป็นต้องสร้าง Feedback Task</li>
+      <li>ไม่ควรใช้ Due date เป็นเกณฑ์เพียงอย่างเดียว หากเป็น Requirement ใหม่หรืออยู่นอก Original Scope ควรแยกออกจากงาน Implementation เดิม</li></ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="lang lang-en active">
+      <h2>4. Feedback / Production Feedback Workflow</h2>
+      <div class="status-flow"><span class="status">To Do</span><span>→</span><span class="status">In Progress</span><span>→</span><span class="status waiting">Waiting</span><span>→</span><span class="status done">Done</span></div>
+      <ul><li>Dev moves the task through To Do → In Progress → Waiting.</li>
+      <li>Waiting means the requested changes are complete and confirmation or additional feedback is pending.</li>
+      <li>If the Head coordinates with JP, the Head moves Waiting → Done after JP confirms.</li>
+      <li>If the Dev communicates with JP directly, the Dev may move the task to Done after JP confirms.</li></ul>
+    </div>
+    <div class="lang lang-th">
+      <h2>4. Workflow ของ Feedback / Production Feedback</h2>
+      <div class="status-flow"><span class="status">To Do</span><span>→</span><span class="status">In Progress</span><span>→</span><span class="status waiting">Waiting</span><span>→</span><span class="status done">Done</span></div>
+      <ul><li>Dev เปลี่ยน Status ตามลำดับ To Do → In Progress → Waiting</li>
+      <li>Waiting หมายถึง Dev แก้ไขตาม Feedback เสร็จแล้ว และกำลังรอ Confirmation หรือ Feedback เพิ่มเติม</li>
+      <li>หาก Head เป็นผู้ประสานงานกับ JP เมื่อได้รับ Confirmation จาก JP แล้ว Head จะเป็นผู้เปลี่ยน Waiting → Done</li>
+      <li>หาก Dev เป็นผู้คุยกับ JP โดยตรงโดยไม่ผ่าน Head เมื่อได้รับ Confirmation แล้ว Dev สามารถเปลี่ยน Task เป็น Done ได้เอง</li></ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="lang lang-en active">
+      <h2>5. Additional Feedback While Waiting</h2>
+      <ul><li>Do not create another Feedback task for the same active feedback cycle.</li>
+      <li>Add the new feedback to the existing task Description.</li>
+      <li>Create a dated heading for each round, e.g. <b>Feedback - 2026/08/20</b>.</li>
+      <li>Move Waiting → In Progress when additional implementation is required.</li>
+      <li>Adjust the Due date based on the latest feedback and required effort, or to a date the Head considers appropriate.</li></ul>
+    </div>
+    <div class="lang lang-th">
+      <h2>5. กรณีมี Feedback เพิ่มระหว่าง Waiting</h2>
+      <ul><li>ไม่จำเป็นต้องสร้าง Feedback Task ใหม่ หากยังเป็น Feedback cycle เดิม</li>
+      <li>เพิ่มรายละเอียด Feedback ใหม่ใน Description ของ Task เดิม</li>
+      <li>แยกหัวข้อตามวันที่ให้ชัดเจน เช่น <b>Feedback - 2026/08/20</b></li>
+      <li>หากต้องแก้เพิ่มเติม ให้เปลี่ยน Waiting → In Progress</li>
+      <li>ปรับ Due date ตาม Feedback ล่าสุดและ Effort ที่ต้องใช้ หรือใช้วันที่ Head พิจารณาว่าเหมาะสม</li></ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="lang lang-en active">
+      <h2>6. Overall Flow</h2>
+      <div class="flow"><div class="flow-row">
+      <div class="flow-box">FE - Task Name<br><span class="small">Implementation</span></div><div class="arrow">→</div>
+      <div class="flow-box">Feedback - Task Name<br><span class="small">Pre-release feedback</span></div><div class="arrow">→</div>
+      <div class="flow-box">Release - Task Name<br><span class="small">First release</span></div><div class="arrow">→</div>
+      <div class="flow-box">Production Feedback - Task Name<br><span class="small">Post-release fix</span></div><div class="arrow">→</div>
+      <div class="flow-box">Release - Task Name<br><span class="small">(Production Feedback Fix)</span></div>
+      </div></div>
+      <div class="note">Once a task/release is completed, later Production feedback should start a new cycle instead of rewriting completed task history.</div>
+    </div>
+    <div class="lang lang-th">
+      <h2>6. Flow โดยรวม</h2>
+      <div class="flow"><div class="flow-row">
+      <div class="flow-box">FE - Task Name<br><span class="small">Implementation</span></div><div class="arrow">→</div>
+      <div class="flow-box">Feedback - Task Name<br><span class="small">Feedback ก่อน Release</span></div><div class="arrow">→</div>
+      <div class="flow-box">Release - Task Name<br><span class="small">Release ครั้งแรก</span></div><div class="arrow">→</div>
+      <div class="flow-box">Production Feedback - Task Name<br><span class="small">Feedback หลัง Production</span></div><div class="arrow">→</div>
+      <div class="flow-box">Release - Task Name<br><span class="small">(Production Feedback Fix)</span></div>
+      </div></div>
+      <div class="note">เมื่อ Task หรือ Release ถูกปิดเรียบร้อยแล้ว Feedback ที่เข้ามาภายหลัง โดยเฉพาะหลัง Production ควรเริ่มเป็น cycle ใหม่ เพื่อไม่ให้ History ของ Task เดิมถูกเปลี่ยนย้อนหลัง</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="lang lang-en active">
+      <h2>7. Quick Decision Rules</h2>
+      <table><tr><th>Situation</th><th>Action</th></tr>
+      <tr><td>Dev is implementing the original scope</td><td>Use FE task.</td></tr>
+      <tr><td>Head asks for an in-scope adjustment before Due date</td><td>Keep using FE task; no Feedback task needed.</td></tr>
+      <tr><td>New / out-of-scope requirement</td><td>Handle separately.</td></tr>
+      <tr><td>Feedback is Waiting and JP sends more feedback</td><td>Update Description, adjust Due date, and return to In Progress.</td></tr>
+      <tr><td>Head coordinated with JP and JP confirms</td><td>Head moves task to Done.</td></tr>
+      <tr><td>Dev coordinated directly with JP and JP confirms</td><td>Dev may move task to Done.</td></tr>
+      <tr><td>Feedback arrives after Production release</td><td>Create Production Feedback task.</td></tr>
+      <tr><td>Production Feedback fix needs deployment</td><td>Create a new Release task for the fix.</td></tr></table>
+    </div>
+    <div class="lang lang-th">
+      <h2>7. สรุปการตัดสินใจแบบเร็ว</h2>
+      <table><tr><th>สถานการณ์</th><th>Action</th></tr>
+      <tr><td>Dev กำลังทำงานตาม Original Scope</td><td>ใช้ FE Task</td></tr>
+      <tr><td>Head ขอให้แก้ใน Scope เดิมก่อนถึง Due date</td><td>ใช้ FE Task เดิม ไม่ต้องสร้าง Feedback Task</td></tr>
+      <tr><td>มี Requirement ใหม่ / Out of Scope</td><td>แยกออกจาก FE Task เดิม</td></tr>
+      <tr><td>Feedback อยู่ Waiting แล้ว JP ส่ง Feedback เพิ่ม</td><td>อัปเดต Description, ปรับ Due date และกลับเป็น In Progress</td></tr>
+      <tr><td>Head เป็นผู้ประสาน JP และ JP Confirm แล้ว</td><td>Head เปลี่ยนเป็น Done</td></tr>
+      <tr><td>Dev คุยกับ JP โดยตรงและ JP Confirm แล้ว</td><td>Dev เปลี่ยนเป็น Done ได้เอง</td></tr>
+      <tr><td>มี Feedback หลัง Release Production</td><td>สร้าง Production Feedback Task</td></tr>
+      <tr><td>Production Feedback ต้อง Deploy ใหม่</td><td>สร้าง Release Task ใหม่สำหรับ Fix รอบนั้น</td></tr></table>
+    </div>
+  </section>
+</div>
+<script>
+const thBtn=document.getElementById('thBtn'),enBtn=document.getElementById('enBtn');
+function setLang(lang){
+  document.querySelectorAll('.lang').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.lang-'+lang).forEach(x=>x.classList.add('active'));
+  thBtn.classList.toggle('active',lang==='th');
+  enBtn.classList.toggle('active',lang==='en');
+  document.documentElement.lang=lang;
+}
+thBtn.addEventListener('click',()=>setLang('th'));
+enBtn.addEventListener('click',()=>setLang('en'));
+</script>
+</body></html>
