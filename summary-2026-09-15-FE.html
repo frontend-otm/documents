@@ -1,0 +1,337 @@
+<title>OWNDAYS GPay Build Recap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#eef1f3;
+    --surface:#ffffff;
+    --surface-2:#e2e7ea;
+    --ink:#121a20;
+    --ink-muted:#57646d;
+    --border:#d2d9de;
+    --accent:#0e7c86;
+    --accent-ink:#ffffff;
+    --accent-soft:#dcefee;
+    --warn:#a8742a;
+    --warn-soft:#f5ecd9;
+    --critical:#a83a34;
+    --critical-soft:#f6e2e0;
+    --good:#3f8f5b;
+    --good-soft:#deefe3;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Noto Sans Thai', 'Noto Sans', -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1316; --surface:#161d21; --surface-2:#1e262a;
+      --ink:#e7edef; --ink-muted:#93a3aa; --border:#2a343a;
+      --accent:#49c9cf; --accent-ink:#06181a; --accent-soft:#123336;
+      --warn:#dcae56; --warn-soft:#332a17;
+      --critical:#e07a72; --critical-soft:#372020;
+      --good:#79d19b; --good-soft:#17301f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1316; --surface:#161d21; --surface-2:#1e262a;
+    --ink:#e7edef; --ink-muted:#93a3aa; --border:#2a343a;
+    --accent:#49c9cf; --accent-ink:#06181a; --accent-soft:#123336;
+    --warn:#dcae56; --warn-soft:#332a17;
+    --critical:#e07a72; --critical-soft:#372020;
+    --good:#79d19b; --good-soft:#17301f;
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--bg); color:var(--ink); font-family:var(--sans); line-height:1.6;}
+  .wrap{max-width:860px; margin:0 auto; padding:28px 20px 60px;}
+
+  .i18n{display:none;}
+  .wrap[data-active-lang="en"] .i18n[data-lang="en"],
+  .wrap[data-active-lang="th"] .i18n[data-lang="th"]{display:inline;}
+  .i18n.block{display:none;}
+  .wrap[data-active-lang="en"] .i18n.block[data-lang="en"],
+  .wrap[data-active-lang="th"] .i18n.block[data-lang="th"]{display:block;}
+
+  .lang-switch{
+    display:inline-flex; gap:4px;
+    background:var(--surface-2); border:1px solid var(--border);
+    border-radius:99px; padding:3px;
+  }
+  .lang-btn{
+    font-family:var(--mono); font-size:.72rem; font-weight:700; letter-spacing:.03em;
+    color:var(--ink-muted); background:transparent; border:none; border-radius:99px;
+    padding:5px 12px; cursor:pointer;
+  }
+  .lang-btn:hover{color:var(--ink);}
+  .lang-btn.active{background:var(--accent); color:var(--accent-ink);}
+  .lang-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  .head{
+    display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end;
+    gap:12px; border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:22px;
+  }
+  .head-title{display:flex; align-items:center; gap:12px;}
+  .hero-icon{
+    flex:0 0 auto; width:42px; height:42px; border-radius:12px;
+    background:var(--ink); color:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hero-icon svg{width:24px; height:24px; display:block;}
+  .eyebrow{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent); font-weight:600;
+  }
+  h1{font-size:clamp(1.5rem,3vw,2rem); margin:.25em 0 .3em; font-weight:700; text-wrap:balance;}
+  .head-right{display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
+  .meta{font-family:var(--mono); font-size:.78rem; color:var(--ink-muted); text-align:right;}
+
+  .lead{
+    font-size:.98rem; color:var(--ink);
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:8px; padding:14px 16px; margin-bottom:22px;
+  }
+  .lead b{font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-muted); display:block; margin-bottom:6px; font-weight:600;}
+
+  .stat-strip{
+    display:flex; align-items:center; gap:18px;
+    background:var(--accent-soft); border:1px solid var(--accent); border-radius:10px;
+    padding:16px 20px; margin-bottom:28px;
+  }
+  .stat-num{font-family:var(--mono); font-weight:700; font-size:2.1rem; color:var(--accent); line-height:1; white-space:nowrap;}
+  .stat-label{font-size:.86rem; color:var(--ink);}
+  .stat-label b{display:block; font-size:.95rem; margin-bottom:2px;}
+
+  section{margin-bottom:22px;}
+  h2{font-size:1.02rem; font-weight:700; margin:0 0 12px; display:flex; align-items:center; gap:10px;}
+  .num-badge{
+    flex:0 0 auto; width:30px; height:30px; border-radius:9px;
+    background:var(--accent-soft); border:1px solid var(--accent); color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .num-badge svg{width:16px; height:16px; display:block;}
+
+  .diagram{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:14px; margin:10px 0 4px; display:flex; justify-content:center;
+  }
+  .diagram svg{width:100%; max-width:420px; height:auto; display:block;}
+  .diagram-caption{font-family:var(--mono); font-size:.68rem; color:var(--ink-muted); text-align:center; margin-top:8px;}
+
+  ul.points{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  ul.points li{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:11px 14px; font-size:.9rem;}
+  ul.points li.flagged{border-left:3px solid var(--warn); background:var(--warn-soft);}
+  ul.points li.critical{border-left:3px solid var(--critical); background:var(--critical-soft);}
+  ul.points li.good{border-left:3px solid var(--good); background:var(--good-soft);}
+
+  .badge{
+    display:inline-block; font-family:var(--mono); font-size:.62rem; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase;
+    padding:2px 8px; border-radius:99px; margin-right:8px; vertical-align:middle;
+  }
+  .badge.bug{background:var(--surface); color:var(--critical); border:1px solid var(--critical);}
+  .badge.learn{background:var(--surface); color:var(--accent); border:1px solid var(--accent);}
+  .badge.done{background:var(--surface); color:var(--good); border:1px solid var(--good);}
+
+  code{font-family:var(--mono); font-size:.85em; background:var(--surface-2); padding:1px 5px; border-radius:4px;}
+
+  .closing{
+    background:var(--good-soft); border:1px solid var(--good); border-radius:8px;
+    padding:14px 16px; font-size:.92rem;
+  }
+  .closing b{font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--good); display:block; margin-bottom:6px; font-weight:600;}
+
+  footer{margin-top:30px; padding-top:14px; border-top:1px solid var(--border); font-size:.76rem; color:var(--ink-muted);}
+</style>
+
+<div class="wrap" data-active-lang="th" id="app">
+
+  <div class="head">
+    <div class="head-title">
+      <div class="hero-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 9.5h20"/><path d="M6 15h4"/></svg>
+      </div>
+      <div>
+        <div class="eyebrow">OWNDAYS FE — Checkout / Google Pay</div>
+        <h1><span class="i18n" data-lang="en">Today's Build Recap</span><span class="i18n" data-lang="th">สรุปวันนี้</span></h1>
+      </div>
+    </div>
+    <div class="head-right">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" data-lang-btn="en">EN</button>
+        <button type="button" class="lang-btn" data-lang-btn="th">TH</button>
+      </div>
+      <div class="meta">
+        <span class="i18n" data-lang="en">15 September 2026</span><span class="i18n" data-lang="th">15 กันยายน 2026</span><br>
+        <span class="i18n" data-lang="en">Checkout repo · Google Pay via Primer</span><span class="i18n" data-lang="th">repo Checkout · Google Pay ผ่าน Primer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lead">
+    <b><span class="i18n" data-lang="en">What was done</span><span class="i18n" data-lang="th">ทำอะไรไปบ้าง</span></b>
+    <span class="i18n" data-lang="en">Went from getting the local dev environment running, to tracing how Checkout's payment system actually works, to shipping a real, tested Google Pay implementation — plus catching a real integration bug along the way.</span>
+    <span class="i18n" data-lang="th">เริ่มจากการทำให้ local dev environment รันได้จริง ไปจนถึงไล่โค้ดเข้าใจว่าระบบจ่ายเงินของ Checkout ทำงานยังไงจริงๆ และจบด้วยการ implement Google Pay จริงที่ผ่านการทดสอบ พร้อมเจอ bug integration จริงระหว่างทาง</span>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-num">7</div>
+    <div class="stat-label">
+      <b><span class="i18n" data-lang="en">things learned/shipped today</span><span class="i18n" data-lang="th">เรื่องที่เรียนรู้/ทำสำเร็จวันนี้</span></b>
+      <span class="i18n" data-lang="en">From local environment setup to a real, working Google Pay implementation</span>
+      <span class="i18n" data-lang="th">ตั้งแต่ตั้งค่า local environment จนถึง Google Pay ที่ implement จริงและทำงานได้</span>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3"/><path d="M13 15h4"/></svg></span><span class="i18n" data-lang="en">Got the local dev environment fully working</span><span class="i18n" data-lang="th">แก้ปัญหารัน local environment จนสำเร็จ</span></h2>
+    <ul class="points">
+      <li>
+        <span class="i18n" data-lang="en">Learned that Checkout's <code>basePath</code> forces every URL to be prefixed with <code>/sg/en/checkout</code>.</span>
+        <span class="i18n" data-lang="th">เข้าใจว่า <code>basePath</code> ของ Checkout บังคับให้ทุก URL ต้องมี <code>/sg/en/checkout</code> นำหน้าเสมอ</span>
+      </li>
+      <li>
+        <span class="i18n" data-lang="en">Session/cart isn't tied to whichever repo's dev server is running — it's tied to the browser cookie — so switching between running Base (to shop) and Checkout (to pay) works without running both at once.</span>
+        <span class="i18n" data-lang="th">รู้ว่า session/cart ไม่ผูกกับ repo ที่รันอยู่ แต่ผูกกับ cookie ในเบราว์เซอร์ — เลยสลับรัน Base (ซื้อของ) แล้วมารัน Checkout (จ่ายเงิน) ได้โดยไม่ต้องรันพร้อมกัน</span>
+      </li>
+      <li>
+        <span class="i18n" data-lang="en">Used a preprod account until the real payment-methods page rendered — saw GRABPAY, which directly confirmed the "generic component" theory.</span>
+        <span class="i18n" data-lang="th">ใช้ account preprod จนเห็นหน้า payment methods จริง (เห็น GRABPAY ที่ยืนยันทฤษฎีเรื่อง generic component ได้ตรงๆ)</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5c0 1.5.6 2.4 1.3 3.2A4 4 0 0 0 7 13.5V16a3 3 0 0 0 3 3h.5"/><path d="M12 2a5 5 0 0 1 5 5c0 1.5-.6 2.4-1.3 3.2A4 4 0 0 1 17 13.5V16a3 3 0 0 1-3 3h-.5"/><path d="M10 21h4"/><path d="M12 19v2"/></svg></span><span class="i18n" data-lang="en">Understood the underlying mechanics more deeply</span><span class="i18n" data-lang="th">เข้าใจกลไกเบื้องหลังลึกขึ้น</span></h2>
+    <ul class="points">
+      <li>
+        <span class="i18n" data-lang="en"><code>apiWrapper</code> (core-utils) is the central point every API call passes through — always returns the same response shape.</span>
+        <span class="i18n" data-lang="th"><code>apiWrapper</code> (core-utils) คือจุดกลางที่ทุก API call ต้องผ่าน — คืนผลลัพธ์รูปแบบเดียวกันเสมอ</span>
+      </li>
+      <li>
+        <span class="i18n" data-lang="en"><code>PaymentContainerRoot.tsx</code> is the "decision brain" with no UI of its own; two gateways run side by side (Juspay/Primer).</span>
+        <span class="i18n" data-lang="th"><code>PaymentContainerRoot.tsx</code> ทำหน้าที่ "สมองตัดสินใจ" ไม่มี UI ในตัวเอง มี 2 gateway ทำงานคู่กัน (Juspay/Primer)</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg></span><span class="i18n" data-lang="en">Got Primer's official documentation from the team (LK)</span><span class="i18n" data-lang="th">ได้เอกสารทางการของ Primer จากทีม (LK) มาอ้างอิง</span></h2>
+    <ul class="points">
+      <li>
+        <span class="i18n" data-lang="en">Doc: primer.io/docs/connections/payment-methods/google-pay/overview</span>
+        <span class="i18n" data-lang="th">เอกสาร: primer.io/docs/connections/payment-methods/google-pay/overview</span>
+      </li>
+      <li>
+        <span class="i18n" data-lang="en">Confirmed Google Pay genuinely needs frontend implementation work, not just waiting for backend — Primer classifies it as a "native payment method" (must render its own button), unlike Atome/GrabPay.</span>
+        <span class="i18n" data-lang="th">ยืนยันว่า Google Pay ต้อง implement เพิ่มจากฝั่ง frontend จริง ไม่ใช่แค่รอ backend ทำเสร็จแล้วจบ — เพราะ Primer จัดกลุ่ม Google Pay เป็น "native payment method" (ต้องสร้างปุ่มเอง) คนละแบบกับ Atome/GrabPay</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a3 3 0 0 0 4.243 4.243L15 14.485V17h-2.485l-4.058 4.058a3 3 0 1 1-4.243-4.243L8.272 12.7"/><path d="M14.7 6.3l-3.157 3.157"/><path d="M8.272 12.7L4.5 16.472"/></svg></span><span class="i18n" data-lang="en">Actually implemented Google Pay in the Checkout repo</span><span class="i18n" data-lang="th">ลงมือ implement Google Pay จริงใน repo Checkout</span></h2>
+    <ul class="points">
+      <li>
+        <span class="i18n" data-lang="en">Created <code>PrimerGooglePay.tsx</code> + updated the enum in <code>types/payment.ts</code> + added the dispatch case in <code>PaymentScreen.tsx</code>.</span>
+        <span class="i18n" data-lang="th">สร้าง <code>PrimerGooglePay.tsx</code> + แก้ enum ใน <code>types/payment.ts</code> + เพิ่มจุด dispatch ใน <code>PaymentScreen.tsx</code></span>
+      </li>
+      <li class="flagged">
+        <span class="badge bug"><span class="i18n" data-lang="en">Real bug</span><span class="i18n" data-lang="th">Bug จริง</span></span>
+        <span class="i18n" data-lang="en">Ran type-check/lint/build until they actually passed — hit 2 real issues: the installed <code>@lk/core-utils</code> was older than expected (missing <code>isBlocked</code>), and <code>EventTypes</code> is a real TypeScript enum that had to be referenced correctly.</span>
+        <span class="i18n" data-lang="th">รัน type-check/lint/build จนผ่านจริง เจอ bug จริงระหว่างทาง 2 จุด: <code>@lk/core-utils</code> เวอร์ชันที่ติดตั้งเก่ากว่าที่คาด (ไม่มี field <code>isBlocked</code>) และ <code>EventTypes</code> เป็น TypeScript enum ต้องเขียนให้ถูกรูปแบบ</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="8" height="10" rx="4"/><path d="M12 8V6"/><path d="M9 6h6"/><path d="M8 12H5"/><path d="M8 15H5"/><path d="M16 12h3"/><path d="M16 15h3"/><path d="M9 8L7 6"/><path d="M15 8l2-2"/></svg></span><span class="i18n" data-lang="en">Found a missing <code>orderPayment</code> call — caught by the team (Sandeep)</span><span class="i18n" data-lang="th">เจอ bug ขาด <code>orderPayment</code> API call — ทีม (Sandeep) ตรวจเจอจากฝั่งหลังบ้าน</span></h2>
+    <ul class="points">
+      <li class="critical">
+        <span class="badge bug"><span class="i18n" data-lang="en">Real bug</span><span class="i18n" data-lang="th">Bug จริง</span></span>
+        <span class="i18n" data-lang="en">Clicking Google Pay wasn't calling <code>orderPayment</code> at all. Traced the existing Primer Card flow and made Google Pay call <code>processOrderPayment</code> the same way (reusing the existing function, not duplicating it) — a good example of why this kind of integration bug needs real verification from both sides.</span>
+        <span class="i18n" data-lang="th">ปุ่ม Google Pay กดแล้วไม่เรียก <code>orderPayment</code> เลย ต้องไล่เทียบกับ flow ของ Primer Card ที่มีอยู่แล้ว แล้วแก้ให้ Google Pay เรียก <code>processOrderPayment</code> แบบเดียวกัน (reuse function เดิม ไม่เขียนซ้ำ) — เป็นตัวอย่างที่ดีว่า bug ด้าน integration แบบนี้ต้องอาศัยการตรวจสอบจริงจากทั้งสองฝั่ง</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="12" height="12" rx="2"/><rect x="9" y="9" width="12" height="12" rx="2" fill="var(--surface)"/></svg></span><span class="i18n" data-lang="en">Learned a UI trick to match the mockup</span><span class="i18n" data-lang="th">เรียนรู้ trick ทำ UI ให้ตรงกับ mockup</span></h2>
+    <ul class="points">
+      <li>
+        <span class="badge learn"><span class="i18n" data-lang="en">Learned</span><span class="i18n" data-lang="th">เรียนรู้</span></span>
+        <span class="i18n" data-lang="en">Primer's native Google Pay button can't be triggered by code — reused the same pattern Apple Pay already uses: show a decorative radio row, and place the real, transparent button directly on top of it, so the click lands on the real button while the user sees the decorative one.</span>
+        <span class="i18n" data-lang="th">ปุ่ม native ของ Primer (Google Pay) ไม่มีทาง trigger ด้วยโค้ดได้เอง ต้องใช้ pattern เดียวกับ Apple Pay ที่มีอยู่แล้ว — โชว์ radio row ปลอมไว้ แล้ววางปุ่มจริงแบบโปร่งใสทับไว้ด้านบน ให้คลิกโดนของจริงแต่มองเห็นของปลอม</span>
+      </li>
+    </ul>
+    <div class="diagram">
+      <svg viewBox="0 0 420 150" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="20" width="180" height="110" rx="10" fill="var(--surface)" stroke="var(--border)" stroke-width="1.5"/>
+        <circle cx="35" cy="50" r="8" fill="none" stroke="var(--ink-muted)" stroke-width="2"/>
+        <rect x="52" y="44" width="90" height="12" rx="3" fill="var(--surface-2)"/>
+        <rect x="26" y="75" width="148" height="40" rx="8" fill="var(--surface-2)"/>
+        <text x="100" y="99" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--ink-muted)">G Pay</text>
+        <text x="100" y="140" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--ink-muted)">decoy row (visible)</text>
+
+        <path d="M195 75 L235 75" stroke="var(--accent)" stroke-width="2" marker-end="url(#arrow)"/>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+
+        <rect x="240" y="20" width="180" height="110" rx="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <circle cx="265" cy="50" r="8" fill="none" stroke="var(--ink-muted)" stroke-width="1.5" opacity="0.35"/>
+        <rect x="282" y="44" width="90" height="12" rx="3" fill="var(--surface-2)" opacity="0.35"/>
+        <rect x="256" y="75" width="148" height="40" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="330" y="99" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--accent)" font-weight="700">real button (transparent)</text>
+        <text x="330" y="140" text-anchor="middle" font-family="var(--mono)" font-size="10" fill="var(--accent)">click lands here ↑</text>
+      </svg>
+    </div>
+    <div class="diagram-caption">
+      <span class="i18n" data-lang="en">Decorative row underneath, Primer's real Google Pay button transparently stacked on top — same trick already used for Apple Pay.</span>
+      <span class="i18n" data-lang="th">แถวปลอมอยู่ข้างล่าง ส่วนปุ่ม Google Pay จริงของ Primer ถูกวางแบบโปร่งใสทับด้านบน — trick เดียวกับที่ใช้กับ Apple Pay อยู่แล้ว</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9.5 12l1.8 1.8L14.5 10"/></svg></span><span class="i18n" data-lang="en">Learned about logo copyright/compliance</span><span class="i18n" data-lang="th">เรียนรู้เรื่อง compliance/ลิขสิทธิ์ของโลโก้</span></h2>
+    <ul class="points">
+      <li class="good">
+        <span class="badge done"><span class="i18n" data-lang="en">Resolved</span><span class="i18n" data-lang="th">แก้แล้ว</span></span>
+        <span class="i18n" data-lang="en">Initially tried drawing the Google Pay logo by hand, then realized it's Google's trademark and shouldn't be copied that way — fixed it to pull <code>logoImageUrl</code> from the backend instead, same as every other payment method (Grab, Atome). No hardcoded asset left in the FE code.</span>
+        <span class="i18n" data-lang="th">ตอนแรกลองวาดโลโก้ Google Pay เอง แต่รู้ตัวว่าเป็นเครื่องหมายการค้าของ Google ไม่ควรลอกแบบเอง — แก้ให้ดึง <code>logoImageUrl</code> จาก backend แทนเหมือน payment method อื่นทุกตัว (Grab, Atome) ไม่ hardcode asset ไว้ในโค้ด FE เลย</span>
+      </li>
+    </ul>
+  </section>
+
+  <div class="closing">
+    <b><span class="i18n" data-lang="en">Why today mattered</span><span class="i18n" data-lang="th">สรุปคุณค่าของวันนี้</span></b>
+    <span class="i18n" data-lang="en">Went beyond reading code — shipped a real, tested implementation, caught 3 real bugs (2 build-time, 1 integration), and made 2 judgment calls (UI trick, logo compliance) that needed real engineering reasoning, not just following a tutorial.</span>
+    <span class="i18n" data-lang="th">ไม่ใช่แค่ "อ่านโค้ด" แล้วจบ แต่ได้ส่งโค้ดจริงที่ผ่านการทดสอบ เจอ bug จริง 3 จุด (build-time 2 จุด, integration 1 จุด) และตัดสินใจเชิงวิศวกรรม 2 เรื่อง (UI trick, compliance ของโลโก้) ที่ต้องใช้เหตุผลจริง ไม่ใช่แค่ทำตามสูตร</span>
+  </div>
+
+  <footer>
+    <span class="i18n" data-lang="en">Repo: Checkout (OWNDAYS SG) · Feature: Google Pay via Primer · Compiled 15 Sep 2026</span>
+    <span class="i18n" data-lang="th">Repo: Checkout (OWNDAYS SG) · ฟีเจอร์: Google Pay ผ่าน Primer · จัดทำ 15 ก.ย. 2026</span>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var app = document.getElementById('app');
+  var LANG_KEY = 'owndays-gpay-recap-lang';
+
+  function setLang(lang){
+    app.setAttribute('data-active-lang', lang);
+    document.querySelectorAll('.lang-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === lang);
+    });
+    try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
+  }
+  document.querySelectorAll('.lang-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ setLang(btn.getAttribute('data-lang-btn')); });
+  });
+  var savedLang = 'th';
+  try { savedLang = localStorage.getItem(LANG_KEY) || 'th'; } catch(e) {}
+  setLang(savedLang);
+})();
+</script>
