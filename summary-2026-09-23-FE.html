@@ -1,0 +1,415 @@
+<meta charset="utf-8">
+<title>Warranty API Gaps Recap</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #0e1316;
+    --surface: #161d21;
+    --surface-2: #1e262a;
+    --ink: #e7edef;
+    --ink-muted: #93a3aa;
+    --border: #2a343a;
+    --accent: #7c93f0;
+    --accent-ink: #0b1220;
+    --accent-soft: #1c2540;
+    --accent2: #e08a58;
+    --accent2-ink: #1a0f08;
+    --accent2-soft: #3a2418;
+    --warn: #dcae56;
+    --warn-soft: #332a17;
+    --good: #79d19b;
+    --good-soft: #17301f;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Noto Sans Thai', 'Noto Sans', -apple-system, sans-serif;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1316; --surface: #161d21; --surface-2: #1e262a;
+    --ink: #e7edef; --ink-muted: #93a3aa; --border: #2a343a;
+    --accent: #7c93f0; --accent-ink: #0b1220; --accent-soft: #1c2540;
+    --accent2: #e08a58; --accent2-ink: #1a0f08; --accent2-soft: #3a2418;
+    --warn: #dcae56; --warn-soft: #332a17;
+    --good: #79d19b; --good-soft: #17301f;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  .i18n { display: none; }
+  .wrap[data-active-lang="en"] .i18n[data-lang="en"] { display: inline; }
+  .wrap[data-active-lang="th"] .i18n[data-lang="th"] { display: inline; }
+
+  .lang-switch {
+    display: inline-flex;
+    gap: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 3px;
+  }
+  .lang-btn {
+    font-family: var(--mono);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    color: var(--ink-muted);
+    background: transparent;
+    border: none;
+    border-radius: 99px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  .lang-btn:hover { color: var(--ink); }
+  .lang-btn.active { background: var(--accent); color: var(--accent-ink); }
+  .lang-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+  }
+  .head-title { display: flex; align-items: center; gap: 12px; }
+  .hero-icon {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-icon svg { width: 24px; height: 24px; display: block; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); margin: .25em 0 .3em; font-weight: 700; text-wrap: balance; }
+  .head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .meta { font-family: var(--mono); font-size: .78rem; color: var(--ink-muted); text-align: right; }
+
+  .lead {
+    font-size: .98rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+  }
+  .lead b {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .stat-strip {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .stat-num { font-family: var(--mono); font-weight: 700; font-size: 2.1rem; color: var(--accent); line-height: 1; white-space: nowrap; }
+  .stat-label { font-size: .86rem; color: var(--ink); }
+  .stat-label b { display: block; font-size: .95rem; margin-bottom: 2px; }
+
+  .team-divider { display: flex; align-items: center; gap: 10px; margin: 34px 0 18px; }
+  .team-divider.first { margin-top: 0; }
+  .team-tag {
+    font-family: var(--mono);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .team-tag.payment { background: var(--accent2-soft); color: var(--accent2); border: 1px solid var(--accent2); }
+  .team-tag.warranty { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+  .team-tag.gaps { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+  .team-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .team-divider-text { font-size: .82rem; color: var(--ink-muted); }
+
+  section { margin-bottom: 24px; }
+  h2 { font-size: 1.02rem; font-weight: 700; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; }
+  .num-badge {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .num-badge svg { width: 16px; height: 16px; display: block; }
+  .num-badge.payment { background: var(--accent2-soft); border-color: var(--accent2); color: var(--accent2); }
+  .num-badge.gaps { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+
+  ul.points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  ul.points li { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; font-size: .9rem; }
+  ul.points li.flagged { border-left: 3px solid var(--warn); background: var(--warn-soft); }
+  ul.points li.good { border-left: 3px solid var(--good); background: var(--good-soft); }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .badge.note { background: var(--surface); color: var(--warn); border: 1px solid var(--warn); }
+  .badge.done { background: var(--surface); color: var(--good); border: 1px solid var(--good); }
+
+  code { font-family: var(--mono); font-size: .85em; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; }
+
+  .kit-map { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .kit-map li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: .88rem;
+  }
+  .kit-map .from { color: var(--accent); font-family: var(--mono); font-weight: 600; }
+  .kit-map .arrow { color: var(--ink-muted); }
+  .kit-map .to { color: var(--ink); }
+
+  .closing {
+    background: var(--good-soft);
+    border: 1px solid var(--good);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: .92rem;
+    margin-bottom: 18px;
+  }
+  .closing b {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--good);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--border); font-size: .76rem; color: var(--ink-muted); }
+</style>
+
+<div class="wrap" data-active-lang="th" id="app">
+
+  <div class="head">
+    <div class="head-title">
+      <div class="hero-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4z"></path><path d="M9 12l2 2 4-4"></path></svg>
+      </div>
+      <div>
+        <div class="eyebrow">OWNDAYS — Frontend</div>
+        <h1><span class="i18n" data-lang="en">Training Recap</span><span class="i18n" data-lang="th">สรุปการเรียนรู้</span></h1>
+      </div>
+    </div>
+    <div class="head-right">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" data-lang-btn="en">EN</button>
+        <button type="button" class="lang-btn" data-lang-btn="th">TH</button>
+      </div>
+      <div class="meta">
+        <span class="i18n" data-lang="en">23 September 2026</span><span class="i18n" data-lang="th">23 กันยายน 2026</span><br>
+        <span class="i18n" data-lang="en">Payment (Google Pay) &amp; Warranty (UI Kit Integration)</span><span class="i18n" data-lang="th">Payment (Google Pay) &amp; Warranty (UI Kit Integration)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lead">
+    <b><span class="i18n" data-lang="en">Summary</span><span class="i18n" data-lang="th">สรุปภาพรวม</span></b>
+    <span class="i18n" data-lang="en">On Payment, the team reviewed the Google Pay new-tab bug together and agreed the current Cancel-only popup approach is fine as-is. On Warranty, the mockup now matches Design using components from the shared UI Kit, and a first pass against the Preprod API surfaced several gaps that still need Backend confirmation.</span>
+    <span class="i18n" data-lang="th">ฝั่ง Payment ทีมคุยและตรวจสอบบั๊ก Google Pay new tab ร่วมกันแล้ว สรุปว่าแนวทาง popup แบบ Cancel-only ที่มีอยู่โอเคแล้ว ฝั่ง Warranty ทำ Mockup ให้ตรงกับ Design โดยใช้ component จาก UI Kit ที่ใช้ร่วมกันสำเร็จแล้ว และตรวจสอบกับ Preprod API รอบแรกเจอ gap หลายจุดที่ต้องรอ Backend ยืนยันต่อ</span>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-num">5</div>
+    <div class="stat-label">
+      <b><span class="i18n" data-lang="en">API gaps flagged for Backend confirmation</span><span class="i18n" data-lang="th">API Gap ที่แจ้งรอ Backend ยืนยัน</span></b>
+      <span class="i18n" data-lang="en">Plus Payment resolved (no further fix needed) and Warranty mockup shipped against Design</span>
+      <span class="i18n" data-lang="th">นอกจากนี้ Payment ปิดเคสแล้ว (ไม่ต้องแก้เพิ่ม) และ Warranty mockup เสร็จตาม Design แล้ว</span>
+    </div>
+  </div>
+
+  <div class="team-divider first">
+    <span class="team-tag payment">PAYMENT</span>
+    <span class="team-divider-line"></span>
+    <span class="team-divider-text">Google Pay New Tab — Closed Out</span>
+  </div>
+
+  <section>
+    <h2><span class="num-badge payment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg></span><span class="i18n" data-lang="en">New Tab Bug — Reviewed &amp; Resolved</span><span class="i18n" data-lang="th">บั๊ก New Tab — ตรวจสอบและปิดเคสแล้ว</span></h2>
+    <ul class="points">
+      <li class="flagged">
+        <span class="badge note"><span class="i18n" data-lang="en">Found</span><span class="i18n" data-lang="th">พบปัญหา</span></span>
+        <span class="i18n" data-lang="en">Found an additional bug on Mobile: when Google Pay opens in a New Tab, the Tab couldn't be closed — investigated the popup/tab flow and behavior further.</span>
+        <span class="i18n" data-lang="th">พบ Bug เพิ่มเติมบน Mobile กรณีเปิด Google Pay ใน New Tab แล้วไม่สามารถกดปิด Tab ได้ จึงตรวจสอบ Flow และ Behavior ของ Popup/Tab เพิ่มเติม</span>
+      </li>
+      <li>
+        <span class="i18n" data-lang="en">The team added a popup at the bottom, with only a Cancel button, to handle this case.</span>
+        <span class="i18n" data-lang="th">ทีมได้เพิ่ม Popup ด้านล่าง โดยมีเฉพาะปุ่ม Cancel เพื่อรองรับกรณีดังกล่าว</span>
+      </li>
+      <li class="good">
+        <span class="badge done"><span class="i18n" data-lang="en">Closed</span><span class="i18n" data-lang="th">ปิดเคส</span></span>
+        <span class="i18n" data-lang="en">After discussing and reviewing it together with the team, concluded the current approach is fine and no further changes are needed.</span>
+        <span class="i18n" data-lang="th">หลังจากคุยและตรวจสอบร่วมกับทีมแล้ว สรุปว่าแนวทางปัจจุบันโอเคและไม่จำเป็นต้องแก้ไขเพิ่มเติม</span>
+      </li>
+    </ul>
+  </section>
+
+  <div class="team-divider">
+    <span class="team-tag warranty">WARRANTY</span>
+    <span class="team-divider-line"></span>
+    <span class="team-divider-text">Mockup + UI Kit Integration</span>
+  </div>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg></span><span class="i18n" data-lang="en">Mockup Matches Design — Done</span><span class="i18n" data-lang="th">ปรับ Mockup ตรงตาม Design แล้ว</span></h2>
+    <ul class="points">
+      <li class="good">
+        <span class="badge done"><span class="i18n" data-lang="en">Done</span><span class="i18n" data-lang="th">เสร็จแล้ว</span></span>
+        <span class="i18n" data-lang="en">Adjusted the Mockup to match Design, using the post-order repo as the base and the ui-kit repo for the related components — complete.</span>
+        <span class="i18n" data-lang="th">ปรับ Mockup ให้ตรงตาม Design โดยใช้ post-order repo เป็นหลัก และใช้ ui-kit repo สำหรับ Components ที่เกี่ยวข้อง เสร็จเรียบร้อยแล้ว</span>
+      </li>
+      <li>
+        <span class="i18n" data-lang="en">Did an initial check of the API Schema and format against the Pre-prod API, including checking for any schema pieces still missing compared to Design.</span>
+        <span class="i18n" data-lang="th">ตรวจสอบ API Schema และ Format เบื้องต้นจาก Pre-prod API แล้ว รวมถึงตรวจสอบว่ามี Schema ส่วนใดที่ยังขาดจาก Design หรือไม่</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span><span class="i18n" data-lang="en">UI Kit Components Used</span><span class="i18n" data-lang="th">Components จาก UI Kit ที่ใช้</span></h2>
+    <ul class="kit-map">
+      <li><code class="from">Drawer</code><span class="arrow">→</span><span class="to"><span class="i18n" data-lang="en">Desktop Drawer</span><span class="i18n" data-lang="th">Desktop Drawer</span></span></li>
+      <li><code class="from">BottomSheet</code><span class="arrow">→</span><span class="to"><span class="i18n" data-lang="en">Mobile Bottom Sheet</span><span class="i18n" data-lang="th">Mobile Bottom Sheet</span></span></li>
+      <li><code class="from">AccordionItem</code><span class="arrow">→</span><span class="to"><span class="i18n" data-lang="en">Accordion Expand/Collapse</span><span class="i18n" data-lang="th">Accordion Expand/Collapse</span></span></li>
+      <li><code class="from">StatusTag</code><span class="arrow">→</span><span class="to"><span class="i18n" data-lang="en">Tag "Valid for..."</span><span class="i18n" data-lang="th">Tag "Valid for..."</span></span></li>
+      <li><code class="from">IconComponent</code><span class="arrow">→</span><span class="to"><span class="i18n" data-lang="en">Eye / Settings / World Globe / X Close</span><span class="i18n" data-lang="th">Eye / Settings / World Globe / X Close</span></span></li>
+      <li><code class="from">IconButton</code><span class="arrow">→</span><span class="to"><span class="i18n" data-lang="en">Back button on Mobile</span><span class="i18n" data-lang="th">ปุ่มย้อนกลับบน Mobile</span></span></li>
+      <li><code class="from">LinkButton</code><span class="arrow">→</span><span class="to"><span class="i18n" data-lang="en">"View warranty details"</span><span class="i18n" data-lang="th">"View warranty details"</span></span></li>
+    </ul>
+  </section>
+
+  <div class="team-divider">
+    <span class="team-tag gaps">API GAPS</span>
+    <span class="team-divider-line"></span>
+    <span class="team-divider-text"><span class="i18n" data-lang="en">Things Backend Isn't Ready For Yet</span><span class="i18n" data-lang="th">สิ่งที่ Backend ยังไม่พร้อม</span></span>
+  </div>
+
+  <section>
+    <h2><span class="num-badge gaps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path></svg></span><span class="i18n" data-lang="en">Gaps to Confirm with BE</span><span class="i18n" data-lang="th">Gap ที่ต้องยืนยันกับ BE</span></h2>
+    <ul class="points">
+      <li class="flagged">
+        <span class="badge note"><span class="i18n" data-lang="en">Images</span><span class="i18n" data-lang="th">รูปภาพ</span></span>
+        <span class="i18n" data-lang="en"><code>items[].image</code> and <code>universalServices.terms[].imageUrl</code> are still empty, so product images and Universal Services icons aren't ready yet.</span>
+        <span class="i18n" data-lang="th"><code>items[].image</code> และ <code>universalServices.terms[].imageUrl</code> ยังเป็นค่าว่าง ทำให้รูปสินค้าและ Icon ของ Universal Services ยังไม่พร้อม</span>
+      </li>
+      <li class="flagged">
+        <span class="badge note"><span class="i18n" data-lang="en">Universal Services</span><span class="i18n" data-lang="th">Universal Services</span></span>
+        <span class="i18n" data-lang="en">The API only returns 1 item, while Design needs 3, and the description received looks copied from <code>frame_warranty</code> — using 3 items of Mock Data per Design for now.</span>
+        <span class="i18n" data-lang="th">API ส่งมาเพียง 1 รายการ จากที่ Design ต้องการ 3 รายการ และ Description ที่ได้รับดูเหมือนถูก Copy มาจาก <code>frame_warranty</code> จึงยังใช้ Mock Data 3 รายการตาม Design ไปก่อน</span>
+      </li>
+      <li class="flagged">
+        <span class="badge note"><span class="i18n" data-lang="en">Status</span><span class="i18n" data-lang="th">Status</span></span>
+        <span class="i18n" data-lang="en">Currently only <code>ACTIVE</code> has been seen — no <code>EXPIRED</code> value yet, so need to confirm with BE what the status value for an expired warranty should be.</span>
+        <span class="i18n" data-lang="th">ปัจจุบันพบเฉพาะ <code>ACTIVE</code> ยังไม่พบค่า <code>EXPIRED</code> จึงต้องยืนยันกับ BE ว่าค่า Status สำหรับ Warranty ที่หมดอายุควรเป็นอะไร</span>
+      </li>
+      <li class="flagged">
+        <span class="badge note"><span class="i18n" data-lang="en">Footnote</span><span class="i18n" data-lang="th">Footnote</span></span>
+        <span class="i18n" data-lang="en">Footnote is currently tied to each Warranty, not at the Order level, and the sample only has <code>damage_protection</code>. FE currently merges all unique footnotes into a Disclaimer shown below, but still needs BE to confirm this is the correct behavior.</span>
+        <span class="i18n" data-lang="th">ปัจจุบัน Footnote ผูกอยู่กับแต่ละ Warranty ไม่ใช่ระดับ Order และใน Sample มีเฉพาะ <code>damage_protection</code> โดยตอนนี้ FE รวม Footnote ที่ไม่ซ้ำกันทั้งหมดมาแสดงเป็น Disclaimer ด้านล่างก่อน แต่ยังต้องยืนยันกับ BE ว่านี่เป็น Behavior ที่ถูกต้องหรือไม่</span>
+      </li>
+      <li class="flagged">
+        <span class="badge note"><span class="i18n" data-lang="en">API Contract</span><span class="i18n" data-lang="th">API Contract</span></span>
+        <span class="i18n" data-lang="en">The endpoint using <code>name=OD_WARRANTY_SAMPLE</code> looks like a static AB-config lookup, not yet tied to <code>orderId</code>/<code>itemId</code> — need to confirm with BE whether this is the real Production API contract or just a placeholder for parallel FE development.</span>
+        <span class="i18n" data-lang="th">Endpoint ที่ใช้ <code>name=OD_WARRANTY_SAMPLE</code> ดูเหมือนเป็น Static AB-config lookup และยังไม่ได้ผูกกับ <code>orderId</code>/<code>itemId</code> จึงต้องยืนยันกับ BE ว่านี่คือ API Contract จริงสำหรับ Production หรือเป็นเพียง Placeholder สำหรับการพัฒนา FE แบบ Parallel กันก่อน</span>
+      </li>
+    </ul>
+  </section>
+
+  <div class="closing">
+    <b><span class="i18n" data-lang="en">Why today mattered</span><span class="i18n" data-lang="th">สรุปคุณค่าของวันนี้</span></b>
+    <span class="i18n" data-lang="en">Payment's Google Pay edge case is closed out with team agreement, and Warranty's UI is now built for real against Design using shared UI Kit components — with a clear, itemized list of what's still blocking on Backend before this can go further than Mock Data.</span>
+    <span class="i18n" data-lang="th">เคส edge case ของ Google Pay ฝั่ง Payment ปิดแล้วโดยทีมเห็นตรงกัน ส่วน UI ของ Warranty ตอนนี้สร้างจริงตาม Design โดยใช้ component จาก UI Kit ที่ใช้ร่วมกันแล้ว พร้อมรายการที่ยังติด Backend อยู่ชัดเจนก่อนจะไปต่อจาก Mock Data ได้</span>
+  </div>
+
+  <footer>
+    <span class="i18n" data-lang="en">OWNDAYS — Frontend: Payment (Google Pay) &amp; Warranty (UI Kit) · Compiled 23 Sep 2026</span>
+    <span class="i18n" data-lang="th">OWNDAYS — Frontend: Payment (Google Pay) &amp; Warranty (UI Kit) · จัดทำ 23 ก.ย. 2026</span>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var LANG_KEY = "frontend-recap-0923-lang";
+
+  function setLang(lang) {
+    var wrap = document.getElementById("app");
+    if (wrap) {
+      wrap.setAttribute("data-active-lang", lang);
+    }
+    var buttons = document.querySelectorAll(".lang-btn");
+    for (var i = 0; i < buttons.length; i++) {
+      var btn = buttons[i];
+      if (btn.getAttribute("data-lang-btn") === lang) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    }
+    try {
+      localStorage.setItem(LANG_KEY, lang);
+    } catch (e) {}
+  }
+
+  var buttons = document.querySelectorAll(".lang-btn");
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", function (event) {
+      setLang(event.currentTarget.getAttribute("data-lang-btn"));
+    });
+  }
+
+  var savedLang = "th";
+  try {
+    savedLang = localStorage.getItem(LANG_KEY) || "th";
+  } catch (e) {}
+  setLang(savedLang);
+})();
+</script>
