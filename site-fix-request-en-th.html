@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Site Fix Request</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --fg:#37352f; --muted:#787774; --line:#e9e9e7; --hover:#f1f1ef; --soft:#f7f7f5;
+  --callout:#f1f1ef; --code:#f7f6f3; --code-fg:#eb5757; --link:#37352f; --accent:#2383e2;
+  --t-red-bg:#ffe2dd; --t-red-fg:#5d1715; --t-blue-bg:#d3e5ef; --t-blue-fg:#183347;
+  --t-yel-bg:#fdecc8; --t-yel-fg:#402c1b; --t-pink-bg:#f5e0e9; --t-pink-fg:#4c2337;
+  --t-green-bg:#dbeddb; --t-green-fg:#1c3829; --t-gray-bg:#e3e2e0; --t-gray-fg:#32302c;
+  --c-brown:#f4eeee; --shadow:0 4px 18px rgba(15,15,15,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191919; --fg:#d4d4d4; --muted:#9b9b9b; --line:#2f2f2f; --hover:#2a2a2a; --soft:#202020;
+    --callout:#252525; --code:#2a2a2a; --code-fg:#ff7369; --link:#d4d4d4; --accent:#529cca;
+    --t-red-bg:#6e3630; --t-red-fg:#fce9e7; --t-blue-bg:#28456c; --t-blue-fg:#e5f2fc;
+    --t-yel-bg:#594a3a; --t-yel-fg:#f0efed; --t-pink-bg:#69314c; --t-pink-fg:#fae9f1;
+    --t-green-bg:#2b593f; --t-green-fg:#e8f1ec; --t-gray-bg:#373737; --t-gray-fg:#f0efed;
+    --c-brown:#2e2724; --shadow:0 4px 18px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191919; --fg:#d4d4d4; --muted:#9b9b9b; --line:#2f2f2f; --hover:#2a2a2a; --soft:#202020;
+  --callout:#252525; --code:#2a2a2a; --code-fg:#ff7369; --link:#d4d4d4; --accent:#529cca;
+  --t-red-bg:#6e3630; --t-red-fg:#fce9e7; --t-blue-bg:#28456c; --t-blue-fg:#e5f2fc;
+  --t-yel-bg:#594a3a; --t-yel-fg:#f0efed; --t-pink-bg:#69314c; --t-pink-fg:#fae9f1;
+  --t-green-bg:#2b593f; --t-green-fg:#e8f1ec; --t-gray-bg:#373737; --t-gray-fg:#f0efed;
+  --c-brown:#2e2724; --shadow:0 4px 18px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+html[lang="th"] body{font-family:"Noto Sans Thai",ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+a{color:var(--link);text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:2px;word-break:break-all}
+a:hover{text-decoration-color:var(--fg)}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;height:45px;padding:0 12px;background:var(--bg);border-bottom:1px solid transparent}
+.topbar.scrolled{border-bottom-color:var(--line)}
+.crumbs{display:flex;align-items:center;gap:2px;min-width:0;flex:1;font-size:14px;overflow:hidden;white-space:nowrap}
+.crumbs a,.crumbs span{padding:2px 6px;border-radius:4px;text-decoration:none;overflow:hidden;text-overflow:ellipsis;color:var(--fg)}
+.crumbs a:hover{background:var(--hover)}
+.crumbs .sep{color:var(--muted);padding:0 1px}
+.lang{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex:none}
+.lang button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:3px 10px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--hover);color:var(--fg);font-weight:600}
+.page{max-width:900px;margin:0 auto;padding:40px 96px 120px}
+.page.wide{max-width:1200px}
+@media (max-width:760px){.page{padding:28px 16px 100px}}
+.pg-icon{font-size:72px;line-height:1;margin:0 0 8px}
+h1.pg-title{font-size:40px;line-height:1.2;font-weight:700;margin:0 0 16px;word-break:break-word}
+@media (max-width:760px){h1.pg-title{font-size:30px}.pg-icon{font-size:56px}}
+.props{margin:0 0 8px;font-size:14px}
+.prop{display:flex;align-items:flex-start;min-height:34px;padding:4px 0}
+.prop .k{flex:0 0 180px;color:var(--muted);display:flex;align-items:center;gap:6px;padding:3px 6px}
+.prop .v{flex:1;padding:3px 6px;min-width:0;word-break:break-word}
+.prop .v.empty{color:var(--muted);opacity:.7}
+@media (max-width:560px){.prop .k{flex-basis:120px}}
+.more-btn{border:0;background:none;color:var(--muted);font:inherit;font-size:14px;padding:4px 6px;border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.more-btn:hover{background:var(--hover)}
+.divider{border:0;border-top:1px solid var(--line);margin:12px 0 20px}
+.tag{display:inline-block;padding:0 6px;border-radius:3px;font-size:14px;line-height:20px;margin:0 4px 2px 0;white-space:nowrap}
+.tag.red{background:var(--t-red-bg);color:var(--t-red-fg)}
+.tag.blue{background:var(--t-blue-bg);color:var(--t-blue-fg)}
+.tag.yel{background:var(--t-yel-bg);color:var(--t-yel-fg)}
+.tag.pink{background:var(--t-pink-bg);color:var(--t-pink-fg)}
+.tag.green{background:var(--t-green-bg);color:var(--t-green-fg)}
+.tag.gray{background:var(--t-gray-bg);color:var(--t-gray-fg)}
+.content h2{font-size:24px;font-weight:600;line-height:1.3;margin:36px 0 6px;scroll-margin-top:60px}
+.content h3{font-size:20px;font-weight:600;line-height:1.3;margin:28px 0 4px;scroll-margin-top:60px}
+.content h4{font-size:17px;font-weight:600;margin:20px 0 4px;scroll-margin-top:60px}
+.content p{margin:4px 0;min-height:1em}
+.content ul,.content ol{margin:4px 0;padding-left:26px}
+.content li{margin:2px 0}
+.callout{display:flex;gap:10px;padding:16px 16px 16px 12px;border-radius:6px;background:var(--callout);margin:6px 0}
+.callout.brown{background:var(--c-brown)}
+.callout .ico{font-size:21px;line-height:1.3;flex:none;width:26px;text-align:center}
+.callout .cb{flex:1;min-width:0}
+.callout .cb>:first-child{margin-top:0}
+pre.code{background:var(--code);border-radius:4px;padding:16px 18px;overflow-x:auto;font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;margin:8px 0;white-space:pre}
+code.i{background:var(--code);color:var(--code-fg);border-radius:4px;padding:1px 5px;font:.86em ui-monospace,SFMono-Regular,Menlo,monospace}
+.red-t{color:#e03e3e}
+figure.img{margin:10px 0}
+figure.img img{max-width:100%;height:auto;border-radius:4px;display:block;background:var(--soft)}
+figure.img figcaption{font-size:13px;color:var(--muted)}
+.toggle>summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:4px;padding:2px 0;border-radius:4px}
+.toggle>summary::-webkit-details-marker{display:none}
+.toggle>summary .tri{flex:none;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;transition:transform .15s;color:var(--fg)}
+.toggle>summary .tri:hover{background:var(--hover)}
+.toggle[open]>summary .tri{transform:rotate(90deg)}
+.toggle>summary .tt{flex:1}
+.toggle>.tb{padding-left:28px}
+.toggle.h2>summary .tt{font-size:24px;font-weight:600;line-height:1.3}
+.toggle.h3>summary .tt{font-size:20px;font-weight:600;line-height:1.3}
+.toggle.h2,.toggle.h3{margin-top:28px}
+.toggle.h2>summary .tri,.toggle.h3>summary .tri{margin-top:2px}
+.toc{display:block;padding:0;margin:0;list-style:none}
+.toc a{display:block;text-decoration:none;color:var(--fg);padding:3px 4px;border-bottom:1px solid var(--line);border-radius:3px;font-size:15px;word-break:normal}
+.toc a:hover{background:var(--hover)}
+.toc .l2 a{padding-left:24px}.toc .l3 a{padding-left:48px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:8px 0}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.tbl-wrap{overflow-x:auto;margin:8px 0}
+table.simple{border-collapse:collapse;font-size:14px;min-width:100%}
+table.simple td,table.simple th{border:1px solid var(--line);padding:7px 9px;vertical-align:top;text-align:left}
+table.simple th,table.simple td.hc{background:var(--soft);font-weight:600}
+/* database */
+.db{margin:28px 0 8px}
+.db-title{display:inline-flex;align-items:center;gap:6px;font-size:20px;font-weight:600;padding:2px 4px;border-radius:4px;text-decoration:none;color:var(--fg);cursor:pointer;word-break:normal}
+.db-title:hover{background:var(--hover)}
+.db-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 4px;font-size:14px}
+.chip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:32px;padding:1px 10px;font-size:13px;color:var(--accent);background:transparent;cursor:pointer;font-family:inherit}
+.chip.off{color:var(--muted)}
+.db-scroll{overflow-x:auto;border-top:1px solid var(--line)}
+table.dbt{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+table.dbt th{font-weight:400;color:var(--muted);text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);white-space:nowrap}
+table.dbt td{padding:7px 8px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);vertical-align:top}
+table.dbt th:last-child,table.dbt td:last-child{border-right:0}
+table.dbt tbody tr{cursor:pointer}
+table.dbt tbody tr:hover td{background:var(--hover)}
+table.dbt td.no{font-weight:600;white-space:nowrap}
+table.dbt td.no .open{display:none;margin-left:8px;font-size:11px;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px;background:var(--bg)}
+table.dbt tbody tr:hover td.no .open{display:inline-block}
+table.dbt td.stars{white-space:nowrap;letter-spacing:1px}
+.db-empty{color:var(--muted);font-size:14px;padding:10px 8px;border-bottom:1px solid var(--line)}
+.db-count{color:var(--muted);font-size:13px;padding:6px 8px}
+.icon-p{width:16px;text-align:center;opacity:.8}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);text-decoration:none;padding:3px 6px;border-radius:4px;margin:0 0 16px -6px}
+.back:hover{background:var(--hover);color:var(--fg)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:48px;border-top:1px solid var(--line);padding-top:16px;font-size:14px}
+.pager a{text-decoration:none;padding:8px 10px;border-radius:6px;border:1px solid var(--line);max-width:48%;word-break:normal}
+.pager a:hover{background:var(--hover)}
+.pager small{display:block;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin-top:56px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<header class="topbar" id="topbar">
+  <nav class="crumbs" id="crumbs"></nav>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="th">ไทย</button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- helpers ---------- */
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const A = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${text ? text : esc(url)}</a>`;
+const C = s => `<code class="i">${esc(s)}</code>`;
+const P = (...lines) => lines.map(l => ["p", l]);
+const IMGBASE = "https://artistic-flame-972.notion.site/image/attachment%3A";
+const IMG = (att, blk, w) => ["img", `${IMGBASE}${att}%3Aimage.png?table=block&id=${blk}&spaceId=81d8034a-9b19-49d2-b3c4-472a7d2e8aff&width=${w||1410}&userId=&cache=v2`];
+
+const SH_BROKEN = "https://docs.google.com/spreadsheets/d/1sDUCTUQ_qhaF8T6EVr7NXN7cvHijYFA8tO5oBNfiwM4/edit?gid=527858378#gid=527858378";
+const SH_TITLE  = "https://docs.google.com/spreadsheets/d/1sDUCTUQ_qhaF8T6EVr7NXN7cvHijYFA8tO5oBNfiwM4/edit?gid=1734577079#gid=1734577079";
+const SH_LQ     = "https://docs.google.com/spreadsheets/d/1sDUCTUQ_qhaF8T6EVr7NXN7cvHijYFA8tO5oBNfiwM4/edit?gid=677013016#gid=677013016";
+const SH_LQ_OLD = "https://docs.google.com/spreadsheets/d/1ngNGQYAR5H8Ax0hVjJALflB2Q0n2vYHKJ5yPM7PjUJ4/edit?gid=677013016#gid=677013016";
+const OD = "https://www.owndays.com/sg/en";
+
+/* ---------- UI strings ---------- */
+const UI = {
+  en:{
+    docTitle:"Site Fix Request (OWNDAYS Singapore)",
+    pURL:"URL", pClient:"🏢 Client company master DB", pAnalyst:"Analyst", pSiteType:"Site type", pCreated:"Created",
+    pMeasure:"Measure type", pDate:"Date", pProject:"Project name", pPM:"[Internal] PM design list (*old internal Notion)",
+    pResult:"Results", pDeliv:"Deliverables", pPurpose:"Measure purpose", pIssue:"Issues",
+    empty:"Empty", noAccess:"No access", more:n=>`${n} more properties`, hide:n=>`Hide ${n} properties`,
+    dbSite:"DB site", ecSite:"EC site", created:"June 24, 2026", measureVal:"Site fix request",
+    colNo:"No.", colTitle:"Fix item", colPri:"Priority", colJudge:"Assessment", colStatus:"Status",
+    stNot:"Not started", jFix:"Needs fixing", jOk:"No particular issues",
+    db1:"Audit results (1)", db2:"Audit results – continued (2)", db3:"Audit results – DB-type (3)",
+    filterLbl:"Assessment: Contains Needs fixing", filter:"Filter", editFilters:"Edit filters", noResults:"No results",
+    count:n=>`Count ${n}`, open:"OPEN",
+    why:"[Why this work is needed]", cur:"Current status", act:"Action required",
+    back:"Back", prev:"Previous", next:"Next",
+    grpN:"General", grpD:"DB-type",
+    sdTitle:"Structured data measures",
+    sdCols:["Structured data type","Example page type","Reference URL","In audit scope","Example URL","Implemented","Errors","How to fix"],
+    footer:"English translation of the original Japanese document. Links, images and spreadsheets point to the original sources (images contain Japanese text)."
+  },
+  th:{
+    docTitle:"เอกสารขอแก้ไขเว็บไซต์ (OWNDAYS สิงคโปร์)",
+    pURL:"URL", pClient:"🏢 ฐานข้อมูลบริษัทลูกค้า", pAnalyst:"นักวิเคราะห์", pSiteType:"ประเภทเว็บไซต์", pCreated:"วันที่สร้าง",
+    pMeasure:"ประเภทมาตรการ", pDate:"วันที่", pProject:"ชื่อโปรเจกต์", pPM:"【ใช้ภายใน】รายการออกแบบ PM (*Notion ภายในเดิม)",
+    pResult:"ผลลัพธ์", pDeliv:"ผลงานส่งมอบ", pPurpose:"วัตถุประสงค์ของมาตรการ", pIssue:"ปัญหา",
+    empty:"ว่าง", noAccess:"ไม่มีสิทธิ์เข้าถึง", more:n=>`คุณสมบัติเพิ่มเติม ${n} รายการ`, hide:n=>`ซ่อนคุณสมบัติ ${n} รายการ`,
+    dbSite:"เว็บไซต์แบบ DB", ecSite:"เว็บไซต์ EC", created:"24 มิถุนายน 2026", measureVal:"เอกสารขอแก้ไขเว็บไซต์",
+    colNo:"No.", colTitle:"รายการแก้ไข", colPri:"ความสำคัญ", colJudge:"ผลการประเมิน", colStatus:"สถานะ",
+    stNot:"ยังไม่เริ่ม", jFix:"มีจุดที่ต้องแก้ไข", jOk:"ไม่พบปัญหาเป็นพิเศษ",
+    db1:"สรุปผลการตรวจสอบ (1)", db2:"สรุปผลการตรวจสอบ – ต่อเนื่อง (2)", db3:"สรุปผลการตรวจสอบ – ประเภท DB (3)",
+    filterLbl:"ผลการประเมิน: มีคำว่า มีจุดที่ต้องแก้ไข", filter:"ตัวกรอง", editFilters:"แก้ไขตัวกรอง", noResults:"ไม่มีผลลัพธ์",
+    count:n=>`จำนวน ${n}`, open:"เปิด",
+    why:"【เหตุผลที่ต้องดำเนินการ】", cur:"สถานะปัจจุบัน", act:"สิ่งที่ต้องดำเนินการ",
+    back:"ย้อนกลับ", prev:"ก่อนหน้า", next:"ถัดไป",
+    grpN:"ทั่วไป", grpD:"ประเภท DB",
+    sdTitle:"มาตรการด้าน Structured Data",
+    sdCols:["ประเภท Structured Data","ตัวอย่างประเภทหน้า","URL อ้างอิง","อยู่ในขอบเขตตรวจสอบ","ตัวอย่าง URL","ติดตั้งแล้ว","มีข้อผิดพลาด","วิธีแก้ไข"],
+    footer:"ฉบับแปลภาษาไทยจากเอกสารต้นฉบับภาษาญี่ปุ่น ลิงก์ รูปภาพ และสเปรดชีตอ้างอิงไปยังแหล่งข้อมูลต้นฉบับ (ข้อความในรูปภาพเป็นภาษาญี่ปุ่น)"
+  }
+};
+
+/* standard item body: reason / current / action (+ extra blocks) */
+function std(L, reason, current, action, extra){
+  const u = UI[L];
+  return [["h3", u.why], ["call","💡",reason], ["h4", u.cur], ["call","☹️",current], ["h4", u.act], ["call","🙂",action]].concat(extra||[]);
+}
+const REF_LQ = {
+  en:(old)=>P(`☛ For the locations that need fixing, please refer to ${A(old?SH_LQ_OLD:SH_LQ,"Handling of low-quality / duplicate pages")}.`),
+  th:(old)=>P(`☛ สำหรับจุดที่ต้องแก้ไข กรุณาดูที่ ${A(old?SH_LQ_OLD:SH_LQ,"การจัดการหน้าคุณภาพต่ำ / หน้าซ้ำ")}`)
+};
+const REF_LQ_OR = {
+  en:()=>REF_LQ.en(true).concat(P("or","please refer to [Site fix request details.xlsx_Duplicate title page list].")),
+  th:()=>REF_LQ.th(true).concat(P("หรือ","กรุณาดูที่ [รายละเอียดเอกสารขอแก้ไขเว็บไซต์.xlsx_รายการหน้าที่ title ซ้ำ]"))
+};
+const CAP = {en:"※Paste screenshot here※", th:"※วางภาพหน้าจอที่นี่※"};
+
+/* ---------- items ---------- */
+const ITEMS = [];
+function add(id, grp, n, pri, fix, title, en, th){ ITEMS.push({id, grp, n, pri, fix, title, body:{en, th}}); }
+
+/* General 1 */
+add("n1",1,1,3,false,{en:"URL normalization",th:"การทำ URL ให้เป็นมาตรฐาน (URL Normalization)"},
+ std("en",
+  P(`Search engines treat URLs with/without "www", with/without "index.html", and "http"/"https" as separate sites.`,
+    `If URLs are not unified, the effect of backlinks may be split and not be fully evaluated.`,
+    `We therefore recommend redirecting any access to a URL that is not the canonical URL you want shown in search results to the canonical URL.`),
+  P(`"With / without www"`,`"With / without index.html", "With / without index.php"`,`"http / https"`,`The above URLs, which display the same content, are not unified.`),
+  [["p","We recommend redirecting any URL that is not the canonical URL you want shown in search results to the canonical URL."],
+   ["p","<b>If redirects can be used</b>"],
+   ["p","Please set up a 301 redirect via server settings or a program. On Apache servers, redirects can be configured in “.htaccess”."],
+   ["p","<b>If redirects cannot be used</b>"],
+   ["p",`If server-side redirects are not available, you can normalize the URL by adding a ${C('rel="canonical"')} setting to the page's HTML source.`],
+   ["p","Example:"],["code",'<link rel="canonical" href="Canonical URL" />'],
+   ["p","※If your Apache server supports “mod_rewrite”, redirects can be configured in the .htaccess file."],
+   ["p","※If you use nginx, IIS or another server, please configure the redirect in the server settings."]]),
+ std("th",
+  P(`เครื่องมือค้นหา (Search Engine) จะมองว่า URL แบบ "มี/ไม่มี www", "มี/ไม่มี index.html" และ "http/https" เป็นคนละเว็บไซต์กัน`,
+    `หากไม่รวม URL ให้เป็นแบบเดียวกัน ผลของ Backlink อาจกระจายออกไปและไม่ได้รับการประเมินอย่างเต็มที่`,
+    `ดังนั้นจึงแนะนำให้ตั้งค่า Redirect การเข้าถึง URL ที่ไม่ใช่ URL หลัก (Canonical URL) ที่ต้องการให้แสดงในผลการค้นหา ไปยัง URL หลัก`),
+  P(`"มี / ไม่มี www"`,`"มี / ไม่มี index.html", "มี / ไม่มี index.php"`,`"http / https"`,`URL ข้างต้นซึ่งแสดงเนื้อหาเดียวกันยังไม่ได้ถูกรวมให้เป็นแบบเดียวกัน`),
+  [["p","แนะนำให้ตั้งค่า Redirect URL ที่ไม่ใช่ URL หลักที่ต้องการให้แสดงในผลการค้นหา ไปยัง URL หลัก"],
+   ["p","<b>กรณีที่ใช้ Redirect ได้</b>"],
+   ["p","กรุณาตั้งค่า 301 Redirect ผ่านการตั้งค่าเซิร์ฟเวอร์หรือโปรแกรม สำหรับเซิร์ฟเวอร์ Apache สามารถตั้งค่า Redirect ได้ที่ไฟล์ “.htaccess”"],
+   ["p","<b>กรณีที่ใช้ Redirect ไม่ได้</b>"],
+   ["p",`หากไม่สามารถใช้ Redirect ฝั่งเซิร์ฟเวอร์ได้ สามารถทำ URL Normalization ได้โดยเพิ่มการตั้งค่า ${C('rel="canonical"')} ใน HTML Source ของหน้า`],
+   ["p","ตัวอย่าง:"],["code",'<link rel="canonical" href="URL หลัก" />'],
+   ["p","※หากเซิร์ฟเวอร์ Apache ที่ใช้งานอยู่รองรับ “mod_rewrite” สามารถตั้งค่า Redirect ได้ด้วยไฟล์ .htaccess"],
+   ["p","※หากใช้เซิร์ฟเวอร์ nginx, IIS ฯลฯ กรุณาตั้งค่า Redirect ที่การตั้งค่าของเซิร์ฟเวอร์"]])
+);
+
+/* General 2 */
+const IMG_N2 = IMG("4fb44a80-a49d-452f-b354-02943ff23a43","3b2426fa-47b5-8364-b48d-8143cfa9a945");
+add("n2",1,2,1,true,{en:"Fixing broken links",th:"แก้ไขลิงก์เสีย (Broken Links)"},
+ std("en",
+  P("If broken links exist, the crawlability of search engines deteriorates and the site's evaluation may drop.","To let search engines correctly recognize the site, please fix the broken links."),
+  [["p","There are places with broken links."],["p","Example: internal links to store pages"],["p",A(OD+"/gift-cards")],["p",A(OD+"/contacts/clear-contactlens/daily")],IMG_N2],
+  P("Please fix the broken links, e.g. by entering the correct URL or removing the link.",`☛ For the locations that need fixing, please refer to ${A(SH_BROKEN,"List of pages containing broken-link URLs")}.`),
+  [["h4","How to locate broken links"],
+   ["p","STEP 1: Open the page that contains the broken link"],
+   ["p","STEP 2: Open DevTools (right-click on the page > Inspect)"],
+   ["p","STEP 3: Open “Search” in DevTools and enter the broken-link URL"],
+   ["p","※Click on the code once and then press the shortcut key to search within DevTools."],
+   ["p","※The search shortcut is “Ctrl+F” on Windows and “command + F” on Mac."]]),
+ std("th",
+  P("หากมีลิงก์เสีย ความสามารถในการ Crawl ของเครื่องมือค้นหาจะแย่ลง และอาจทำให้การประเมินเว็บไซต์ลดลง","เพื่อให้เครื่องมือค้นหารับรู้เว็บไซต์ได้อย่างถูกต้อง กรุณาแก้ไขจุดที่เป็นลิงก์เสีย"),
+  [["p","มีจุดที่เป็นลิงก์เสียอยู่"],["p","ตัวอย่าง: ลิงก์ภายในไปยังหน้าร้านค้า"],["p",A(OD+"/gift-cards")],["p",A(OD+"/contacts/clear-contactlens/daily")],IMG_N2],
+  P("กรุณาแก้ไขจุดที่เป็นลิงก์เสีย เช่น ใส่ URL ที่ถูกต้อง หรือลบลิงก์ออก",`☛ สำหรับจุดที่ต้องแก้ไข กรุณาดูที่ ${A(SH_BROKEN,"รายการหน้าที่มี URL ลิงก์เสีย")}`),
+  [["h4","วิธีตรวจหาจุดที่เป็นลิงก์เสีย"],
+   ["p","STEP 1: เปิดหน้าที่มีลิงก์เสีย"],
+   ["p","STEP 2: เปิด DevTools (คลิกขวาบนหน้า > Inspect / ตรวจสอบ)"],
+   ["p","STEP 3: เปิด “Search” ใน DevTools แล้วป้อน URL ที่เป็นลิงก์เสีย"],
+   ["p","※คลิกที่โค้ดหนึ่งครั้งก่อน แล้วจึงกดคีย์ลัด จะสามารถค้นหาภายใน DevTools ได้"],
+   ["p","※คีย์ลัดสำหรับค้นหา: Windows “Ctrl+F” / Mac “command + F”"]])
+);
+
+/* General 3 */
+add("n3",1,3,1,true,{en:"Create sitemap.xml",th:"สร้าง sitemap.xml"},
+ std("en",
+  P("Creating and uploading a sitemap in XML format helps search engines discover the pages they should crawl.","sitemap.xml is limited to 50 MB (uncompressed) and 50,000 URLs.","If there are a large number of pages, we recommend splitting it into multiple files."),
+  P("sitemap.xml has not been updated."),
+  [["p","Please update the sitemap.xml file."],["call","💡",P("Not only this time — whenever you add new pages, please update sitemap.xml.")]]),
+ std("th",
+  P("การสร้างและอัปโหลด Sitemap ในรูปแบบ XML จะช่วยให้เครื่องมือค้นหาค้นพบหน้าที่ควร Crawl ได้","sitemap.xml มีข้อจำกัดคือขนาดไม่เกิน 50 MB (ก่อนบีบอัด) และ URL ไม่เกิน 50,000 รายการ","หากมีจำนวนหน้ามาก แนะนำให้แบ่งไฟล์ออกเป็นหลายไฟล์"),
+  P("sitemap.xml ยังไม่ได้รับการอัปเดต"),
+  [["p","กรุณาอัปเดตไฟล์ sitemap.xml"],["call","💡",P("ไม่ใช่เฉพาะครั้งนี้เท่านั้น ทุกครั้งที่เพิ่มหน้าใหม่ กรุณาอัปเดต sitemap.xml")]])
+);
+
+/* General 4 */
+add("n4",1,4,2,true,{en:"Fixing <title> tags",th:"แก้ไขแท็ก <title>"},
+ std("en",
+  P("If <title> tags are duplicated across different pages, Google may not correctly understand the page content and an unintended page may be evaluated. Therefore, the <title> should be set individually for each page wherever possible. Setting appropriate keywords for each page can also be expected to increase traffic from long-tail keywords.".replace(/</g,"&lt;")),
+  [["p","There are pages whose &lt;title&gt; tag text is duplicated."],["p","Example: many product detail pages share the common title “Buy Online - Owndays SG”"],["p",A(OD+"/air-au2104a-4a-c4-eyeframe.html")],["p",A(OD+"/air-au2109a-5s-c4-eyeframe.html")]],
+  P("Please set unique text in the title tag of each page.","It is effective to include the keywords you want each page to rank for.",`☛ For the locations that need fixing, please refer to the ${A(SH_TITLE,"Duplicate title page list")}.`)),
+ std("th",
+  P("หากแท็ก &lt;title&gt; ซ้ำกันระหว่างหน้าต่าง ๆ Google อาจไม่สามารถเข้าใจเนื้อหาของหน้าได้อย่างถูกต้อง และอาจประเมินหน้าที่ไม่ได้ตั้งใจ ดังนั้นควรตั้งค่า &lt;title&gt; แยกเฉพาะของแต่ละหน้าให้มากที่สุดเท่าที่ทำได้ นอกจากนี้ การกำหนดคีย์เวิร์ดที่เหมาะสมให้แต่ละหน้ายังช่วยเพิ่ม Traffic จาก Long-tail Keyword ได้"),
+  [["p","มีหน้าที่ข้อความในแท็ก &lt;title&gt; ซ้ำกัน"],["p","ตัวอย่าง: หน้ารายละเอียดสินค้าจำนวนมากใช้ title เดียวกันคือ “Buy Online - Owndays SG”"],["p",A(OD+"/air-au2104a-4a-c4-eyeframe.html")],["p",A(OD+"/air-au2109a-5s-c4-eyeframe.html")]],
+  P("กรุณากำหนดข้อความที่ไม่ซ้ำกันในแท็ก title ของแต่ละหน้า","การใส่คีย์เวิร์ดที่ต้องการให้แต่ละหน้าติดอันดับสูงจะได้ผลดี",`☛ สำหรับจุดที่ต้องแก้ไข กรุณาดูที่ ${A(SH_TITLE,"รายการหน้าที่ title ซ้ำ")}`))
+);
+
+/* General 5 */
+function mobileSub(L, title, problem, fixTitle, fixBlocks){
+  return ["tog","h4",title,[["call","☹️",problem],["h4",UI[L].act],["call","🙂",[["p","<b>"+fixTitle+"</b>"]].concat(fixBlocks)]]];
+}
+add("n5",1,5,2,false,{en:"Mobile usability",th:"รองรับการใช้งานบนมือถือ (Mobile Usability)"},
+ std("en",
+  P("Google has introduced an algorithm that lowers the evaluation of pages not optimized for smartphones.","Addressing mobile usability helps avoid ranking drops caused by a lack of mobile usability."),
+  P("There are pages that are not mobile-friendly."),
+  P("If you only have pages for PC, please prepare mobile-optimized pages.","※Paste Lighthouse screenshot here※",A("https://developer.chrome.com/docs/lighthouse/overview/?hl=ja&visit_id=638889460586611307-676917179&rd=2#devtools"))
+ ).concat([
+  ["p","<i>Keep only the applicable items below and delete those that do not apply.</i>"],
+  mobileSub("en","Viewport not set",
+    P("The viewport is a meta tag that is important for optimizing a site for smartphones. Placing this tag in the site's source resolves the issue. Many of the issues introduced below can also be solved by setting the viewport, so address this with top priority."),
+    "If the viewport is not set, please add the following to the head",
+    [["code",'<meta name="viewport" content="width=device-width, initial-scale=1">'],["p","Besides initial-scale, the viewport can also have the following attributes:"],["ul",["minimum-scale","maximum-scale","user-scalable"]],
+     ["p","Reference: Set the viewport — Web Fundamentals"],["p",A("https://developers.google.com/web/fundamentals/layouts/rwd-fundamentals/set-the-viewport?hl=ja")],
+     ["p","By setting the viewport, the browser adjusts the site content to the screen size the user is viewing. Even for sites viewed mostly on PC, please set the viewport."]]),
+  mobileSub("en","Fixed-width viewport",
+    P("Detected when a specific width is set in the viewport tag's width and that value is not appropriate for the content. A fixed-width viewport ensures content is displayed as intended, but it is a stopgap for making a page smartphone-compatible and is not recommended in Google's guidelines."),
+    "Please change the fixed-width viewport setting",
+    [["p","If a fixed-width viewport is set, the page will not be mobile-friendly."],["p","If possible, we recommend changing the viewport from a fixed width to a setting such as the following:"],
+     ["code",'<meta name="viewport" content="width=device-width, initial-scale=1">'],["p","Reference: Configure the viewport - PageSpeed Insights"],["p",A("https://developers.google.com/speed/docs/insights/ConfigureViewport?hl=ja")],
+     ["p","By setting the viewport, the browser adjusts the site content to the screen size the user is viewing. Even for sites viewed mostly on PC, please set the viewport."]]),
+  mobileSub("en","Content not sized to the viewport",
+    P("If content does not fit the viewport size, users have to scroll horizontally to view the page.","For example, if there are images wider than the viewport, we recommend making the content fit within the viewport width."),
+    "Please adjust the content to fit within the viewport width",
+    P("Screen sizes and CSS pixel widths vary widely between devices (e.g. between phones and tablets, or between different phones), so to display content properly you must not depend on a specific viewport width.",
+      "If you set a large absolute width on page elements in CSS, a div becomes too wide for the viewport of narrow devices (e.g. iPhone, which is 320 CSS pixels wide). Instead, use relative width values such as width: 100%.",
+      "Even if the viewport is set correctly, the page may not display well depending on its content. Be careful that high-resolution images etc. do not overflow the site width.")),
+  mobileSub("en","Font size too small",
+    P("If the font size is too small when viewing a page on a smartphone, the page will be judged as not mobile-friendly.","Therefore, if the page's font size is too small on smartphones, we recommend setting the viewport etc."),
+    "Please set the viewport so that fonts scale",
+    [["p","After setting the viewport, Google recommends the following:"],["ul",["Use a base font size of 16 CSS pixels.","Define font scaling using sizes relative to the base size.","Text needs vertical space between characters, which may need adjusting per font.","In general, the browser default line height of 1.2 em is recommended.","Limit the number of fonts and scales used. Too many font types and sizes make the page layout cluttered and overly complex."]]]),
+  mobileSub("en","Tap targets (buttons/links) too close together",
+    P("If links and buttons are placed too close to each other, they lead to mis-taps and the page will be judged as not mobile-friendly. We recommend adjusting the proximity and size of links and buttons so users do not mis-tap."),
+    "Make important tap targets large enough to press easily",
+    [["p","This applies to tap targets users use frequently — for example, buttons for frequently used actions, the search bar and other important form fields, and main navigation links. These tap targets should be at least 7 mm (48 CSS pixels if the viewport is set properly); if smaller than 7 mm, ensure enough space around them."],
+     ["p","<b>Ensure enough space between small tap targets</b>"],
+     ["p","Less frequently used links and buttons may be smaller than the recommended 7 mm. However, so that users do not accidentally tap another target when pressing one with their finger, do not place other tap targets within 5 mm (32 CSS pixels) horizontally and vertically."]]),
+  mobileSub("en","Flash is used",
+    P("Flash generally refers to web content created by combining audio, video and vector-graphics animation. It was once used on many sites, but since it does not display on smartphones, pages using Flash are judged as not mobile-friendly."),
+    "Use HTML5 standards for animation",
+    P("Make the site comfortable for all users to browse.","Use video embeds that can be played on all devices.","We recommend making video captions available. This enables access for people using assistive browsing features and those whose browsers cannot play proprietary video formats.","Reference: Unplayable content - Mobile guide for webmasters",A("https://developers.google.com/webmasters/mobile-sites/mobile-seo/common-mistakes/unplayable-content?hl=ja")))
+ ]),
+ std("th",
+  P("Google ได้นำอัลกอริทึมที่ลดการประเมินหน้าที่ไม่รองรับสมาร์ตโฟนมาใช้","การปรับปรุงให้รองรับการใช้งานบนมือถือจะช่วยหลีกเลี่ยงการตกอันดับจากการไม่รองรับ Mobile Usability"),
+  P("มีหน้าที่ไม่เป็นมิตรกับมือถือ (Mobile-friendly)"),
+  P("หากมีเฉพาะหน้าสำหรับ PC กรุณาจัดเตรียมหน้าที่รองรับมือถือ","※วางภาพหน้าจอ Lighthouse ที่นี่※",A("https://developer.chrome.com/docs/lighthouse/overview/?hl=ja&visit_id=638889460586611307-676917179&rd=2#devtools"))
+ ).concat([
+  ["p","<i>ให้คงไว้เฉพาะหัวข้อด้านล่างที่ตรงกับกรณี และลบหัวข้อที่ไม่เกี่ยวข้องออก</i>"],
+  mobileSub("th","ไม่ได้ตั้งค่า Viewport",
+    P("Viewport คือ meta tag ที่สำคัญในการปรับเว็บไซต์ให้เหมาะกับสมาร์ตโฟน การใส่แท็กนี้ใน Source ของเว็บไซต์จะช่วยแก้ปัญหาได้ ปัญหาหลายข้อที่จะแนะนำต่อไปนี้ก็สามารถแก้ได้ด้วยการตั้งค่า Viewport จึงควรดำเนินการเป็นลำดับแรก"),
+    "หากยังไม่ได้ตั้งค่า Viewport กรุณาเพิ่มโค้ดต่อไปนี้ใน head",
+    [["code",'<meta name="viewport" content="width=device-width, initial-scale=1">'],["p","นอกจาก initial-scale แล้ว Viewport ยังสามารถกำหนด Attribute ต่อไปนี้ได้"],["ul",["minimum-scale","maximum-scale","user-scalable"]],
+     ["p","อ้างอิง: การตั้งค่า Viewport — Web Fundamentals"],["p",A("https://developers.google.com/web/fundamentals/layouts/rwd-fundamentals/set-the-viewport?hl=ja")],
+     ["p","เมื่อตั้งค่า Viewport เบราว์เซอร์จะปรับเนื้อหาของเว็บไซต์ให้เข้ากับขนาดหน้าจอที่ผู้ใช้กำลังดูอยู่ แม้เป็นเว็บไซต์ที่มีผู้เข้าชมจาก PC เป็นส่วนใหญ่ ก็ควรตั้งค่า Viewport ไว้"]]),
+  mobileSub("th","Viewport แบบกำหนดความกว้างคงที่",
+    P("จะถูกตรวจพบเมื่อมีการกำหนดค่า width ในแท็ก Viewport เป็นความกว้างเฉพาะ และค่านั้นไม่เหมาะกับเนื้อหา Viewport แบบความกว้างคงที่ทำให้แสดงเนื้อหาได้ตามที่ต้องการ แต่เป็นเพียงวิธีแก้ขัดในการทำให้หน้ารองรับสมาร์ตโฟน และไม่ได้รับการแนะนำในแนวทางของ Google"),
+    "กรุณาเปลี่ยนการตั้งค่า Viewport ที่กำหนดความกว้างคงที่",
+    [["p","หากตั้งค่า Viewport แบบความกว้างคงที่ หน้าจะไม่เป็นมิตรกับมือถือ"],["p","หากเป็นไปได้ แนะนำให้เปลี่ยน Viewport จากความกว้างคงที่เป็นการตั้งค่าดังต่อไปนี้"],
+     ["code",'<meta name="viewport" content="width=device-width, initial-scale=1">'],["p","อ้างอิง: การกำหนดค่า Viewport - PageSpeed Insights"],["p",A("https://developers.google.com/speed/docs/insights/ConfigureViewport?hl=ja")],
+     ["p","เมื่อตั้งค่า Viewport เบราว์เซอร์จะปรับเนื้อหาของเว็บไซต์ให้เข้ากับขนาดหน้าจอที่ผู้ใช้กำลังดูอยู่ แม้เป็นเว็บไซต์ที่มีผู้เข้าชมจาก PC เป็นส่วนใหญ่ ก็ควรตั้งค่า Viewport ไว้"]]),
+  mobileSub("th","ขนาดเนื้อหาไม่พอดีกับ Viewport",
+    P("หากเนื้อหาไม่พอดีกับขนาด Viewport ผู้ใช้จะต้องเลื่อนหน้าไปทางซ้าย-ขวาเพื่อดู","ตัวอย่างเช่น หากมีรูปภาพที่กว้างกว่า Viewport แนะนำให้ปรับเนื้อหาให้อยู่ภายในความกว้างของ Viewport"),
+    "กรุณาปรับเนื้อหาให้อยู่ภายในความกว้างของ Viewport",
+    P("ขนาดหน้าจอและความกว้างเป็น CSS Pixel แตกต่างกันมากระหว่างอุปกรณ์ (เช่น ระหว่างโทรศัพท์กับแท็บเล็ต หรือระหว่างโทรศัพท์ต่างรุ่น) ดังนั้นเพื่อแสดงเนื้อหาได้อย่างเหมาะสม จึงไม่ควรขึ้นอยู่กับความกว้าง Viewport ที่เฉพาะเจาะจง",
+      "หากกำหนดค่า width ขององค์ประกอบในหน้าเป็นค่าสัมบูรณ์ขนาดใหญ่ใน CSS div จะกว้างเกินไปสำหรับ Viewport ของอุปกรณ์ที่แคบ (เช่น iPhone ที่มีความกว้าง 320 CSS Pixel) ให้ใช้ค่าความกว้างแบบสัมพัทธ์ เช่น width: 100% แทน",
+      "แม้จะตั้งค่า Viewport ถูกต้องแล้ว แต่บางครั้งก็อาจแสดงผลได้ไม่ดีขึ้นอยู่กับเนื้อหาของเว็บไซต์ ควรระวังไม่ให้รูปภาพความละเอียดสูง ฯลฯ ล้นออกนอกความกว้างของเว็บไซต์")),
+  mobileSub("th","ขนาดตัวอักษรเล็กเกินไป",
+    P("หากขนาดตัวอักษรเล็กเกินไปเมื่อดูหน้าบนสมาร์ตโฟน หน้าจะถูกตัดสินว่าไม่เป็นมิตรกับมือถือ","ดังนั้นหากขนาดตัวอักษรเล็กเกินไปเมื่อดูบนสมาร์ตโฟน แนะนำให้ตั้งค่า Viewport ฯลฯ"),
+    "กรุณาตั้งค่า Viewport เพื่อให้ตัวอักษรขยาย/ย่อได้",
+    [["p","หลังจากตั้งค่า Viewport แล้ว Google แนะนำให้ดำเนินการดังนี้"],["ul",["ใช้ขนาดตัวอักษรพื้นฐาน 16 CSS Pixel","กำหนดการขยาย/ย่อตัวอักษรโดยใช้ขนาดที่สัมพัทธ์กับขนาดพื้นฐาน","ข้อความต้องมีระยะห่างแนวตั้งระหว่างตัวอักษร และอาจต้องปรับตามแต่ละฟอนต์","โดยทั่วไปแนะนำให้ใช้ความสูงบรรทัดค่าเริ่มต้นของเบราว์เซอร์ที่ 1.2 em","จำกัดจำนวนฟอนต์และระดับการขยาย/ย่อที่ใช้ หากมีประเภทหรือขนาดฟอนต์มากเกินไป เลย์เอาต์ของหน้าจะดูรกและซับซ้อนเกินไป"]]]),
+  mobileSub("th","องค์ประกอบที่ต้องแตะ (ปุ่ม/ลิงก์) อยู่ใกล้กันเกินไป",
+    P("หากลิงก์หรือปุ่มอยู่ใกล้กันเกินไป จะทำให้แตะผิด และหน้าจะถูกตัดสินว่าไม่เป็นมิตรกับมือถือ แนะนำให้ปรับระยะห่างและขนาดของลิงก์และปุ่มเพื่อไม่ให้ผู้ใช้แตะผิด"),
+    "ทำให้องค์ประกอบที่ต้องแตะที่สำคัญมีขนาดใหญ่พอที่จะกดได้ง่าย",
+    [["p","ใช้กับองค์ประกอบที่ผู้ใช้แตะบ่อย เช่น ปุ่มสำหรับการทำงานที่ใช้บ่อย แถบค้นหาและช่องฟอร์มที่สำคัญอื่น ๆ และลิงก์นำทางหลัก องค์ประกอบเหล่านี้ควรมีขนาดอย่างน้อย 7 มม. (48 CSS Pixel ขึ้นไปหากตั้งค่า Viewport อย่างเหมาะสมแล้ว) หากเล็กกว่า 7 มม. ควรเว้นพื้นที่รอบ ๆ ให้เพียงพอ"],
+     ["p","<b>เว้นระยะห่างระหว่างองค์ประกอบที่ต้องแตะขนาดเล็กให้เพียงพอ</b>"],
+     ["p","ลิงก์หรือปุ่มที่ใช้ไม่บ่อยอาจมีขนาดเล็กกว่า 7 มม. ที่แนะนำได้ แต่เพื่อไม่ให้ผู้ใช้แตะโดนองค์ประกอบอื่นโดยไม่ตั้งใจเมื่อใช้นิ้วกด ไม่ควรวางองค์ประกอบที่ต้องแตะอื่นภายในระยะ 5 มม. (32 CSS Pixel) ทั้งแนวนอนและแนวตั้ง"]]),
+  mobileSub("th","มีการใช้ Flash",
+    P("Flash โดยทั่วไปหมายถึงเนื้อหาเว็บที่สร้างจากการผสมผสานเสียง วิดีโอ และแอนิเมชันแบบ Vector Graphics เคยถูกใช้ในเว็บไซต์จำนวนมาก แต่เนื่องจากไม่แสดงผลบนสมาร์ตโฟน หน้าที่ใช้ Flash จะถูกตัดสินว่าไม่เป็นมิตรกับมือถือ"),
+    "ใช้มาตรฐาน HTML5 สำหรับแอนิเมชัน",
+    P("ทำให้ผู้ใช้ทุกคนสามารถเข้าชมเว็บไซต์ได้อย่างสะดวก","ใช้การฝังวิดีโอที่สามารถเล่นได้บนทุกอุปกรณ์","แนะนำให้มีคำบรรยาย (Caption) สำหรับวิดีโอ เพื่อให้ผู้ที่ใช้ฟังก์ชันช่วยการท่องเว็บ และผู้ที่ใช้เบราว์เซอร์ที่ไม่สามารถเล่นรูปแบบวิดีโอเฉพาะได้ สามารถเข้าถึงเว็บไซต์ได้","อ้างอิง: เนื้อหาที่เล่นไม่ได้ - คู่มือมือถือสำหรับ Webmaster",A("https://developers.google.com/webmasters/mobile-sites/mobile-seo/common-mistakes/unplayable-content?hl=ja")))
+ ])
+);
+
+/* General 6 */
+add("n6",1,6,3,false,{en:"Annotation settings for mobile",th:"การตั้งค่า Annotation สำหรับมือถือ"},
+ std("en",
+  P("If PC pages and smartphone pages are operated on separate URLs, we recommend specifying annotations on each page that link them, so Google can recognize the URLs of the PC page and the mobile page."),
+  P("The annotation settings for PC and smartphone pages are not optimal.","・","・","・"),
+  [["p",`Please add a ${C('link rel="alternate"')} tag pointing to the mobile URL on the PC page.`],["p","Target URL:"],["p","Code to add:"],
+   ["p",`Please add a ${C('link rel="canonical"')} tag pointing to the PC URL on the mobile page.`],["p","Target URL:"],["p","Code to add:"],
+   ["p","Search Console > [Search Traffic] > [Mobile Usability]"]]
+ ).concat([["h4","Example URLs"],["p","PC URL: http://example.com/page-1"],["p","Mobile URL: http://m.example.com/page-1"],
+   ["h4","Example code to add on the PC page"],["code",'<link rel="alternate" media="only screen and (max-width: 640px)"  href="http://m.example.com/page-1">'],
+   ["h4","Example code to add on the mobile page"],["code",'<link rel="canonical" href="http://www.example.com/page-1">'],
+   ["call","💡",[["p","<b>Note</b>"],["p","The mobile page and its paired PC page must be set up so that they correspond one-to-one with the appropriate page."]]]]),
+ std("th",
+  P("หากหน้าสำหรับ PC และหน้าสำหรับสมาร์ตโฟนใช้ URL แยกกัน แนะนำให้ระบุ Annotation ที่เชื่อมโยงกันในแต่ละหน้า เพื่อให้ Google รับรู้ URL ของหน้า PC และหน้ามือถือได้"),
+  P("การตั้งค่า Annotation ของหน้า PC และหน้าสมาร์ตโฟนยังไม่เหมาะสม","・","・","・"),
+  [["p",`กรุณาเพิ่มแท็ก ${C('link rel="alternate"')} ที่ชี้ไปยัง URL มือถือในหน้า PC`],["p","URL ที่ต้องติดตั้ง:"],["p","โค้ดที่ต้องเพิ่ม:"],
+   ["p",`กรุณาเพิ่มแท็ก ${C('link rel="canonical"')} ที่ชี้ไปยัง URL ของ PC ในหน้ามือถือ`],["p","URL ที่ต้องติดตั้ง:"],["p","โค้ดที่ต้องเพิ่ม:"],
+   ["p","Search Console > [Search Traffic] > [Mobile Usability]"]]
+ ).concat([["h4","ตัวอย่าง URL"],["p","URL สำหรับ PC: http://example.com/page-1"],["p","URL สำหรับมือถือ: http://m.example.com/page-1"],
+   ["h4","ตัวอย่างโค้ดที่เพิ่มในหน้า PC"],["code",'<link rel="alternate" media="only screen and (max-width: 640px)"  href="http://m.example.com/page-1">'],
+   ["h4","ตัวอย่างโค้ดที่เพิ่มในหน้ามือถือ"],["code",'<link rel="canonical" href="http://www.example.com/page-1">'],
+   ["call","💡",[["p","<b>ข้อควรระวัง</b>"],["p","หน้ามือถือและหน้า PC ที่เป็นคู่กันต้องตั้งค่าให้สอดคล้องกันแบบ 1 ต่อ 1 กับหน้าที่ถูกต้องเสมอ"]]]])
+);
+
+/* General 7 */
+add("n7",1,7,3,false,{en:"Mobile-First Indexing (MFI)",th:"รองรับ Mobile-First Indexing (MFI)"},
+ std("en",
+  P("In response to the growth of mobile users, Google officially announced that the content it evaluates will shift from PC pages to mobile pages. Since search rankings will be determined based on mobile pages, if mobile pages lack many elements compared to PC pages, they need to be enriched to the same level as the PC pages."),
+  [["p","On mobile pages, the following content placed on PC pages is missing:"],["ul",["Internal link group in the middle of the page","Text content at the bottom of the page"]]],
+  P("Please transfer the content and internal link groups on PC pages to the mobile pages.","※As far as possible, please transfer them with the same content.")),
+ std("th",
+  P("เนื่องจากจำนวนผู้ใช้มือถือเพิ่มขึ้น Google จึงประกาศอย่างเป็นทางการว่าเนื้อหาที่ใช้ในการประเมินจะเปลี่ยนจากหน้า PC เป็นหน้ามือถือ ต่อไปอันดับการค้นหาจะถูกกำหนดโดยอ้างอิงจากหน้ามือถือ ดังนั้นหากหน้ามือถือขาดองค์ประกอบไปมากเมื่อเทียบกับหน้า PC จำเป็นต้องเพิ่มเนื้อหาให้ใกล้เคียงกับหน้า PC"),
+  [["p","ในหน้ามือถือ ยังไม่มีเนื้อหาต่อไปนี้ซึ่งมีอยู่ในหน้า PC"],["ul",["กลุ่มลิงก์ภายในบริเวณกลางหน้า","เนื้อหาข้อความบริเวณท้ายหน้า"]]],
+  P("กรุณาย้ายเนื้อหาและกลุ่มลิงก์ภายในที่อยู่ในหน้า PC มาไว้ในหน้ามือถือ","※หากเป็นไปได้ กรุณาย้ายมาโดยคงเนื้อหาเดิมไว้"))
+);
+
+/* General 8–10, 12, 13 (template-style items) */
+add("n8",1,8,3,false,{en:"Fixing auto-generated text",th:"แก้ไขข้อความที่สร้างขึ้นอัตโนมัติ"},
+ std("en",
+  P("If auto-generated text is used on many pages of the site, Google may rate it as a site with a lot of low-quality content, and rankings across the whole site may drop.","Therefore, if auto-generated text is used on many pages, it should be removed and original information added."),
+  P("Auto-generated text is used on many pages.","Example: ******"),
+  P("We recommend removing auto-generated text and publishing original information as far as possible.",CAP.en).concat(REF_LQ_OR.en())),
+ std("th",
+  P("หากมีการใช้ข้อความที่สร้างขึ้นอัตโนมัติในหลายหน้าของเว็บไซต์ Google อาจประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์อาจลดลง","ดังนั้นหากมีการใช้ข้อความที่สร้างขึ้นอัตโนมัติในหลายหน้า จำเป็นต้องลบออกและเพิ่มข้อมูลที่เป็นเอกลักษณ์ของตนเอง"),
+  P("มีการใช้ข้อความที่สร้างขึ้นอัตโนมัติในหลายหน้า","ตัวอย่าง: ******"),
+  P("แนะนำให้ลบข้อความที่สร้างขึ้นอัตโนมัติ และเผยแพร่ข้อมูลที่เป็นเอกลักษณ์ของตนเองให้มากที่สุดเท่าที่ทำได้",CAP.th).concat(REF_LQ_OR.th()))
+);
+add("n9",1,9,3,false,{en:"Fixing copied text",th:"แก้ไขข้อความที่คัดลอกมา"},
+ std("en",
+  P("If many pages on the site are created with text copied from other sites, Google rates it as a site with a lot of low-quality content, and rankings across the whole site drop.","Therefore, pages created with copied text need to reduce the amount of copied text and add original information."),
+  P("A large number of pages created with copied text exist on the site.","Example: ******"),
+  P("We recommend removing text created by copying and publishing original information as far as possible.","We recommend adding as much original information as possible to pages created with copied text.",CAP.en).concat(REF_LQ_OR.en())),
+ std("th",
+  P("หากหลายหน้าในเว็บไซต์สร้างจากข้อความที่คัดลอกมาจากเว็บไซต์อื่น Google จะประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์จะลดลง","ดังนั้นหน้าที่สร้างจากข้อความที่คัดลอกมา จำเป็นต้องลดปริมาณข้อความที่คัดลอกและเพิ่มข้อมูลที่เป็นเอกลักษณ์ของตนเอง"),
+  P("มีหน้าที่สร้างจากข้อความที่คัดลอกมาอยู่ในเว็บไซต์เป็นจำนวนมาก","ตัวอย่าง: ******"),
+  P("แนะนำให้ลบข้อความที่คัดลอกมา และเผยแพร่ข้อมูลที่เป็นเอกลักษณ์ของตนเองให้มากที่สุดเท่าที่ทำได้","แนะนำให้เพิ่มข้อมูลที่เป็นเอกลักษณ์ของตนเองให้มากที่สุดในหน้าที่สร้างจากข้อความที่คัดลอกมา",CAP.th).concat(REF_LQ_OR.th()))
+);
+add("n10",1,10,3,false,{en:"Fixing large amounts of boilerplate text",th:"แก้ไขข้อความสำเร็จรูป (Boilerplate) จำนวนมาก"},
+ std("en",
+  P("If many pages of the site contain voluminous boilerplate text, Google may rate it as a site with a lot of low-quality content, and rankings across the whole site may drop.","To avoid being rated as low-quality content, you need to avoid heavy use of boilerplate — e.g. create the boilerplate as an independent page, and on pages currently containing it, show a short summary with a link to that independent detail page."),
+  P("A large amount of boilerplate text exists on the site.","Example: ******"),
+  P("We recommend the following:","① Create an independent page containing the boilerplate ② Change the pages currently containing the boilerplate to show a summary of it plus a link to ①, making them unique pages with different content",CAP.en).concat(REF_LQ_OR.en())),
+ std("th",
+  P("หากหลายหน้าของเว็บไซต์มีข้อความสำเร็จรูปปริมาณมาก Google อาจประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์อาจลดลง","เพื่อไม่ให้ถูกประเมินว่าเป็นเนื้อหาคุณภาพต่ำ จำเป็นต้องหลีกเลี่ยงการใช้ข้อความสำเร็จรูปจำนวนมาก เช่น สร้างข้อความสำเร็จรูปเป็นหน้าแยกต่างหาก และในหน้าที่มีข้อความสำเร็จรูปอยู่ในปัจจุบัน ให้แสดงบทสรุปสั้น ๆ พร้อมลิงก์ไปยังหน้ารายละเอียดที่แยกไว้"),
+  P("มีข้อความสำเร็จรูปจำนวนมากอยู่ในเว็บไซต์","ตัวอย่าง: ******"),
+  P("แนะนำให้ดำเนินการดังนี้","① สร้างหน้าแยกสำหรับข้อความสำเร็จรูป ② เปลี่ยนหน้าที่มีข้อความสำเร็จรูปอยู่ในปัจจุบัน ให้แสดงบทสรุปของข้อความนั้นพร้อมลิงก์ไปยัง ① และปรับให้เป็นหน้าที่มีเนื้อหาเฉพาะของตนเอง",CAP.th).concat(REF_LQ_OR.th()))
+);
+const IMG_N11 = IMG("2594c8ac-6fa0-4ea8-8776-3786a687bf6c","389426fa-47b5-80d3-b996-ee3a20f131a6");
+const U_N11 = OD+"/stranger-things-owndays-st-cloth-6s-c2-accessories.html";
+add("n11",1,11,3,true,{en:"Addressing insufficient main content",th:"แก้ไขปัญหาเนื้อหาหลักไม่เพียงพอ"},
+ std("en",
+  P("If a large number of pages whose main content is insufficient are indexed, Google may rate it as a site with a lot of low-quality content, and rankings across the whole site may drop.","Therefore, for pages whose main content is insufficient, we recommend either preventing search engines from indexing them using a noindex tag etc., or enriching the main content."),
+  [["p","A large number of pages with insufficient main content are indexed."],["p","Example: "+A(U_N11)],IMG_N11],
+  P("We recommend enriching the main content.").concat(REF_LQ.en(false))),
+ std("th",
+  P("หากหน้าที่มีเนื้อหาหลักไม่เพียงพอถูก Index เป็นจำนวนมาก Google อาจประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์อาจลดลง","ดังนั้นสำหรับหน้าที่มีเนื้อหาหลักไม่เพียงพอ แนะนำให้ป้องกันไม่ให้เครื่องมือค้นหา Index ด้วยแท็ก noindex ฯลฯ หรือเพิ่มเนื้อหาหลักให้มากขึ้น"),
+  [["p","มีหน้าที่เนื้อหาหลักไม่เพียงพอถูก Index อยู่เป็นจำนวนมาก"],["p","ตัวอย่าง: "+A(U_N11)],IMG_N11],
+  P("แนะนำให้เพิ่มเนื้อหาหลักให้สมบูรณ์ยิ่งขึ้น").concat(REF_LQ.th(false)))
+);
+add("n12",1,12,3,false,{en:"Addressing pages with no content",th:"แก้ไขปัญหาหน้าที่ไม่มีเนื้อหา"},
+ std("en",
+  P("If a large number of pages whose main content is insufficient are indexed, Google may rate it as a site with a lot of low-quality content, and rankings across the whole site may drop.","Therefore, for pages whose main content is insufficient, we recommend either preventing search engines from indexing them using a noindex tag etc., or enriching the main content."),
+  P("A large number of pages with no main content are indexed.","Example: ******"),
+  P("We recommend measures to prevent search engines from indexing pages with insufficient main content.",CAP.en).concat(REF_LQ_OR.en())),
+ std("th",
+  P("หากหน้าที่มีเนื้อหาหลักไม่เพียงพอถูก Index เป็นจำนวนมาก Google อาจประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์อาจลดลง","ดังนั้นสำหรับหน้าที่มีเนื้อหาหลักไม่เพียงพอ แนะนำให้ป้องกันไม่ให้เครื่องมือค้นหา Index ด้วยแท็ก noindex ฯลฯ หรือเพิ่มเนื้อหาหลักให้มากขึ้น"),
+  P("มีหน้าที่ไม่มีเนื้อหาหลักถูก Index อยู่เป็นจำนวนมาก","ตัวอย่าง: ******"),
+  P("แนะนำให้ป้องกันไม่ให้เครื่องมือค้นหา Index หน้าที่มีเนื้อหาหลักไม่เพียงพอ",CAP.th).concat(REF_LQ_OR.th()))
+);
+add("n13",1,13,3,false,{en:"Addressing similar content",th:"แก้ไขปัญหาเนื้อหาที่คล้ายกัน"},
+ std("en",
+  P("If a large number of pages with similar main content are indexed on the site, Google may rate it as a site with a lot of low-quality content, and rankings across the whole site may drop.","Therefore, if many similar pages exist, you need to either add content to each page or consolidate them into one page."),
+  P("A large number of pages with similar main content are indexed.","Example: ******"),
+  P("We recommend measures to prevent search engines from indexing pages with insufficient main content.",CAP.en).concat(REF_LQ_OR.en())),
+ std("th",
+  P("หากหน้าที่มีเนื้อหาหลักคล้ายกันถูก Index เป็นจำนวนมาก Google อาจประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์อาจลดลง","ดังนั้นหากมีหน้าที่คล้ายกันจำนวนมาก จำเป็นต้องเพิ่มเนื้อหาให้แต่ละหน้า หรือรวมเป็นหน้าเดียว"),
+  P("มีหน้าที่เนื้อหาหลักคล้ายกันถูก Index อยู่เป็นจำนวนมาก","ตัวอย่าง: ******"),
+  P("แนะนำให้ป้องกันไม่ให้เครื่องมือค้นหา Index หน้าที่มีเนื้อหาหลักไม่เพียงพอ",CAP.th).concat(REF_LQ_OR.th()))
+);
+const IMG_N14 = IMG("9937fc1f-6a27-4c7e-90f9-68033d894563","389426fa-47b5-8086-8431-f296a15d1676");
+add("n14",1,14,3,true,{en:"Addressing duplicate URLs",th:"แก้ไขปัญหา URL ซ้ำ"},
+ std("en",
+  P("If search engines can access pages with the same information through multiple different URLs, the crawler may not evaluate the page correctly. We recommend placing a canonical tag on such duplicate pages to normalize them to the main page."),
+  [["p","Search engines can access pages with the same information through multiple different URLs."],["p","Example:"],["p",A(OD+"/owndays-sun-owndays-sun8023b-5s-c1-sunglasses.html")],["p",A(OD+"/sun-sun8023b-5s-c1-sunglasses.html")],IMG_N14],
+  P("We recommend a 301 redirect to the canonical URL.").concat(REF_LQ.en(false))),
+ std("th",
+  P("หากเครื่องมือค้นหาสามารถเข้าถึงหน้าที่มีข้อมูลเดียวกันผ่าน URL ที่แตกต่างกันหลาย URL Crawler อาจประเมินหน้าได้ไม่ถูกต้อง แนะนำให้ติดตั้งแท็ก canonical ในหน้าที่ซ้ำ เพื่อระบุหน้าหลัก (Normalization)"),
+  [["p","เครื่องมือค้นหาสามารถเข้าถึงหน้าที่มีข้อมูลเดียวกันผ่าน URL ที่แตกต่างกันหลาย URL"],["p","ตัวอย่าง:"],["p",A(OD+"/owndays-sun-owndays-sun8023b-5s-c1-sunglasses.html")],["p",A(OD+"/sun-sun8023b-5s-c1-sunglasses.html")],IMG_N14],
+  P("แนะนำให้ทำ 301 Redirect ไปยัง URL หลัก").concat(REF_LQ.th(false)))
+);
+add("n15",1,15,3,false,{en:"Adding site information such as author information",th:"เพิ่มข้อมูลเว็บไซต์ เช่น ข้อมูลผู้เขียน"},
+ std("en",
+  P("If the site lacks sufficient information demonstrating its reliability and expertise, its content may be judged as low quality.","We therefore recommend adding information that conveys the site's reliability to users and Google."),
+  P("Information such as the operator, site policy and author information is insufficient."),
+  P("We recommend creating pages that increase reliability — such as operator, site policy and author information — and linking to them from across the whole site.",CAP.en)),
+ std("th",
+  P("หากเว็บไซต์มีข้อมูลที่แสดงถึงความน่าเชื่อถือและความเชี่ยวชาญไม่เพียงพอ เนื้อหาอาจถูกตัดสินว่าเป็นเนื้อหาคุณภาพต่ำ","ดังนั้นจึงแนะนำให้เพิ่มข้อมูลที่สื่อถึงความน่าเชื่อถือของเว็บไซต์ให้ผู้ใช้และ Google รับรู้"),
+  P("ข้อมูลเกี่ยวกับผู้ดำเนินการ นโยบายเว็บไซต์ ข้อมูลผู้เขียน ฯลฯ ยังไม่เพียงพอ"),
+  P("แนะนำให้สร้างหน้าที่เพิ่มความน่าเชื่อถือ เช่น ข้อมูลผู้ดำเนินการ นโยบายเว็บไซต์ ข้อมูลผู้เขียน และติดตั้งลิงก์ไปยังหน้าเหล่านั้นจากทั่วทั้งเว็บไซต์",CAP.th))
+);
+add("n16",1,16,3,false,{en:"Fixing excessive sub-content",th:"แก้ไขเนื้อหารอง (Sub-content) ที่มากเกินไป"},
+ std("en",
+  P("If sub-content such as navigation, search forms and ads obstructs the main content, Google may rate the site as low quality. Therefore, if sub-content is excessive, the page structure needs to be changed so the main content is easy to find."),
+  P("There are navigation, search forms and ads that make the main content hard to find.","Example: *****"),
+  P("We recommend changing to a page structure where the main content is easy to find.",CAP.en)),
+ std("th",
+  P("หากเนื้อหารอง เช่น เมนูนำทาง ฟอร์มค้นหา หรือโฆษณา รบกวนเนื้อหาหลัก Google อาจประเมินว่าเป็นเว็บไซต์คุณภาพต่ำ ดังนั้นหากเนื้อหารองมีมากเกินไป จำเป็นต้องปรับโครงสร้างหน้าให้ค้นหาเนื้อหาหลักได้ง่าย"),
+  P("มีเมนูนำทาง ฟอร์มค้นหา และโฆษณาที่ทำให้ค้นหาเนื้อหาหลักได้ยาก","ตัวอย่าง: *****"),
+  P("แนะนำให้ปรับโครงสร้างหน้าให้ค้นหาเนื้อหาหลักได้ง่าย",CAP.th))
+);
+add("n17",1,17,1,false,{en:"Creating a custom 404 page",th:"สร้างหน้า 404 แบบกำหนดเอง (Custom 404)"},
+ std("en",
+  P("Without a custom 404 page, when users land on a 404 page there is no path back to the site, so they tend to leave. We recommend creating a custom 404 page to improve navigation when users reach a 404 page."),
+  P("There is no custom 404 page."),
+  [["p","Please create a custom 404 page. The custom 404 page should return status code 404, clearly state that the page has been deleted, and include links to the site's main pages. Upload the created file to the root directory and add the following code to the “.htaccess” file."],
+   ["p","<b>[Code to add]</b>"],["p","RewriteEngine on<br>ErrorDocument 404 /<span class=\"red-t\">404.html</span>"],["p","※The red text is an arbitrary file name"],
+   ["p","☛ Custom 404 page sample"],["p",A("https://www.willgate.co.jp/404.html")]]),
+ std("th",
+  P("หากไม่มีหน้า 404 แบบกำหนดเอง เมื่อผู้ใช้เข้าถึงหน้า 404 จะไม่มีทางกลับไปยังเว็บไซต์ จึงมีแนวโน้มที่ผู้ใช้จะออกจากเว็บไซต์ แนะนำให้สร้างหน้า 404 แบบกำหนดเองเพื่อปรับปรุงการนำทางเมื่อผู้ใช้เข้าถึงหน้า 404"),
+  P("ไม่มีหน้า 404 แบบกำหนดเอง"),
+  [["p","กรุณาสร้างหน้า 404 แบบกำหนดเอง โดยหน้านี้ต้องส่งคืน Status Code 404 ระบุอย่างชัดเจนว่าหน้านั้นถูกลบแล้ว และมีลิงก์ไปยังหน้าหลักของเว็บไซต์ อัปโหลดไฟล์ที่สร้างไปที่ Root Directory และเพิ่มโค้ดต่อไปนี้ในไฟล์ “.htaccess”"],
+   ["p","<b>【โค้ดที่ต้องเพิ่ม】</b>"],["p","RewriteEngine on<br>ErrorDocument 404 /<span class=\"red-t\">404.html</span>"],["p","※ตัวอักษรสีแดงคือชื่อไฟล์ที่ตั้งได้ตามต้องการ"],
+   ["p","☛ ตัวอย่างหน้า 404 แบบกำหนดเอง"],["p",A("https://www.willgate.co.jp/404.html")]])
+);
+add("n18",1,18,2,true,{en:"Creating breadcrumb lists",th:"สร้าง Breadcrumb (เส้นทางนำทาง)"},
+ std("en",
+  P("When considering website usability, it is important to provide navigation that lets users recognize “where in the site the page they are viewing is located”. A breadcrumb list also makes it easier for Google to understand the relationships between pages."),
+  P("There is no breadcrumb list on the site."),
+  P("Please add a breadcrumb list leading to the current page on each page of the site.")),
+ std("th",
+  P("ในการพิจารณาความสะดวกในการใช้งานเว็บไซต์ สิ่งสำคัญคือการมีระบบนำทางที่ให้ผู้ใช้รู้ว่า “กำลังดูหน้าที่อยู่ตำแหน่งใดในเว็บไซต์” นอกจากนี้ การมี Breadcrumb ยังช่วยให้ Google เข้าใจความสัมพันธ์ระหว่างหน้าต่าง ๆ ได้ง่ายขึ้น"),
+  P("ในเว็บไซต์ไม่มี Breadcrumb"),
+  P("กรุณาแสดง Breadcrumb ที่นำไปสู่หน้าปัจจุบันในแต่ละหน้าของเว็บไซต์"))
+);
+
+/* General 19 — Core Web Vitals */
+const I19 = {
+  a:IMG("de8950fa-183e-43c3-9567-19766d4c39ed","3a3426fa-47b5-80f7-911f-cc1683d5635a"),
+  b:IMG("31ea7ff0-2217-40f4-9a21-cf14dc77f394","3a3426fa-47b5-807d-90ef-e136bfe62816"),
+  c:IMG("9d34e51d-eddd-469f-b525-9ec7ea0bb7e1","9b3426fa-47b5-835f-b38a-019097f753d9"),
+  d:IMG("1e991e19-ef9e-4789-81f9-77ba706983ec","3a3426fa-47b5-8023-a824-c6aa4c410524"),
+  e:IMG("ee314045-f9c2-40c4-8c1a-7672c2e8e3e7","3a3426fa-47b5-801c-923d-ce66076dff04"),
+  f:IMG("ed8df574-8aaa-45a6-8a13-67d314c0ca7a","3a3426fa-47b5-8008-98e2-cf97ab49f6aa"),
+  g:IMG("b3128811-cc97-482e-bb91-3688a0f2a022","3a3426fa-47b5-808e-ac3c-f7b297dab900"),
+  h:IMG("63af65c9-f8e3-47f4-bf79-a703d98a3afa","7e6426fa-47b5-8230-af7b-81598e652a06",1330),
+  i:IMG("40b5bb89-d203-4d54-bd30-915f9c70bad6","161426fa-47b5-8274-b14e-0153c27d18c6",1330),
+  j:IMG("effb60d0-a7d3-4cfa-b0a4-cfc413705f02","e37426fa-47b5-83a5-9b8f-81ef089ccec7",1330),
+  k:IMG("e6be6ef9-a191-4cdd-9845-db7d76c11065","29a426fa-47b5-82f9-a8d6-013d419de495",830),
+  l:IMG("e75a1043-a2eb-4b35-8429-7b5933d01bb9","918426fa-47b5-82a2-ade7-01d19772dfe8",830),
+  m:IMG("2de1b9b8-186c-4de1-81e2-169e6cc484e1","02f426fa-47b5-8377-bf17-810f6e49ca7a",1330)
+};
+const PSI = "https://pagespeed.web.dev/analysis/https-www-owndays-com-sg-en-eyewear-sunglasses-html/t7wyzqebbg?utm_source=search_console&form_factor=mobile&hl=ja";
+const thr = (L, name, a, b, c) => ["table",[["",L==="en"?"Good":"ดี",L==="en"?"Needs improvement":"ต้องปรับปรุง",L==="en"?"Poor":"ช้า"],[name,a,b,c]],{hr:true,hc:true}];
+add("n19",1,19,1,true,{en:"Core Web Vitals measures",th:"มาตรการด้าน Core Web Vitals"},
+ std("en",
+  P("Google has incorporated Core Web Vitals into its algorithm as a ranking factor.","Addressing Core Web Vitals helps avoid ranking drops caused by elements that harm the user experience."),
+  P("There are pages that need improvement on both mobile and PC."),
+  P("Please diagnose and improve the target pages in Google Search Console.")
+ ).concat([
+  ["h4","How to check"],
+  ["ol",["Log in to Google Search Console","Click “Core Web Vitals” in the “Experience” section of the left menu","Graphs for “Mobile” and “PC” are displayed; click “Open report” for the one you want to check"]],
+  I19.a, I19.b,
+  ["h3","User experience"],
+  ["p","Important signals for a page to be rated as having a good page experience in Google Search"],
+  ["p","※Google plans to review the page experience signals every year"],
+  ["h4","Page experience signals"],
+  ["table",[["Core Web Vitals","The page performs well in terms of loading, interactivity and visual stability (LCP, INP, CLS)<br>※FID: metric until February 2024<br>※INP: new metric replacing FID from March 2024"],
+            ["Mobile-friendly","The page is mobile-friendly"],["HTTPS","The page is served over HTTPS"],
+            ["No intrusive interstitials","Users can easily access the page content<br>※Interstitial: ads etc. displayed so as to hide or cover part of the content"]],{hc:true}],
+  ["h3","Incorporation into ranking factors"],
+  ["p","Enabled for mobile devices from August 2021."],["p","Started as part of the desktop ranking system from February 2022,"],["p","completed on March 4, 2022."],
+  ["p","From March 2024, INP replaced FID and was incorporated as a new metric."],
+  ["p","Desktop ranking is based on the same page experience signals as those released for mobile."],
+  I19.c,
+  ["h3","What are Core Web Vitals?"],
+  ["call","💡",[["p","<b>What are Web Vitals?</b>"],["p","Web Vitals is a Google initiative to provide unified guidance for quality signals considered essential to delivering a great user experience on the web."]]],
+  ["call","💡",[["p","<b>What are Core Web Vitals?</b>"],["p","Core Web Vitals are the three metrics considered particularly important among Web Vitals: “LCP”, “INP (FID)” and “CLS”."],["p","※FID: metric until February 2024; INP: new metric from March 2024"]]],
+  ["h3","PageSpeed Insights"],
+  ["p","The causes of CWV issues can be checked with PageSpeed Insights"],
+  I19.d,
+  ["p","▼ Each metric"], I19.e,
+  ["p","▼ Detailed issues"], I19.f, I19.g,
+  ["p","▼ Audited URL"], ["p",A(PSI)],
+  ["tog","h3","What is LCP?",[
+    ["p","<b>LCP: Largest Contentful Paint</b>"],
+    ["p","Indicates how quickly the user can see the largest content element after requesting the URL (page loading)."],
+    ["p","※Currently, the largest elements are images, videos and large block-level text elements"],
+    thr("en","LCP","2.5 s or less","4 s or less","Over 4 s"),
+    ["p","▼ LCP example (image)"], I19.h,
+    ["p","▼ LCP example (text)"], I19.i,
+    ["p","The largest element loads gradually, and the image in the rightmost frame finally becomes the LCP."],
+    ["p","※ From https://web.dev/optimize-lcp/"],
+    ["h4","Main causes and solutions for LCP"],
+    ["call","☹️",[["p","<b>Main causes</b>"],["p","Slow server response time, render-blocking time due to JavaScript and CSS, slow resource (images etc.) loading, client-side rendering time"]]],
+    ["call","🙂",[["p","<b>Main solutions</b>"],["ul",["Speed up server response time","Reduce the number of redirects","Remove unused CSS","Optimize images (compression, resizing, serving in next-gen formats, etc.)","Compress text","Optimize JavaScript (for sites rendering on the client side)"]],["p","Reference: Optimize Largest Contentful Paint"],["p",A("https://web.dev/optimize-lcp/")]]]
+  ]],
+  ["tog","h3","What is INP?",[
+    ["p","<b>INP: Interaction to Next Paint</b>"],
+    ["p","A metric that assesses a page's overall responsiveness to user interactions by observing the latency of all clicks, taps and keyboard interactions that occur throughout the lifespan of a user's visit to the page. The final INP value is the longest interaction observed."],
+    thr("en","INP","200 ms or less","500 ms or less","Over 500 ms"),
+    I19.j,
+    ["p","Two interactions are monitored, and since the one on the right takes longer, it is adopted as the INP value."],
+    ["h4","Main causes and solutions for INP"],
+    ["call","☹️",[["p","<b>Main causes</b>"],["p","JavaScript execution triggered by clicks, taps and keyboard operations"]]],
+    ["call","🙂",[["p","<b>Main solutions</b>"],["ul",["Optimize poor INP caused by JavaScript","Optimize long tasks","Optimize input delay","Optimize script evaluation","Run JavaScript off the browser's main thread","Optimize rendering","　Keep DOM size small","　Use content-visibility to lazily render off-screen elements","　Be aware of the performance cost when rendering HTML with JavaScript"]],["p","Reference: How to optimize Interaction to Next Paint (INP)"],["p",A("https://web.dev/articles/inp?hl=ja")]]]
+  ]],
+  ["tog","h3","What is CLS?",[
+    ["p","<b>CLS: Cumulative Layout Shift</b>"],
+    ["p","The amount of page layout movement (shift) during the loading phase, indicating how stable the page is (visual stability)."],
+    ["p","※CLS calculation = impact fraction × distance fraction"],
+    thr("en","CLS","0.1 or less","0.25 or less","Over 0.25"),
+    I19.k, I19.l,
+    ["ul",["When trying to read content, an image is inserted and the content moves down","When trying to click a button, an ad is inserted and the ad gets clicked instead"]],
+    ["p","Events like those above occur."],
+    ["h4","Main causes and solutions for CLS"],
+    ["call","☹️",[["p","<b>Main causes</b>"],["p","Images without dimensions, ads without dimensions, embeds and iframes (YouTube, Google Maps, social media, etc.), dynamic content, web fonts, etc."]]],
+    ["call","🙂",[["p","<b>Main solutions</b>"],["ul",["Always add width and height attributes to images","Reserve space where banners, ads, embeds and dynamic content will appear","Load a different font first before the web font<br>(use &lt;link rel=preload&gt; and font-display: optional)"]],["p","Reference: Optimize Cumulative Layout Shift"],["p",A("https://web.dev/optimize-cls/")]]],
+    I19.m
+  ]]
+ ]),
+ std("th",
+  P("Google ได้นำ Core Web Vitals มาใช้เป็นปัจจัยในการจัดอันดับในอัลกอริทึม","การปรับปรุงด้าน Core Web Vitals จะช่วยหลีกเลี่ยงการตกอันดับจากองค์ประกอบที่ทำให้ประสบการณ์ของผู้ใช้แย่ลง"),
+  P("มีหน้าที่ต้องปรับปรุงทั้งบนมือถือและ PC"),
+  P("กรุณาวิเคราะห์และปรับปรุงหน้าที่เกี่ยวข้องด้วย Google Search Console")
+ ).concat([
+  ["h4","ขั้นตอนการตรวจสอบ"],
+  ["ol",["เข้าสู่ระบบ Google Search Console","คลิก “Core Web Vitals (ตัวชี้วัดหลักของเว็บ)” ในส่วน “Experience (ประสบการณ์)” ที่เมนูด้านซ้าย","จะแสดงกราฟของ “มือถือ” และ “PC” ให้คลิก “Open report (เปิดรายงาน)” ของฝั่งที่ต้องการตรวจสอบ"]],
+  I19.a, I19.b,
+  ["h3","ประสบการณ์ของผู้ใช้ (User Experience)"],
+  ["p","สัญญาณสำคัญที่ทำให้หน้าได้รับการประเมินว่ามีประสบการณ์การใช้งานหน้าเว็บ (Page Experience) ที่ดีใน Google Search"],
+  ["p","※Google มีแผนทบทวนสัญญาณ Page Experience ทุกปี"],
+  ["h4","สัญญาณ Page Experience"],
+  ["table",[["Core Web Vitals<br>(ตัวชี้วัดหลักของเว็บ)","หน้ามีประสิทธิภาพดีในด้านการโหลด การโต้ตอบ และความเสถียรของการแสดงผล (LCP, INP, CLS)<br>※FID: ตัวชี้วัดจนถึงกุมภาพันธ์ 2024<br>※INP: ตัวชี้วัดใหม่ที่ใช้แทน FID ตั้งแต่มีนาคม 2024"],
+            ["เป็นมิตรกับมือถือ","หน้าเป็นมิตรกับมือถือ (Mobile-friendly)"],["HTTPS","หน้าให้บริการผ่าน HTTPS"],
+            ["ไม่มี Interstitial ที่สร้างความรำคาญ","ผู้ใช้สามารถเข้าถึงเนื้อหาของหน้าได้ง่าย<br>※Interstitial: โฆษณา ฯลฯ ที่แสดงโดยบังหรือปิดทับเนื้อหาบางส่วน"]],{hc:true}],
+  ["h3","การนำมาใช้เป็นปัจจัยการจัดอันดับ"],
+  ["p","เริ่มมีผลกับอุปกรณ์มือถือตั้งแต่สิงหาคม 2021"],["p","เริ่มใช้เป็นส่วนหนึ่งของระบบจัดอันดับสำหรับ PC ตั้งแต่กุมภาพันธ์ 2022"],["p","และเสร็จสมบูรณ์เมื่อวันที่ 4 มีนาคม 2022"],
+  ["p","ตั้งแต่มีนาคม 2024 INP ได้เข้ามาแทนที่ FID และถูกนำมาใช้เป็นตัวชี้วัดใหม่"],
+  ["p","การจัดอันดับสำหรับ PC ใช้สัญญาณ Page Experience ชุดเดียวกับที่เปิดใช้สำหรับมือถือ"],
+  I19.c,
+  ["h3","Core Web Vitals คืออะไร"],
+  ["call","💡",[["p","<b>Web Vitals คืออะไร</b>"],["p","Web Vitals คือโครงการของ Google ที่ให้คำแนะนำแบบรวมศูนย์เกี่ยวกับสัญญาณคุณภาพที่ถือว่าสำคัญต่อการมอบประสบการณ์ผู้ใช้ที่ดีบนเว็บ"]]],
+  ["call","💡",[["p","<b>Core Web Vitals คืออะไร</b>"],["p","Core Web Vitals คือ 3 ตัวชี้วัดที่ถือว่าสำคัญเป็นพิเศษใน Web Vitals ได้แก่ “LCP”, “INP (FID)” และ “CLS”"],["p","※FID: ตัวชี้วัดจนถึงกุมภาพันธ์ 2024, INP: ตัวชี้วัดใหม่ตั้งแต่มีนาคม 2024"]]],
+  ["h3","PageSpeed Insights"],
+  ["p","สามารถตรวจสอบสาเหตุของปัญหา CWV ได้ด้วย PageSpeed Insights"],
+  I19.d,
+  ["p","▼ ตัวชี้วัดแต่ละตัว"], I19.e,
+  ["p","▼ ปัญหาโดยละเอียด"], I19.f, I19.g,
+  ["p","▼ URL ที่ตรวจสอบ"], ["p",A(PSI)],
+  ["tog","h3","LCP คืออะไร",[
+    ["p","<b>LCP: Largest Contentful Paint</b>"],
+    ["p","แสดงว่าหลังจากผู้ใช้ร้องขอ URL แล้ว ผู้ใช้จะเห็นองค์ประกอบเนื้อหาที่ใหญ่ที่สุดได้เร็วเพียงใด (การโหลดหน้า)"],
+    ["p","※ปัจจุบัน องค์ประกอบที่ใหญ่ที่สุดได้แก่ รูปภาพ วิดีโอ และองค์ประกอบข้อความระดับบล็อกขนาดใหญ่"],
+    thr("th","LCP","ไม่เกิน 2.5 วินาที","ไม่เกิน 4 วินาที","เกิน 4 วินาที"),
+    ["p","▼ ตัวอย่าง LCP (รูปภาพ)"], I19.h,
+    ["p","▼ ตัวอย่าง LCP (ข้อความ)"], I19.i,
+    ["p","องค์ประกอบที่ใหญ่ที่สุดจะค่อย ๆ โหลด และรูปภาพในเฟรมขวาสุดจะกลายเป็น LCP ในที่สุด"],
+    ["p","※ จาก https://web.dev/optimize-lcp/"],
+    ["h4","สาเหตุหลักและวิธีแก้ไข LCP"],
+    ["call","☹️",[["p","<b>สาเหตุหลัก</b>"],["p","เซิร์ฟเวอร์ตอบสนองช้า เวลาที่การเรนเดอร์ถูกบล็อกโดย JavaScript และ CSS การโหลดทรัพยากร (เช่น รูปภาพ) ช้า เวลาในการเรนเดอร์ฝั่ง Client"]]],
+    ["call","🙂",[["p","<b>วิธีแก้ไขหลัก</b>"],["ul",["เพิ่มความเร็วในการตอบสนองของเซิร์ฟเวอร์","ลดจำนวนครั้งของการ Redirect","ลด CSS ที่ไม่ได้ใช้งาน","ปรับแต่งรูปภาพ (บีบอัด ปรับขนาด ส่งในฟอร์แมตรุ่นใหม่ ฯลฯ)","บีบอัดข้อความ","ปรับแต่ง JavaScript (สำหรับเว็บไซต์ที่เรนเดอร์ฝั่ง Client)"]],["p","อ้างอิง: การปรับแต่ง Largest Contentful Paint"],["p",A("https://web.dev/optimize-lcp/")]]]
+  ]],
+  ["tog","h3","INP คืออะไร",[
+    ["p","<b>INP: Interaction to Next Paint</b>"],
+    ["p","ตัวชี้วัดที่ใช้ประเมินการตอบสนองโดยรวมของหน้าต่อการโต้ตอบของผู้ใช้ โดยติดตามเวลาที่หน้าใช้ในการตอบสนองต่อการคลิก การแตะ และการใช้แป้นพิมพ์ทั้งหมดตลอดช่วงเวลาที่ผู้ใช้อยู่ในหน้า ค่า INP สุดท้ายคือเวลาที่นานที่สุดของการโต้ตอบที่ติดตามได้"],
+    thr("th","INP","ไม่เกิน 200 มิลลิวินาที","ไม่เกิน 500 มิลลิวินาที","เกิน 500 มิลลิวินาที"),
+    I19.j,
+    ["p","มีการติดตามการโต้ตอบ 2 ครั้ง และเนื่องจากการโต้ตอบทางขวาใช้เวลานานกว่า จึงถูกใช้เป็นค่า INP"],
+    ["h4","สาเหตุหลักและวิธีแก้ไข INP"],
+    ["call","☹️",[["p","<b>สาเหตุหลัก</b>"],["p","การทำงานของ JavaScript ที่เกิดจากการคลิก การแตะ และการใช้แป้นพิมพ์"]]],
+    ["call","🙂",[["p","<b>วิธีแก้ไขหลัก</b>"],["ul",["ปรับแต่ง INP ที่ไม่ดีซึ่งเกิดจาก JavaScript","ปรับแต่งงาน (Task) ที่ใช้เวลานาน","ปรับแต่ง Input Delay","ปรับแต่งการประมวลผลสคริปต์","รัน JavaScript นอก Main Thread ของเบราว์เซอร์","ปรับแต่งการเรนเดอร์","　ลดขนาด DOM ให้น้อยที่สุด","　ใช้ content-visibility เพื่อหน่วงการเรนเดอร์องค์ประกอบที่อยู่นอกหน้าจอ","　ระวังต้นทุนด้านประสิทธิภาพเมื่อเรนเดอร์ HTML ด้วย JavaScript"]],["p","อ้างอิง: วิธีปรับแต่ง Interaction to Next Paint (INP)"],["p",A("https://web.dev/articles/inp?hl=ja")]]]
+  ]],
+  ["tog","h3","CLS คืออะไร",[
+    ["p","<b>CLS: Cumulative Layout Shift</b>"],
+    ["p","ปริมาณการเคลื่อนที่ (การเลื่อน) ของเลย์เอาต์หน้าในช่วงการโหลด ซึ่งแสดงถึงความเสถียรของหน้า (ความเสถียรของการแสดงผล)"],
+    ["p","※วิธีคำนวณ CLS = สัดส่วนพื้นที่ที่ได้รับผลกระทบ × สัดส่วนระยะที่เคลื่อนที่"],
+    thr("th","CLS","ไม่เกิน 0.1","ไม่เกิน 0.25","เกิน 0.25"),
+    I19.k, I19.l,
+    ["ul",["กำลังจะอ่านเนื้อหา แต่มีรูปภาพแทรกเข้ามาทำให้เนื้อหาเลื่อนลง","กำลังจะคลิกปุ่ม แต่มีโฆษณาแทรกเข้ามาทำให้คลิกโดนโฆษณา"]],
+    ["p","จะเกิดเหตุการณ์ในลักษณะข้างต้น"],
+    ["h4","สาเหตุหลักและวิธีแก้ไข CLS"],
+    ["call","☹️",[["p","<b>สาเหตุหลัก</b>"],["p","รูปภาพที่ไม่ได้ระบุขนาด โฆษณาที่ไม่ได้ระบุขนาด องค์ประกอบที่ฝังและ iframe (YouTube, Google Map, SNS ฯลฯ) เนื้อหาแบบไดนามิก Web Font ฯลฯ"]]],
+    ["call","🙂",[["p","<b>วิธีแก้ไขหลัก</b>"],["ul",["ใส่ Attribute width และ height ให้รูปภาพเสมอ","เตรียมพื้นที่ไว้ล่วงหน้าในตำแหน่งที่แบนเนอร์ โฆษณา องค์ประกอบที่ฝัง และเนื้อหาแบบไดนามิกจะแสดง","ให้โหลดฟอนต์อื่นก่อน Web Font<br>(ใช้ &lt;link rel=preload&gt; และ font-display: optional)"]],["p","อ้างอิง: การปรับแต่ง Cumulative Layout Shift"],["p",A("https://web.dev/optimize-cls/")]]],
+    I19.m
+  ]]
+ ])
+);
+
+/* General 20 — structured data (inline database) */
+add("n20",1,20,3,true,{en:"Structured data measures",th:"มาตรการด้าน Structured Data"},
+ [["sd"]], [["sd"]]
+);
+
+add("n21",1,21,3,false,{en:"E-E-A-T: Demonstrating first-hand information and Experience",th:"E-E-A-T: การพิสูจน์ข้อมูลปฐมภูมิและประสบการณ์ (Experience)"},
+ std("en",
+  P("Google emphasizes E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness). In particular, “Experience”, added in 2022, is highly valued as first-hand information based on real experience. Summaries of secondary information alone are less likely to be valued, and this also affects the reliability of the whole site."),
+  P("Articles and product reviews lack first-hand information.","Example:"),
+  P("Please add the writer's own experiences, original research results, original photos and videos, etc. to articles and content. For product reviews, impressions from actually using the product are effective; for visit reports, on-site photos etc. are effective.")),
+ std("th",
+  P("Google ให้ความสำคัญกับ E-E-A-T (ประสบการณ์ ความเชี่ยวชาญ ความน่าเชื่อถือในฐานะผู้มีอำนาจ ความไว้วางใจ) โดยเฉพาะ “ประสบการณ์ (Experience)” ที่เพิ่มเข้ามาในปี 2022 ได้รับการประเมินสูงในฐานะข้อมูลปฐมภูมิที่มาจากประสบการณ์จริง การสรุปข้อมูลทุติยภูมิเพียงอย่างเดียวมักไม่ได้รับการประเมินที่ดี และยังส่งผลต่อความน่าเชื่อถือของทั้งเว็บไซต์"),
+  P("บทความและรีวิวสินค้ายังไม่มีข้อมูลปฐมภูมิ","ตัวอย่าง:"),
+  P("กรุณาเพิ่มประสบการณ์ของผู้เขียนเอง ผลการสำรวจเฉพาะ รูปภาพหรือวิดีโอต้นฉบับ ฯลฯ ลงในบทความและเนื้อหา สำหรับรีวิวสินค้า ความรู้สึกจากการใช้งานจริงจะได้ผลดี และสำหรับบันทึกการเยี่ยมชม รูปภาพจากสถานที่จริงจะได้ผลดี"))
+);
+add("n22",1,22,3,false,{en:"Helpful content: Site-wide topical audit",th:"Helpful Content: ตรวจสอบความเป็นธีมเดียวกันของทั้งเว็บไซต์"},
+ std("en",
+  P("The helpful content system is a “site-wide signal” that values a consistent theme and expertise across the whole site. If off-topic subjects are mixed in, there is a risk that the evaluation of the whole site will drop."),
+  P("The site includes content that does not fit the site's theme and is aimed solely at gaining traffic.","Example:"),
+  P("Please check whether there is content that deviates from the site's main purpose and area of expertise and is aimed solely at gaining traffic. For such content, consider deleting it, applying noindex, or moving it to a separate domain.")),
+ std("th",
+  P("ระบบ Helpful Content เป็น “สัญญาณระดับทั้งเว็บไซต์ (Site-wide Signal)” ที่ประเมินความสอดคล้องของธีมและความเชี่ยวชาญทั่วทั้งเว็บไซต์ หากมีหัวข้อที่อยู่นอกความเชี่ยวชาญปะปนอยู่ มีความเสี่ยงที่การประเมินของทั้งเว็บไซต์จะลดลง"),
+  P("มีเนื้อหาที่ไม่เข้ากับธีมของเว็บไซต์และมีจุดประสงค์เพียงเพื่อดึง Traffic","ตัวอย่าง:"),
+  P("กรุณาตรวจสอบว่ามีเนื้อหาที่ออกนอกจุดประสงค์หลักหรือความเชี่ยวชาญของเว็บไซต์ และมีจุดประสงค์เพียงเพื่อดึง Traffic หรือไม่ สำหรับเนื้อหาที่เข้าข่าย ให้พิจารณาลบ ตั้งค่า noindex หรือย้ายไปยังโดเมนอื่น"))
+);
+add("n23",1,23,3,false,{en:"Spam policy: Checking for misuse of AI content",th:"นโยบายสแปม: ตรวจสอบการใช้เนื้อหา AI ในทางที่ผิด"},
+ std("en",
+  P("Google does not prohibit the use of AI itself, but mass-producing low-quality content for the purpose of manipulating rankings is regarded as a violation of the spam policy on “scaled content abuse”. AI content without human oversight or added value risks lowering the evaluation of the whole site."),
+  P("The content is highly likely to be regarded as AI-generated.","Example:"),
+  P("Please check whether there is AI content published without human editing or fact-checking. Audit for content that merely paraphrases existing information, and for unnatural AI-style writing or factual errors (hallucinations); where applicable, consider rewriting it with your own insights and first-hand information, or deleting it.","<b>Example of a checking tool</b>",A("https://ai-tool.userlocal.jp/ai_classifier"))),
+ std("th",
+  P("Google ไม่ได้ห้ามการใช้ AI แต่การผลิตเนื้อหาคุณภาพต่ำจำนวนมากโดยมีจุดประสงค์เพื่อปั่นอันดับ ถือเป็นการละเมิดนโยบายสแปมเรื่อง “การใช้เนื้อหาที่สร้างขึ้นจำนวนมากในทางที่ผิด (Scaled Content Abuse)” เนื้อหา AI ที่ไม่มีการกำกับดูแลโดยมนุษย์หรือไม่มีคุณค่าเพิ่ม มีความเสี่ยงที่จะทำให้การประเมินของทั้งเว็บไซต์ลดลง"),
+  P("เนื้อหามีความเป็นไปได้สูงที่จะถูกมองว่าสร้างขึ้นด้วย AI","ตัวอย่าง:"),
+  P("กรุณาตรวจสอบว่ามีเนื้อหา AI ที่เผยแพร่โดยไม่ผ่านการแก้ไขหรือตรวจสอบข้อเท็จจริงโดยมนุษย์หรือไม่ ตรวจสอบเนื้อหาที่เป็นเพียงการเรียบเรียงข้อมูลเดิมใหม่ รวมถึงสำนวนที่ไม่เป็นธรรมชาติแบบ AI หรือข้อมูลที่ผิดข้อเท็จจริง (Hallucination) หากพบ ให้พิจารณาเขียนใหม่โดยเพิ่มมุมมองของตนเองและข้อมูลปฐมภูมิ หรือลบออก","<b>ตัวอย่างเครื่องมือตรวจสอบ</b>",A("https://ai-tool.userlocal.jp/ai_classifier")))
+);
+add("n24",1,24,3,false,{en:"Spam policy: Complying with the new spam policies",th:"นโยบายสแปม: รองรับนโยบายสแปมใหม่"},
+ std("en",
+  P("The 2024 update strengthened the policies on “site reputation abuse” and “expired domain abuse”. Even if unintentional, if the site falls under these, a penalty may be imposed on the whole site."),
+  P("Subdomains or subdirectories are being lent to third parties.","Example:"),
+  P("Please check whether subdomains or subdirectories are lent to third parties and content unrelated to your site's reputation is published. Also check that the site's domain was not acquired for the purpose of exploiting its past reputation.")),
+ std("th",
+  P("การอัปเดตปี 2024 ได้เข้มงวดนโยบายเกี่ยวกับ “การใช้ชื่อเสียงของเว็บไซต์ในทางที่ผิด (Site Reputation Abuse)” และ “การใช้โดเมนที่หมดอายุในทางที่ผิด (Expired Domain Abuse)” แม้จะไม่ได้ตั้งใจ แต่หากเข้าข่าย ทั้งเว็บไซต์อาจถูกลงโทษ (Penalty)"),
+  P("มีการให้บุคคลที่สามเช่าใช้ Subdomain หรือ Subdirectory","ตัวอย่าง:"),
+  P("กรุณาตรวจสอบว่ามีการให้บุคคลที่สามเช่าใช้ Subdomain หรือ Subdirectory และมีการเผยแพร่เนื้อหาที่ไม่เกี่ยวข้องกับชื่อเสียงของเว็บไซต์หรือไม่ นอกจากนี้ กรุณาตรวจสอบว่าโดเมนของเว็บไซต์ไม่ได้ถูกซื้อมาเพื่อใช้ประโยชน์จากชื่อเสียงในอดีตในทางที่ผิด"))
+);
+
+/* ---------- DB-type ---------- */
+const M = OD+"/eyeglasses/men.html";
+const IMG_D1 = IMG("13a82b78-a897-43d7-bd5c-cbc167f4d5cf","3a4426fa-47b5-80aa-95ee-d04905d352c7");
+add("d1",3,1,3,true,{en:"Handling search results with zero hits",th:"จัดการหน้าผลการค้นหาที่มี 0 รายการ"},
+ std("en",
+  P("If a large number of search-result pages with zero results are recognized, Google may rate it as a site with a lot of low-quality content, and rankings across the whole site may drop.","We recommend changing the specification so that a noindex tag is automatically placed on search-result pages with zero results."),
+  [["p","A large number of zero-result pages exist; although they are not indexed, no measures to avoid duplication have been taken."],["p","Example: "+A(M+"?frame_shape_id=26033&frametype_id=11371")],IMG_D1],
+  P("We recommend changing the specification so that a noindex tag is automatically placed on search-result pages with zero results.",CAP.en).concat(REF_LQ.en(false))),
+ std("th",
+  P("หากหน้าผลการค้นหาที่มี 0 รายการถูกรับรู้เป็นจำนวนมาก Google อาจประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์อาจลดลง","แนะนำให้เปลี่ยนสเปกให้มีการติดตั้งแท็ก noindex โดยอัตโนมัติในหน้าผลการค้นหาที่มี 0 รายการ"),
+  [["p","มีหน้าผลการค้นหา 0 รายการอยู่เป็นจำนวนมาก แม้จะไม่ถูก Index แต่ยังไม่มีมาตรการป้องกันความซ้ำซ้อน"],["p","ตัวอย่าง: "+A(M+"?frame_shape_id=26033&frametype_id=11371")],IMG_D1],
+  P("แนะนำให้เปลี่ยนสเปกให้มีการติดตั้งแท็ก noindex โดยอัตโนมัติในหน้าผลการค้นหาที่มี 0 รายการ",CAP.th).concat(REF_LQ.th(false)))
+);
+const IMG_D2 = IMG("2be7ba38-259d-4bd7-a671-70f6ccf866d2","3a4426fa-47b5-8083-947c-db553eac9403");
+const axes = ["FRAME TYPE","FRAME SHAPE","FRAME COLOR","BRANDS","PRICE","GENDER","MATERIAL"];
+function d2combos(L){
+  const ng = "NG: ";
+  const t = L==="en" ? ["▼ URLs that may be generated","Combination of ① and ②","Combination of ① and ③","Combination of ② and ③"] : ["▼ URL ที่สร้างได้ (OK)","การผสม ① และ ②","การผสม ① และ ③","การผสม ② และ ③"];
+  return [["p",t[0]],
+    ["p",t[1]],["p",A(M+"?frametype_id=11370&frame_shape_id=26031")],["p",ng+A(M+"?frame_shape_id=26031&frametype_id=11370")],
+    ["p",t[2]],["p",A(M+"?frametype_id=11370&frame_color_id=13325")],["p",ng+A(M+"?frame_color_id=13325&frametype_id=11370")],
+    ["p",t[3]],["p",A(M+"?frame_shape_id=26031&frame_color_id=13323")],["p",ng+A(M+"?frame_color_id=13323&frame_shape_id=26031")]];
+}
+add("d2",3,2,3,true,{en:"Handling how combined-filter URLs are generated",th:"จัดการวิธีสร้าง URL จากการผสมเงื่อนไขค้นหา"},
+ std("en",
+  P("If search engines can access pages with the same information through multiple different URLs, the crawler may not evaluate the page correctly. Prioritizing the search axes narrows down the URLs generated and suppresses duplicate pages, so we recommend assigning a priority to each search axis when generating combined URLs."),
+  [["p","When combining multiple search axes, the priority of the axes is not clearly defined, so even for the same combination of search conditions, URLs are generated with the conditions in reversed order."],
+   ["p","Although these exist in large numbers and are not indexed, no measures to avoid duplication have been taken."],
+   ["p","① "+A(M+"?frametype_id=11370&frame_color_id=13325")],["p","② "+A(M+"?frame_color_id=13325&frametype_id=11370")],
+   ["p","※Although the URLs ① and ② differ, the combined search conditions are the same, so the content on the pages is similar"],IMG_D2],
+  [["p","We recommend assigning a priority to each search axis when generating combined URLs. Prioritizing the search axes narrows down the URLs generated and suppresses duplicate pages."],
+   ["p","Also, please make sure no internal links point to URLs with the combination order reversed. In addition, do not list URLs with the combination order reversed in sitemap.xml."],
+   ["p","If there are the search axes FRAME TYPE, FRAME SHAPE, FRAME COLOR, BRANDS, PRICE, GENDER and MATERIAL, use the following priority order:"],
+   ["ol",axes]].concat(d2combos("en"))),
+ std("th",
+  P("หากเครื่องมือค้นหาสามารถเข้าถึงหน้าที่มีข้อมูลเดียวกันผ่าน URL ที่แตกต่างกันหลาย URL Crawler อาจประเมินหน้าได้ไม่ถูกต้อง การกำหนดลำดับความสำคัญให้แกนการค้นหาจะช่วยจำกัด URL ที่ถูกสร้างและลดการเกิดหน้าซ้ำ จึงแนะนำให้กำหนดลำดับความสำคัญให้แต่ละแกนการค้นหาเมื่อสร้าง URL แบบผสมเงื่อนไข"),
+  [["p","เมื่อผสมแกนการค้นหาหลายแกน ยังไม่มีการกำหนดลำดับความสำคัญของแกนการค้นหาอย่างชัดเจน ทำให้แม้จะเป็นการผสมเงื่อนไขเดียวกัน ก็มีการสร้าง URL ที่ลำดับเงื่อนไขสลับกัน"],
+   ["p","แม้จะมีอยู่เป็นจำนวนมากและไม่ถูก Index แต่ยังไม่มีมาตรการป้องกันความซ้ำซ้อน"],
+   ["p","① "+A(M+"?frametype_id=11370&frame_color_id=13325")],["p","② "+A(M+"?frame_color_id=13325&frametype_id=11370")],
+   ["p","※แม้ URL ① และ ② จะต่างกัน แต่เงื่อนไขการค้นหาที่ผสมกันนั้นเหมือนกัน เนื้อหาในหน้าจึงคล้ายกัน"],IMG_D2],
+  [["p","แนะนำให้กำหนดลำดับความสำคัญให้แต่ละแกนการค้นหาเมื่อสร้าง URL แบบผสมเงื่อนไข การกำหนดลำดับความสำคัญจะช่วยจำกัด URL ที่ถูกสร้างและลดการเกิดหน้าซ้ำ"],
+   ["p","นอกจากนี้ กรุณาอย่าติดตั้งลิงก์ภายในไปยัง URL ที่ลำดับการผสมสลับกัน และอย่าระบุ URL ที่ลำดับการผสมสลับกันใน sitemap.xml"],
+   ["p","หากมีแกนการค้นหา FRAME TYPE, FRAME SHAPE, FRAME COLOR, BRANDS, PRICE, GENDER และ MATERIAL ให้ใช้ลำดับความสำคัญดังนี้"],
+   ["ol",axes]].concat(d2combos("th")))
+);
+add("d3",3,3,3,true,{en:"Index control for list pages",th:"การควบคุม Index ของหน้ารายการ (List Pages)"},
+ std("en",
+  P("List pages play the role of informing Google of the existence of the detail pages listed on them that you want evaluated. If canonical or noindex tags are not working correctly, or if paginated URLs of list pages are handled incorrectly, pages that should be evaluated may not be.","We recommend placing a self-referencing canonical tag (a canonical tag pointing to the page itself) on list-page URLs that have a non-zero number of listings (including URLs from page 2 onward)."),
+  [["p","Pages that should be indexed are set so that they are not indexed."],["p","Example: the system is such that Google cannot discover page 2 and beyond."],["p",A(M+"?pageCount=27",esc(M+"?pageCount=2"))]],
+  P("Please add list-page URLs (including URLs from page 2 onward) to sitemap.xml, and fix the site so that URLs from page 2 onward can be accessed directly.")),
+ std("th",
+  P("หน้ารายการมีหน้าที่แจ้งให้ Google รู้ถึงการมีอยู่ของหน้ารายละเอียดที่แสดงอยู่ในหน้านั้นซึ่งต้องการให้ได้รับการประเมิน หากแท็ก canonical หรือ noindex ทำงานไม่ถูกต้อง หรือจัดการ URL การแบ่งหน้า (Paging) ของหน้ารายการไม่ถูกต้อง หน้าที่ควรได้รับการประเมินอาจไม่ได้รับการประเมิน","แนะนำให้ติดตั้งแท็ก canonical แบบอ้างอิงตนเอง (Self-referencing canonical: แท็ก canonical ที่ระบุปลายทางเป็นหน้าตนเอง) ใน URL ของหน้ารายการที่มีจำนวนรายการไม่เป็น 0 (รวมถึง URL ตั้งแต่หน้าที่ 2 เป็นต้นไป)"),
+  [["p","หน้าที่ควรถูก Index ถูกตั้งค่าไว้ไม่ให้ถูก Index"],["p","ตัวอย่าง: ระบบทำให้ Google ไม่สามารถค้นพบหน้าที่ 2 เป็นต้นไปได้"],["p",A(M+"?pageCount=27",esc(M+"?pageCount=2"))]],
+  P("กรุณาเพิ่ม URL ของหน้ารายการ (รวมถึง URL ตั้งแต่หน้าที่ 2 เป็นต้นไป) ใน sitemap.xml และแก้ไขให้สามารถเข้าถึง URL ตั้งแต่หน้าที่ 2 เป็นต้นไปได้โดยตรง"))
+);
+const IMG_D4 = IMG("263ea7e9-cf2d-4aec-845d-a65ee439accb","389426fa-47b5-80da-b456-e6c7c8b94762");
+add("d4",3,4,3,true,{en:"Handling narrowed-down (filtered) search results",th:"จัดการผลการค้นหาที่กรองด้วยหลายเงื่อนไข"},
+ std("en",
+  P("As search conditions increase, the number of listings may become small or the content may become similar. If many such similar pages exist on the site, Google rates it as a site with a lot of low-quality content, and rankings across the whole site drop.","We recommend placing a noindex tag on filtered search-result pages with multiple conditions that receive almost no traffic."),
+  [["p","Search-result pages generated by combining multiple conditions, with few listings or similar content, can be generated."],["p","Example:"],["p",A(M+"?frame_color_id=13331&frame_shape_id=26031")],["p",A(M+"?frame_color_id=13331&frametype_id=11371")],IMG_D4],
+  P("We recommend placing a noindex tag on filtered search-result pages with multiple conditions that receive almost no traffic.",A(M+"?frame_color_id=13331&frametype_id=11371"))),
+ std("th",
+  P("เมื่อเงื่อนไขการค้นหาเพิ่มขึ้น จำนวนรายการที่แสดงอาจลดลงหรือเนื้อหาอาจคล้ายกัน หากมีหน้าที่คล้ายกันเช่นนี้อยู่ในเว็บไซต์เป็นจำนวนมาก Google จะประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำจำนวนมาก และอันดับของทั้งเว็บไซต์จะลดลง","แนะนำให้ติดตั้งแท็ก noindex ในหน้าผลการค้นหาที่กรองด้วยหลายเงื่อนไขซึ่งแทบไม่มี Traffic เข้ามา"),
+  [["p","สามารถสร้างหน้าผลการค้นหาที่เกิดจากการผสมหลายเงื่อนไข ซึ่งมีจำนวนรายการน้อยหรือเนื้อหาคล้ายกันได้"],["p","ตัวอย่าง:"],["p",A(M+"?frame_color_id=13331&frame_shape_id=26031")],["p",A(M+"?frame_color_id=13331&frametype_id=11371")],IMG_D4],
+  P("แนะนำให้ติดตั้งแท็ก noindex ในหน้าผลการค้นหาที่กรองด้วยหลายเงื่อนไขซึ่งแทบไม่มี Traffic เข้ามา",A(M+"?frame_color_id=13331&frametype_id=11371")))
+);
+const IMG_D5 = IMG("b7ddb8e4-5b09-4569-bccd-bcf9af50eb49","389426fa-47b5-80de-8458-d3072509dde3");
+const U_SORT = M+"?dir=desc&gan_data=true&sort=created";
+add("d5",3,5,3,true,{en:"Handling sorted search results",th:"จัดการผลการค้นหาที่เรียงลำดับใหม่"},
+ std("en",
+  P("Sorted search-result pages only change the order of listings, and the displayed content hardly changes, so Google may evaluate them as similar pages. We recommend placing a canonical tag on sorted pages."),
+  [["p","Duplicate pages whose URLs differ from the canonical page due to changes in popularity order, number of items, etc. exist, generating pages whose search-result content is almost unchanged."],["p","Example:"],["p",A(U_SORT)],IMG_D5],
+  P("We recommend placing a canonical tag on sorted pages pointing to the page before sorting.",`Example: for ${A(U_SORT)}`,`place a canonical tag pointing to ${A(M)}`)),
+ std("th",
+  P("หน้าผลการค้นหาที่เรียงลำดับใหม่จะเปลี่ยนเพียงลำดับการแสดงผล เนื้อหาที่แสดงแทบไม่เปลี่ยนแปลง จึงอาจถูก Google ประเมินว่าเป็นหน้าที่คล้ายกัน แนะนำให้ติดตั้งแท็ก canonical ในหน้าหลังการเรียงลำดับ"),
+  [["p","มีหน้าซ้ำที่ URL ต่างจากหน้าหลักเนื่องจากการเปลี่ยนการเรียงตามความนิยม จำนวนรายการ ฯลฯ ทำให้เกิดหน้าที่เนื้อหาผลการค้นหาแทบไม่เปลี่ยนแปลง"],["p","ตัวอย่าง:"],["p",A(U_SORT)],IMG_D5],
+  P("แนะนำให้ติดตั้งแท็ก canonical ในหน้าที่เรียงลำดับใหม่ โดยระบุปลายทางเป็นหน้าก่อนการเรียงลำดับ",`ตัวอย่าง: กรณีของ ${A(U_SORT)}`,`ให้ติดตั้งแท็ก canonical ที่ระบุไปยัง ${A(M)}`))
+);
+add("d6",3,6,3,true,{en:"Handling free-word search results",th:"จัดการผลการค้นหาด้วยคำค้นอิสระ (Free-word Search)"},
+ std("en",
+  P("If a large number of search-result pages for each search keyword are recognized, Google may rate it as a site with a lot of low-quality content (similar pages), and rankings across the whole site may drop.","We recommend a specification where a noindex tag is automatically placed on free-word search-result pages, and creating new dedicated feature pages only for frequently searched words."),
+  [["p","Although an individual URL is issued for each keyword the user searches for, index control is not applied to free-word search-result pages."],["p","Example:"],["p",A("https://www.owndays.com/sg/en/search?q=moriyama")]],
+  P("We recommend a specification where a noindex tag is automatically placed on free-word search-result pages, and creating new dedicated feature pages only for words frequently searched in free-word search.")),
+ std("th",
+  P("หากหน้าผลการค้นหาของแต่ละคีย์เวิร์ดถูกรับรู้เป็นจำนวนมาก Google อาจประเมินว่าเป็นเว็บไซต์ที่มีเนื้อหาคุณภาพต่ำ (หน้าที่คล้ายกัน) จำนวนมาก และอันดับของทั้งเว็บไซต์อาจลดลง","แนะนำให้กำหนดสเปกให้ติดตั้งแท็ก noindex โดยอัตโนมัติในหน้าผลการค้นหาด้วยคำค้นอิสระ และสร้างหน้าพิเศษ (Feature Page) ใหม่แยกต่างหากเฉพาะคำที่ถูกค้นหาบ่อย"),
+  [["p","แม้จะมีการออก URL แยกตามคีย์เวิร์ดที่ผู้ใช้ค้นหา แต่ยังไม่มีการควบคุม Index ของหน้าผลการค้นหาด้วยคำค้นอิสระ"],["p","ตัวอย่าง:"],["p",A("https://www.owndays.com/sg/en/search?q=moriyama")]],
+  P("แนะนำให้กำหนดสเปกให้ติดตั้งแท็ก noindex โดยอัตโนมัติในหน้าผลการค้นหาด้วยคำค้นอิสระ และสร้างหน้าพิเศษใหม่แยกต่างหากเฉพาะคำที่ถูกค้นหาบ่อยในการค้นหาด้วยคำค้นอิสระ"))
+);
+add("d7",3,7,3,false,{en:"Handling pages whose listing has ended",th:"จัดการหน้าที่สิ้นสุดการแสดงผลแล้ว"},
+ std("en",
+  P("If nearly identical pages containing only “This listing has ended” keep returning status code “200”, the site may be rated down as having many low-quality pages. When a listing ends, we recommend handling appropriate to the site type."),
+  P("Pages remain even after their listing period has ended.","Example:"),
+  [["p","We recommend the following:"],["ul",["When a listing ends, switch the status code to 404","When reviving past listing information, keep the same URL as previously published"]],["p",CAP.en]].concat(REF_LQ_OR.en())),
+ std("th",
+  P("หากหน้าที่มีเนื้อหาเกือบเหมือนกันซึ่งมีเพียงข้อความ “สิ้นสุดการแสดงผลแล้ว” ยังคงส่ง Status Code “200” เว็บไซต์อาจถูกลดการประเมินว่ามีหน้าคุณภาพต่ำจำนวนมาก เมื่อสิ้นสุดการแสดงผล แนะนำให้ดำเนินการอย่างเหมาะสมตามประเภทของเว็บไซต์"),
+  P("มีหน้าที่ยังคงอยู่แม้จะสิ้นสุดระยะเวลาการแสดงผลแล้ว","ตัวอย่าง:"),
+  [["p","แนะนำให้ดำเนินการดังนี้"],["ul",["เมื่อสิ้นสุดการแสดงผล ให้เปลี่ยน Status Code เป็น 404","เมื่อนำข้อมูลที่เคยแสดงในอดีตกลับมาใช้ ให้ใช้ URL เดิมที่เคยเผยแพร่"]],["p",CAP.th]].concat(REF_LQ_OR.th()))
+);
+const IMG_D8 = IMG("e3ab1d2c-479c-4f9f-9eec-9f08089332fb","3a4426fa-47b5-8045-b8a9-f2677574f32b");
+const U_PARAM = M+"?tab=22925&viewType=tile";
+add("d8",3,8,3,true,{en:"Handling tracking parameters",th:"จัดการพารามิเตอร์สำหรับการวัดผล (Tracking Parameters)"},
+ std("en",
+  P("When URLs differ, Google treats them as different pages. If search engines can access pages with the same information through multiple different URLs, the crawler may not evaluate the page correctly. For parameter URLs such as ad parameters where the page content does not change at all, we recommend placing a canonical tag."),
+  [["p","A large number of pages using parameters are being generated."],["p","Example: "+A(U_PARAM)],IMG_D8],
+  P("For parameter URLs such as ad parameters where the page content does not change at all, we recommend placing a canonical tag.",`Example: for ${A(U_PARAM)}`,`place a canonical tag pointing to ${A(M)}`,CAP.en).concat(REF_LQ.en(false))),
+ std("th",
+  P("เมื่อ URL ต่างกัน Google จะถือว่าเป็นคนละหน้า หากเครื่องมือค้นหาสามารถเข้าถึงหน้าที่มีข้อมูลเดียวกันผ่าน URL ที่แตกต่างกันหลาย URL Crawler อาจประเมินหน้าได้ไม่ถูกต้อง สำหรับ URL ที่มีพารามิเตอร์ เช่น พารามิเตอร์โฆษณา ซึ่งเนื้อหาในหน้าไม่เปลี่ยนแปลงเลย แนะนำให้ติดตั้งแท็ก canonical"),
+  [["p","มีการสร้างหน้าที่ใช้พารามิเตอร์เป็นจำนวนมาก"],["p","ตัวอย่าง: "+A(U_PARAM)],IMG_D8],
+  P("สำหรับ URL ที่มีพารามิเตอร์ เช่น พารามิเตอร์โฆษณา ซึ่งเนื้อหาในหน้าไม่เปลี่ยนแปลงเลย แนะนำให้ติดตั้งแท็ก canonical",`ตัวอย่าง: กรณีของ ${A(U_PARAM)}`,`ให้ติดตั้งแท็ก canonical ที่ระบุไปยัง ${A(M)}`,CAP.th).concat(REF_LQ.th(false)))
+);
+add("d9",3,9,3,false,{en:"Handling application forms",th:"จัดการหน้าฟอร์มสมัคร"},
+ std("en",
+  P("Application form pages tend to have nearly identical content, and when they are generated and recognized in large numbers, the site's evaluation may be lowered. If the application form URL differs for each application and multiple form URLs are generated, we recommend placing a noindex tag."),
+  P("A large number of application form pages with parameters such as IDs exist.","Example:"),
+  P("If the application form URL differs for each application and multiple form URLs are generated, we recommend placing a noindex tag.",CAP.en).concat(REF_LQ_OR.en())),
+ std("th",
+  P("หน้าฟอร์มสมัครมีแนวโน้มที่จะมีเนื้อหาเกือบเหมือนกัน และเมื่อถูกสร้างและรับรู้เป็นจำนวนมาก การประเมินเว็บไซต์อาจลดลง หาก URL ของฟอร์มสมัครแตกต่างกันในแต่ละการสมัครและเกิด URL ฟอร์มหลายรายการ แนะนำให้ติดตั้งแท็ก noindex"),
+  P("มีหน้าฟอร์มสมัครที่มีพารามิเตอร์ เช่น ID อยู่เป็นจำนวนมาก","ตัวอย่าง:"),
+  P("หาก URL ของฟอร์มสมัครแตกต่างกันในแต่ละการสมัครและเกิด URL ฟอร์มหลายรายการ แนะนำให้ติดตั้งแท็ก noindex",CAP.th).concat(REF_LQ_OR.th()))
+);
+add("d10",3,10,3,false,{en:"Handling CMS categories and tags",th:"จัดการหมวดหมู่และแท็กของ CMS"},
+ std("en",
+  P("If categories and tags are created without management, a large number of category or tag pages with only one related article may be generated. Since many such pages may lower the evaluation of the whole site, we recommend managing the creation of categories and tags."),
+  P("A large number of CMS category and tag pages are being created, generating many list pages with few items displayed.","Example:"),
+  P("We recommend placing a noindex tag on article list pages by author or publication month in the content directory, and on category and tag pages not expected to bring traffic.","We recommend managing tag creation so that multiple similar tags or tags with only one article are not created.",CAP.en).concat(REF_LQ_OR.en())),
+ std("th",
+  P("หากมีการสร้างหมวดหมู่และแท็กโดยไม่มีการจัดการ อาจเกิดหน้าหมวดหมู่หรือหน้าแท็กที่มีบทความเพียง 1 บทความเป็นจำนวนมาก เนื่องจากหน้าลักษณะนี้จำนวนมากอาจทำให้การประเมินของทั้งเว็บไซต์ลดลง จึงแนะนำให้จัดการการสร้างหมวดหมู่และแท็ก"),
+  P("มีการสร้างหน้าหมวดหมู่และหน้าแท็กของ CMS จำนวนมาก ทำให้เกิดหน้ารายการที่มีจำนวนรายการน้อยเป็นจำนวนมาก","ตัวอย่าง:"),
+  P("แนะนำให้ติดตั้งแท็ก noindex ในหน้ารายการบทความตามผู้เขียนหรือเดือนที่เผยแพร่ใน Content Directory และหน้าหมวดหมู่หรือหน้าแท็กที่ไม่มีแนวโน้มจะนำ Traffic เข้ามา","แนะนำให้จัดการการสร้างแท็ก เพื่อไม่ให้เกิดแท็กที่คล้ายกันหลายแท็ก หรือแท็กที่มีบทความเพียง 1 บทความ",CAP.th).concat(REF_LQ_OR.th()))
+);
+
+/* ---------- structured data DB (inside General 20) ---------- */
+const GSD = t => `https://developers.google.com/search/docs/appearance/structured-data/${t}?hl=ja`;
+const SD = [
+  {t:{en:"Article",th:"บทความ (Article)"}, p:{en:"Article pages",th:"หน้าบทความ"}, ref:GSD("article"), scope:"○", url:"https://www.owndays.com/sg/en/news/owndays-meets-201409", imp:"×", err:"", fix:{en:"Please implement Article structured data.",th:"กรุณาติดตั้ง Structured Data ของบทความ (Article)"}},
+  {t:{en:"Breadcrumb",th:"Breadcrumb"}, p:{en:"All pages",th:"ทุกหน้า"}, ref:GSD("breadcrumb"), scope:"○", url:OD+"/owndays-pc-pc2008n-2s-c2-eyeglasses.html", imp:"○", err:"", fix:null},
+  {t:{en:"Event",th:"อีเวนต์ (Event)"}, p:{en:"Pages listing event information",th:"หน้าที่แสดงข้อมูลอีเวนต์"}, ref:GSD("event"), scope:"×"},
+  {t:{en:"Job posting",th:"ประกาศรับสมัครงาน (Job Posting)"}, p:{en:"Job detail pages",th:"หน้ารายละเอียดตำแหน่งงาน"}, ref:GSD("job-posting"), scope:"×"},
+  {t:{en:"FAQ",th:"คำถามที่พบบ่อย (FAQ)"}, p:{en:"Pages listing FAQs",th:"หน้าที่แสดงคำถามที่พบบ่อย"}, ref:GSD("faqpage"), scope:"×"},
+  {t:{en:"Local business",th:"ธุรกิจท้องถิ่น (Local Business)"}, p:{en:"Store detail pages",th:"หน้ารายละเอียดร้านค้า"}, ref:GSD("local-business"), scope:"×"},
+  {t:{en:"Organization",th:"องค์กร (Organization)"}, p:{en:"Top page / company information page",th:"หน้าแรก / หน้าข้อมูลบริษัท"}, ref:GSD("organization"), scope:"○", url:OD, imp:"○", err:"", fix:null},
+  {t:{en:"Product",th:"สินค้า (Product)"}, p:{en:"Product detail pages",th:"หน้ารายละเอียดสินค้า"}, ref:GSD("product"), scope:"○", url:OD+"/owndays-pc-pc2008n-2s-c2-eyeglasses.html", imp:"○", err:"", fix:null},
+  {t:{en:"Video",th:"วิดีโอ (Video)"}, p:{en:"Pages with videos",th:"หน้าที่มีวิดีโอ"}, ref:GSD("video"), scope:"×"}
+];
+const shortUrl = u => { const s = u.replace(/^https?:\/\/(www\.)?/,""); return s.length > 28 ? s.slice(0,14)+"…"+s.slice(-6) : s; };
+
+/* ---------- state ---------- */
+let LANG = "en";
+try { const q = new URLSearchParams(location.search).get("lang"); const s = localStorage.getItem("sfr-lang"); LANG = (q==="th"||q==="en") ? q : (s==="th"||s==="en" ? s : "en"); } catch(e) {}
+let moreProps = false;
+const app = document.getElementById("app");
+
+/* ---------- block renderer ---------- */
+function rb(blocks){ return (typeof blocks === "string") ? `<p>${blocks}</p>` : blocks.map(rblk).join(""); }
+function rblk(b){
+  switch(b[0]){
+    case "h2": return `<h2>${b[1]}</h2>`;
+    case "h3": return `<h3>${b[1]}</h3>`;
+    case "h4": return `<h4>${b[1]}</h4>`;
+    case "p":  return `<p>${b[1]}</p>`;
+    case "ul": return `<ul>${b[1].map(x=>`<li>${x}</li>`).join("")}</ul>`;
+    case "ol": return `<ol>${b[1].map(x=>`<li>${x}</li>`).join("")}</ol>`;
+    case "code": return `<pre class="code"><code>${esc(b[1])}</code></pre>`;
+    case "img": return `<figure class="img"><img src="${esc(b[1])}" alt="" loading="lazy" referrerpolicy="no-referrer"></figure>`;
+    case "call": return `<div class="callout${b[1]==="💡"?"":" brown"}"><span class="ico">${b[1]}</span><div class="cb">${rb(b[2])}</div></div>`;
+    case "tog": return `<details class="toggle ${b[1]}"${b[4]?" open":""}><summary><span class="tri">${TRI}</span><span class="tt">${b[2]}</span></summary><div class="tb">${rb(b[3])}</div></details>`;
+    case "table": {
+      const o = b[2]||{};
+      const rows = b[1].map((r,i)=>`<tr>${r.map((c,j)=>{ const head = (o.hr&&i===0)||(o.hc&&j===0); return head?`<td class="hc">${c}</td>`:`<td>${c}</td>`; }).join("")}</tr>`).join("");
+      return `<div class="tbl-wrap"><table class="simple"><tbody>${rows}</tbody></table></div>`;
+    }
+    case "sd": return sdTable(true);
+    case "cols": return `<div class="cols">${b[1].map(c=>`<div>${rb(c)}</div>`).join("")}</div>`;
+    default: return "";
+  }
+}
+const TRI = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2.5 8.5 6 4 9.5z" fill="currentColor"/></svg>`;
+
+/* ---------- tags ---------- */
+const stars = n => "★".repeat(n)+"☆".repeat(3-n);
+const tagStatus = () => `<span class="tag red">${UI[LANG].stNot}</span>`;
+const tagJudge = fix => fix ? `<span class="tag blue">${UI[LANG].jFix}</span>` : `<span class="tag yel">${UI[LANG].jOk}</span>`;
+const itemNo = it => `${it.grp===3?UI[LANG].grpD:UI[LANG].grpN} ${it.n}`;
+const href = id => `#/p/${id}`;
+
+/* ---------- database views ---------- */
+function dbTable(rows, opts){
+  const u = UI[LANG];
+  const head = `<thead><tr><th>${u.colNo}</th><th>${u.colTitle}</th><th>${u.colPri}</th><th>${u.colJudge}</th><th>${u.colStatus}</th></tr></thead>`;
+  const body = rows.map(it=>`<tr data-go="${it.id}" tabindex="0"><td class="no">${itemNo(it)}<span class="open">${u.open}</span></td><td>${esc(it.title[LANG])}</td><td class="stars">${stars(it.pri)}</td><td>${tagJudge(it.fix)}</td><td>${tagStatus()}</td></tr>`).join("");
+  return `<div class="db-scroll"><table class="dbt">${head}<tbody>${body}</tbody></table>${rows.length?"":`<div class="db-empty">${u.noResults}</div>`}</div>`;
+}
+function dbBlock(k, full){
+  const u = UI[LANG];
+  const title = u["db"+k];
+  let rows = [], bar = "";
+  if (k===1) rows = ITEMS.filter(i=>i.grp===1);
+  if (k===3) rows = ITEMS.filter(i=>i.grp===3);
+  if (k===2) bar = `<div class="db-bar"><button type="button" class="chip">${esc(u.filterLbl)} ▾</button><button type="button" class="chip off">${u.editFilters}</button></div>`;
+  const t = full ? "" : `<a class="db-title" href="#/db/${k}">${esc(title)}</a>`;
+  return `<div class="db">${t}${bar}${dbTable(rows)}${full&&rows.length?`<div class="db-count">${u.count(rows.length)}</div>`:""}</div>`;
+}
+function sdTable(inline){
+  const u = UI[LANG];
+  const head = `<thead><tr>${u.sdCols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead>`;
+  const body = SD.map(r=>`<tr style="cursor:default"><td class="no">${esc(r.t[LANG])}</td><td>${esc(r.p[LANG])}</td><td>${A(r.ref, esc(shortUrl(r.ref)))}</td><td>${r.scope}</td><td>${r.url?A(r.url, esc(shortUrl(r.url))):""}</td><td>${r.imp||""}</td><td>${r.err||""}</td><td>${r.fix?esc(r.fix[LANG]):""}</td></tr>`).join("");
+  const t = inline ? `<a class="db-title" href="#/db/sd">${esc(u.sdTitle)}</a>` : "";
+  return `<div class="db">${t}<div class="db-scroll"><table class="dbt" style="min-width:980px">${head}<tbody>${body}</tbody></table></div></div>`;
+}
+
+/* ---------- main page content ---------- */
+const MAIN = {
+ en:{
+  toc:"Table of contents",
+  sec:[
+   ["intro","h2","Introduction"],["about","h3","About this document"],["notes","h3","Notes"],
+   ["importance","h2","Importance of on-site measures"],["imp1","h3","① Maximizing the effect of external links"],["imp2","h3","② Getting Google to properly recognize and evaluate pages"],["imp3","h3","③ Reducing the risk of penalties"],
+   ["trends","h2","Recent trends in search engines"],["friendly","h3","About search-engine friendliness"],["good","h4","○ Search-engine-friendly sites"],["bad","h4","× Sites that are not search-engine-friendly"],
+   ["fixes","h2","Specific fixes"]
+  ],
+  intro:[["p","URL: "+A(OD)]],
+  about:P("This request document (hereinafter “this document”) summarizes, among the on-site measures required for your website to rank higher, the points on which we would like your company to carry out the actual work.","When adding new pages or modifying existing pages, creating them in line with the contents of this document will allow you to build a strong website that is advantageous for ranking higher.","We kindly ask for your cooperation in achieving stable and continuous top rankings."),
+  notes:[["ul",["Regardless of purpose, unauthorized sharing, reproduction, reprinting or any other secondary use of the information obtained from this document is strictly prohibited. If such acts are discovered, we may take legal action.","This document has been prepared based on information and data we consider reliable, but we do not guarantee its accuracy or completeness.","We accept no responsibility whatsoever for any trouble or damage arising from the materials or information provided."]]],
+  imp1:P("With Google's recent algorithms, it has become difficult to rank higher simply by increasing external links while on-site measures remain insufficient.","To maximize the effect of the measures, please implement the on-site measures."),
+  imp2:P("No matter how good the content you publish on the site, Google cannot properly recognize and evaluate it unless it is properly coded.","To ensure the value of the site is properly reflected in its evaluation, the site needs to comply with the guidelines."),
+  imp3:P("Sites that take incorrect measures or have low-quality pages risk suddenly being downgraded by Google.","To achieve continuous rather than temporary top rankings, please fix any areas that may receive a negative evaluation."),
+  friendly:[["call","💡",P("Simply put, “search-engine friendly” means “favored by search engines”.","With the goal of “returning results that match user needs”, Google updates its algorithm several times every day.","It uses more than 200 factors, including the degree of match with the search keyword, to rank websites, and the algorithm becomes more sophisticated every day.","Recently there has been an increasingly strong tendency to emphasize content, but for content to be evaluated, the inside of the site needs to be in order.","Therefore, properly implementing on-site measures is important for ranking higher.")]],
+  good:["Sites with a unified theme across the whole site","Pages with content highly specialized in the keyword","Sites with abundant related content pages","Sites that link out to highly relevant sites","Sites with a clean content (link) hierarchy","Sites whose information is continuously updated","Sites to which information (pages) is continuously added","Sites that have been operated for many years"],
+  bad:["Sites that violate Google's guidelines","Sites without a unified theme","Sites with low-quality pages such as quoted content","Sites with little text content on the target pages","Sites that link out to low-relevance pages","Sites containing filtered words","Sites doing excessive SEO","Sites with high link density within blocks","Sites with pages that cannot be crawled","Sites with pages whose display speed is extremely slow","Sites with duplicate content"],
+  fixes:P("The audit items and results for this audit are as follows.","Specific measures are described on each No. page.")
+ },
+ th:{
+  toc:"สารบัญ",
+  sec:[
+   ["intro","h2","บทนำ"],["about","h3","เนื้อหาของเอกสารนี้"],["notes","h3","ข้อควรทราบ"],
+   ["importance","h2","ความสำคัญของมาตรการภายในเว็บไซต์ (On-site)"],["imp1","h3","① เพิ่มประสิทธิภาพของลิงก์ภายนอกให้สูงสุด"],["imp2","h3","② ทำให้ Google รับรู้และประเมินหน้าได้อย่างเหมาะสม"],["imp3","h3","③ ลดความเสี่ยงจากการถูกลงโทษ (Penalty)"],
+   ["trends","h2","แนวโน้มของเครื่องมือค้นหาในปัจจุบัน"],["friendly","h3","เกี่ยวกับความเป็นมิตรต่อเครื่องมือค้นหา (Search Engine Friendly)"],["good","h4","○ เว็บไซต์ที่เป็นมิตรต่อเครื่องมือค้นหา"],["bad","h4","× เว็บไซต์ที่ไม่เป็นมิตรต่อเครื่องมือค้นหา"],
+   ["fixes","h2","รายละเอียดการแก้ไข"]
+  ],
+  intro:[["p","URL: "+A(OD)]],
+  about:P("เอกสารขอดำเนินการฉบับนี้ (ต่อไปนี้เรียกว่า “เอกสารนี้”) สรุปประเด็นที่เราขอให้บริษัทของท่านดำเนินการจริง จากมาตรการภายในเว็บไซต์ที่จำเป็นต่อการทำให้เว็บไซต์ของท่านติดอันดับสูง","เมื่อเพิ่มหน้าใหม่หรือแก้ไขหน้าที่มีอยู่ หากสร้างหน้าตามเนื้อหาของเอกสารนี้ จะสามารถสร้างเว็บไซต์ที่แข็งแกร่งและได้เปรียบในการติดอันดับสูงได้","จึงขอความร่วมมือเพื่อให้เว็บไซต์ติดอันดับสูงได้อย่างมั่นคงและต่อเนื่อง"),
+  notes:[["ul",["ไม่ว่าจะด้วยวัตถุประสงค์ใด ห้ามแบ่งปัน ทำซ้ำ เผยแพร่ซ้ำ หรือนำข้อมูลที่ได้จากเอกสารนี้ไปใช้ประโยชน์ในรูปแบบอื่นโดยไม่ได้รับอนุญาตโดยเด็ดขาด หากพบการกระทำดังกล่าว บริษัทอาจดำเนินการทางกฎหมาย","เอกสารนี้จัดทำขึ้นจากข้อมูลและสถิติที่บริษัทพิจารณาแล้วว่าเชื่อถือได้ แต่ไม่รับประกันความถูกต้องหรือความครบถ้วนของข้อมูล","บริษัทจะไม่รับผิดชอบใด ๆ ต่อปัญหาหรือความเสียหายที่เกิดขึ้นจากเอกสารหรือข้อมูลที่ให้ไว้"]]],
+  imp1:P("ในอัลกอริทึมของ Google ปัจจุบัน หากมาตรการภายในเว็บไซต์ยังไม่เพียงพอ แม้จะเพิ่มลิงก์ภายนอกเพียงอย่างเดียวก็ยากที่จะติดอันดับสูง","เพื่อให้มาตรการต่าง ๆ เกิดผลสูงสุด จึงขอให้ดำเนินการมาตรการภายในเว็บไซต์"),
+  imp2:P("ไม่ว่าจะเผยแพร่เนื้อหาที่ดีเพียงใดบนเว็บไซต์ หากไม่ได้เขียนโค้ดอย่างเหมาะสม Google ก็ไม่สามารถรับรู้และประเมินได้อย่างเหมาะสม","เพื่อให้คุณค่าของเว็บไซต์สะท้อนออกมาในการประเมินอย่างถูกต้อง จำเป็นต้องทำให้เว็บไซต์เป็นไปตามแนวทาง (Guidelines)"),
+  imp3:P("เว็บไซต์ที่ใช้มาตรการที่ผิดหรือมีหน้าคุณภาพต่ำ มีความเสี่ยงที่จะถูก Google ลดการประเมินอย่างกะทันหัน","เพื่อให้ติดอันดับสูงอย่างต่อเนื่อง ไม่ใช่เพียงชั่วคราว จึงขอให้แก้ไขจุดที่อาจได้รับการประเมินในเชิงลบ"),
+  friendly:[["call","💡",P("กล่าวง่าย ๆ “Search Engine Friendly” หมายถึง “เป็นที่ชื่นชอบของเครื่องมือค้นหา”","Google อัปเดตอัลกอริทึมหลายครั้งในทุก ๆ วัน โดยมีเป้าหมายเพื่อ “แสดงผลลัพธ์ที่ตรงกับความต้องการของผู้ใช้”","ในการจัดอันดับเว็บไซต์ Google ใช้ปัจจัยมากกว่า 200 ปัจจัย รวมถึงระดับความตรงกับคีย์เวิร์ดที่ค้นหา และอัลกอริทึมก็มีความซับซ้อนมากขึ้นทุกวัน","ในระยะหลังมีแนวโน้มที่ให้ความสำคัญกับเนื้อหา (Content) มากขึ้น แต่การที่เนื้อหาจะได้รับการประเมิน จำเป็นต้องจัดโครงสร้างภายในเว็บไซต์ให้เรียบร้อย","ดังนั้นการดำเนินมาตรการภายในเว็บไซต์อย่างเหมาะสมจึงเป็นสิ่งสำคัญต่อการติดอันดับสูง")]],
+  good:["เว็บไซต์ที่มีธีมเป็นหนึ่งเดียวกันทั่วทั้งเว็บไซต์","หน้าที่มีเนื้อหาเชี่ยวชาญเฉพาะด้านเกี่ยวกับคีย์เวิร์ดสูง","เว็บไซต์ที่มีหน้าเนื้อหาที่เกี่ยวข้องอย่างหลากหลาย","เว็บไซต์ที่มีลิงก์ออกไปยังเว็บไซต์ที่มีความเกี่ยวข้องสูง","เว็บไซต์ที่มีลำดับชั้นเนื้อหา (ลำดับชั้นลิงก์) ที่เป็นระเบียบ","เว็บไซต์ที่มีการอัปเดตข้อมูลอย่างต่อเนื่อง","เว็บไซต์ที่มีการเพิ่มข้อมูล (หน้า) อย่างต่อเนื่อง","เว็บไซต์ที่ดำเนินงานมาเป็นเวลาหลายปี"],
+  bad:["เว็บไซต์ที่ละเมิดแนวทางของ Google","เว็บไซต์ที่ธีมไม่เป็นหนึ่งเดียวกัน","เว็บไซต์ที่มีหน้าคุณภาพต่ำ เช่น เนื้อหาที่ยกมาจากที่อื่น","เว็บไซต์ที่มีเนื้อหาข้อความในหน้าเป้าหมายน้อย","เว็บไซต์ที่มีลิงก์ออกไปยังหน้าที่มีความเกี่ยวข้องต่ำ","เว็บไซต์ที่มีคำที่ถูกกรอง (Filtering Words)","เว็บไซต์ที่ทำ SEO มากเกินไป","เว็บไซต์ที่มีความหนาแน่นของลิงก์ภายในบล็อกสูง","เว็บไซต์ที่มีหน้าที่ไม่สามารถ Crawl ได้","เว็บไซต์ที่มีหน้าที่แสดงผลช้ามากผิดปกติ","เว็บไซต์ที่มีเนื้อหาซ้ำ"],
+  fixes:P("รายการที่ตรวจสอบและผลการตรวจสอบในครั้งนี้มีดังต่อไปนี้","มาตรการโดยละเอียดได้ระบุไว้ในหน้าของแต่ละ No.")
+ }
+};
+
+function propsHTML(){
+  const u = UI[LANG];
+  const row = (ic,k,v,empty) => `<div class="prop"><div class="k"><span class="icon-p">${ic}</span>${esc(k)}</div><div class="v${empty?" empty":""}">${v}</div></div>`;
+  const E = u.empty;
+  let h = row("🔗",u.pURL,A(OD,"owndays.com/sg/en"))
+        + row("👤",u.pAnalyst,"米田元洋")
+        + row("☰",u.pSiteType,`<span class="tag pink">${u.dbSite}</span><span class="tag green">${u.ecSite}</span>`)
+        + row("📅",u.pDate,E,true);
+  const more = row("↗",u.pClient,E,true) + row("🕒",u.pCreated,u.created) + row("☰",u.pMeasure,esc(u.measureVal))
+        + row("Aa",u.pProject,u.noAccess,true) + row("↗",u.pPM,E,true) + row("≡",u.pResult,E,true)
+        + row("≡",u.pDeliv,E,true) + row("≡",u.pPurpose,E,true) + row("≡",u.pIssue,E,true);
+  return `<div class="props">${h}${moreProps?more:""}<button type="button" class="more-btn" id="moreBtn">${moreProps?"⌃ "+esc(u.hide(9)):"⌄ "+esc(u.more(9))}</button></div>`;
+}
+
+function renderMain(){
+  const m = MAIN[LANG], u = UI[LANG];
+  const sec = Object.fromEntries(m.sec.map(s=>[s[0],s]));
+  const H = id => { const s = sec[id]; return `<${s[1]} id="${id}">${esc(s[2])}</${s[1]}>`; };
+  const tocItems = m.sec.map(s=>`<li class="l${s[1]==="h2"?1:s[1]==="h3"?2:3}"><a href="#${s[0]}" data-jump="${s[0]}">${esc(s[2])}</a></li>`).join("");
+  return `<article class="page">
+    <div class="pg-icon">🛠️</div>
+    <h1 class="pg-title">${esc(u.docTitle)}</h1>
+    ${propsHTML()}
+    <hr class="divider">
+    <div class="content">
+      <div class="callout" style="padding:8px 12px">
+        <details class="toggle" id="tocToggle" style="flex:1"><summary><span class="tri">${TRI}</span><span class="tt" style="font-size:20px;font-weight:600">${esc(m.toc)}</span></summary>
+          <div class="tb"><ul class="toc">${tocItems}</ul></div></details>
+      </div>
+      <div class="callout brown" style="margin-top:28px;padding:10px 14px"><span class="ico">📙</span><div class="cb">${H("intro").replace("<h2","<h2 style=\"margin:0\"")}</div></div>
+      ${rb(m.intro)}
+      ${H("about")}${rb(m.about)}
+      ${H("notes")}${rb(m.notes)}
+      <div class="callout brown" style="margin-top:36px;padding:10px 14px"><span class="ico">📙</span><div class="cb">${H("importance").replace("<h2","<h2 style=\"margin:0\"")}</div></div>
+      ${H("imp1")}${rb(m.imp1)}
+      ${H("imp2")}${rb(m.imp2)}
+      ${H("imp3")}${rb(m.imp3)}
+      <div class="callout brown" style="margin-top:36px;padding:10px 14px"><span class="ico">📙</span><div class="cb">${H("trends").replace("<h2","<h2 style=\"margin:0\"")}</div></div>
+      ${H("friendly")}${rb(m.friendly)}
+      <div class="cols">
+        <div>${H("good")}<div class="callout"><span class="ico">⭕</span><div class="cb"><ul>${m.good.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div></div>
+        <div>${H("bad")}<div class="callout"><span class="ico">❌</span><div class="cb"><ul>${m.bad.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></div></div>
+      </div>
+      <div class="callout brown" style="margin-top:36px;padding:10px 14px"><span class="ico">📙</span><div class="cb">${H("fixes").replace("<h2","<h2 style=\"margin:0\"")}</div></div>
+      ${rb(m.fixes)}
+      ${dbBlock(1)}${dbBlock(2)}${dbBlock(3)}
+      <p class="note">${esc(u.footer)}</p>
+    </div>
+  </article>`;
+}
+
+function renderItem(it){
+  const u = UI[LANG];
+  const list = ITEMS.filter(i=>i.grp===it.grp);
+  const idx = list.indexOf(it), prev = list[idx-1], next = list[idx+1];
+  const props = `<div class="props">
+     <div class="prop"><div class="k"><span class="icon-p">◎</span>${u.colStatus}</div><div class="v">${tagStatus()}</div></div>
+     <div class="prop"><div class="k"><span class="icon-p">Aa</span>${u.colTitle}</div><div class="v">${esc(it.title[LANG])}</div></div>
+     <div class="prop"><div class="k"><span class="icon-p">☰</span>${u.colJudge}</div><div class="v">${tagJudge(it.fix)}</div></div>
+     <div class="prop"><div class="k"><span class="icon-p">☰</span>${u.colPri}</div><div class="v">${stars(it.pri)}</div></div></div>`;
+  const pager = `<nav class="pager">${prev?`<a href="${href(prev.id)}"><small>← ${u.prev}</small>${esc(itemNo(prev))} · ${esc(prev.title[LANG])}</a>`:"<span></span>"}${next?`<a href="${href(next.id)}" style="text-align:right"><small>${u.next} →</small>${esc(itemNo(next))} · ${esc(next.title[LANG])}</a>`:"<span></span>"}</nav>`;
+  return `<article class="page">
+    <a class="back" href="#/" data-back>← ${u.back}</a>
+    <h1 class="pg-title">${esc(itemNo(it))}</h1>
+    ${props}<hr class="divider">
+    <div class="content">${rb(it.body[LANG])}</div>
+    ${pager}
+  </article>`;
+}
+
+function renderDb(k){
+  const u = UI[LANG];
+  const title = k==="sd" ? u.sdTitle : u["db"+k];
+  const body = k==="sd" ? sdTable(false) : dbBlock(Number(k), true);
+  return `<article class="page wide"><a class="back" href="#/" data-back>← ${u.back}</a><h1 class="pg-title">${esc(title)}</h1><div class="content">${body}</div></article>`;
+}
+
+/* ---------- breadcrumbs ---------- */
+function crumbs(parts){
+  document.getElementById("crumbs").innerHTML = parts.map((p,i)=> (i?`<span class="sep">/</span>`:"") + (p.href?`<a href="${p.href}">${esc(p.t)}</a>`:`<span>${esc(p.t)}</span>`)).join("");
+}
+
+/* ---------- router ---------- */
+function route(keepScroll){
+  const u = UI[LANG];
+  const h = location.hash;
+  const root = {t:"🛠️ "+u.docTitle, href:"#/"};
+  let m;
+  if ((m = h.match(/^#\/p\/(\w+)/))) {
+    const it = ITEMS.find(i=>i.id===m[1]);
+    if (it) {
+      const db = it.grp===3?3:1;
+      app.innerHTML = renderItem(it);
+      crumbs([root,{t:u["db"+db],href:`#/db/${db}`},{t:itemNo(it)}]);
+      document.title = `${itemNo(it)} – ${it.title[LANG]}`;
+      if (!keepScroll) window.scrollTo(0,0);
+      return;
+    }
+  }
+  if ((m = h.match(/^#\/db\/(\w+)/))) {
+    const k = m[1];
+    app.innerHTML = renderDb(k);
+    const parts = [root];
+    if (k==="sd") parts.push({t:u.db1,href:"#/db/1"},{t:itemNo(ITEMS.find(i=>i.id==="n20")),href:href("n20")});
+    parts.push({t:k==="sd"?u.sdTitle:u["db"+k]});
+    crumbs(parts);
+    document.title = k==="sd"?u.sdTitle:u["db"+k];
+    if (!keepScroll) window.scrollTo(0,0);
+    return;
+  }
+  app.innerHTML = renderMain();
+  crumbs([{t:"🛠️ "+u.docTitle}]);
+  document.title = u.docTitle;
+  const anchor = h.replace(/^#\/?/,"");
+  if (anchor && document.getElementById(anchor)) document.getElementById(anchor).scrollIntoView();
+  else if (!keepScroll && savedMainScroll != null) { window.scrollTo(0, savedMainScroll); }
+}
+let savedMainScroll = null;
+
+/* ---------- language ---------- */
+function setLang(l){
+  LANG = l;
+  document.documentElement.lang = l;
+  try { localStorage.setItem("sfr-lang", l); } catch(e) {}
+  document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.lang===l)));
+  const y = window.scrollY;
+  route(true);
+  window.scrollTo(0,y);
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e=>{
+  const lb = e.target.closest(".lang button");
+  if (lb) { setLang(lb.dataset.lang); return; }
+  if (e.target.closest("#moreBtn")) { moreProps = !moreProps; const y=window.scrollY; route(true); window.scrollTo(0,y); return; }
+  const j = e.target.closest("[data-jump]");
+  if (j) { e.preventDefault(); const el = document.getElementById(j.dataset.jump); if (el) el.scrollIntoView({behavior:"smooth"}); return; }
+  const back = e.target.closest("[data-back]");
+  if (back && history.length > 1 && document.referrer === "" && sessionNav > 0) { e.preventDefault(); history.back(); return; }
+  if (e.target.closest("a")) return;
+  const row = e.target.closest("tr[data-go]");
+  if (row) { if (!location.hash || location.hash==="#/" || location.hash==="#") savedMainScroll = window.scrollY; location.hash = href(row.dataset.go); }
+});
+document.addEventListener("keydown", e=>{
+  const row = e.target.closest && e.target.closest("tr[data-go]");
+  if (row && (e.key==="Enter"||e.key===" ")) { e.preventDefault(); location.hash = href(row.dataset.go); }
+});
+let sessionNav = 0;
+window.addEventListener("hashchange", ()=>{ sessionNav++; route(false); });
+window.addEventListener("scroll", ()=>document.getElementById("topbar").classList.toggle("scrolled", window.scrollY>4), {passive:true});
+
+setLang(LANG);
+})();
+</script>
+</body>
+</html>
